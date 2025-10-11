@@ -1,70 +1,78 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Imus City Reservation App
+**A project for the semester for ITWB311 “Web Development” subject**
 
-## Available Scripts
+This README (README.md) is for contributors and reviewers who clone the repository and want a quick way to run, test, and contribute to the Imus City Reservation App React project.
 
-In the project directory, you can run:
+Contents
+- **Prerequisites**
+- **Install**
+- **Run (development)**
+- **Build (production)**
+- **What to test (quick checklist)**
+- **Project structure & important files**
+- **How to contribute (PR process)**
+- **Useful links and references**
 
-### `npm start`
+## Prerequisites
+- Node.js (>= 16 recommended) and npm
+- Git (for branching and PRs)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Install
+1. Clone the repo:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+git clone https://github.com/Ikarizuu/imus-city-resrvation-app
+cd imus-city-resrvation-app
+```
 
-### `npm test`
+2. Install dependencies:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install
+```
 
-### `npm run build`
+## Run (development)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Start the React development server (hot-reloads on change):
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+npm start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Open http://localhost:3000 in your browser.
 
-### `npm run eject`
+## Build (production)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Create an optimized production build (output in `build/`):
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm run build
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Serve the build locally (optional):
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm install -g serve
+serve -s build
+```
 
-## Learn More
+## What to test (quick checklist)
+- Confirm all main pages render without console errors: Home, Employee, Reservation, City Profile, etc.
+- Test modals: Reservation, Reschedule, Announcement.
+- Employee login: go to /employee-login and check the form UI and validation.
+- Reservation flow: try making and rescheduling a reservation.
+- Verify header and footer appear across pages and links use client-side routing (no full page reload).
+- Confirm assets (images/CSS) load and styles are applied.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Project structure
+- imus-city-resrvation-app/
+	- public/ -> static public assets (index.html, manifest, robots.txt)
+	- src/
+		- App.js -> main router and layout
+		- index.js -> app entry and global imports
+		- Pages/ -> React pages grouped by feature (Home, Employee, Reservation, etc.)
+		- Components/ -> shared UI components (Header, Footer, Modals, etc.)
+		- ClonePages/ -> clone pages from [Imus City Government Website](https://www.cityofimus.gov.ph/home)
+		- Media/ -> images and banners
+		- App.css, index.css -> global styles
