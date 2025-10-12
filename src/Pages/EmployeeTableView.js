@@ -46,31 +46,94 @@ const pageSpecificStyles = `
     }
 
     table {
-        width: 100%;
+        border: 1px solid #ccc;
         border-collapse: collapse;
-        margin-top: 20px;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        table-layout: auto;
         background-color: white;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         border-radius: 8px;
         overflow: hidden;
     }
 
-    th, td {
-        padding: 12px 15px;
-        border: 1px solid #e0e0e0;
-        text-align: center;
+    table caption {
+        font-size: 1.5em;
+        margin: .5em 0 .75em;
     }
 
-    th {
+    table tr {
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        padding: .35em;
+    }
+
+    table th,
+    table td {
+        padding: 12px 8px;
+        text-align: center;
+        border: 1px solid #e0e0e0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    table th {
         background-color: #053774;
         color: white;
-        font-weight: bold;
-        font-size: 0.9em;
+        font-size: 0.8em;
+        letter-spacing: .1em;
         text-transform: uppercase;
+        font-weight: bold;
+        white-space: nowrap;
     }
 
     tr:nth-child(even) {
         background-color: #f8f8f8;
+    }
+
+    /* Flexible column widths */
+    table th:nth-child(1), table td:nth-child(1) { /* POS */
+        width: 60px;
+        min-width: 60px;
+    }
+
+    table th:nth-child(2), table td:nth-child(2) { /* TIME */
+        width: 80px;
+        min-width: 80px;
+    }
+
+    table th:nth-child(3), table td:nth-child(3) { /* QUEUE ID */
+        width: 120px;
+        min-width: 120px;
+    }
+
+    table th:nth-child(4), table td:nth-child(4) { /* NAME */
+        width: 150px;
+        min-width: 150px;
+        max-width: 200px;
+    }
+
+    table th:nth-child(5), table td:nth-child(5) { /* EMAIL */
+        width: 200px;
+        min-width: 150px;
+        max-width: 250px;
+    }
+
+    table th:nth-child(6), table td:nth-child(6) { /* STATUS */
+        width: 130px;
+        min-width: 130px;
+    }
+
+    table th:nth-child(7), table td:nth-child(7) { /* REMARKS */
+        width: auto;
+        min-width: 150px;
+        max-width: 300px;
+    }
+
+    table th:nth-child(8), table td:nth-child(8) { /* ACTIONS */
+        width: 200px;
+        min-width: 180px;
     }
 
     .status-dropdown {
@@ -80,7 +143,9 @@ const pageSpecificStyles = `
         background-color: #fff;
         cursor: pointer;
         font-weight: 500;
-        min-width: 100px;
+        width: 100%;
+        max-width: 120px;
+        font-size: 0.85em;
     }
 
     .status-complete { color: #06402B; border-color: #06402B; }
@@ -95,25 +160,34 @@ const pageSpecificStyles = `
         border: 1px solid #ccc;
         border-radius: 5px;
         resize: vertical;
-        font-size: 0.9em;
+        font-size: 0.85em;
+        box-sizing: border-box;
+        font-family: inherit;
     }
 
     .actions-buttons {
         display: flex;
-        gap: 8px;
+        gap: 6px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        min-height: 50px;
     }
 
     .action-button {
-        padding: 8px 12px;
+        padding: 6px 10px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 0.9em;
+        font-size: 0.8em;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 5px;
+        gap: 4px;
         transition: background-color 0.2s ease;
+        white-space: nowrap;
+        min-width: 90px;
+        flex: 1;
     }
 
     .reschedule-button {
@@ -132,6 +206,186 @@ const pageSpecificStyles = `
 
     .delete-button:hover {
         background-color: #c82333;
+    }
+
+    /* Text truncation for long content */
+    .truncate-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: block;
+    }
+
+    .email-cell {
+        font-size: 0.85em;
+    }
+
+    .name-cell {
+        font-size: 0.9em;
+    }
+
+    @media screen and (max-width: 1024px) {
+        table {
+            font-size: 0.9em;
+        }
+        
+        table th,
+        table td {
+            padding: 10px 6px;
+        }
+
+        table th:nth-child(4), table td:nth-child(4) { /* NAME */
+            width: 120px;
+            min-width: 120px;
+            max-width: 150px;
+        }
+
+        table th:nth-child(5), table td:nth-child(5) { /* EMAIL */
+            width: 150px;
+            min-width: 120px;
+            max-width: 180px;
+        }
+
+        .action-button {
+            min-width: 80px;
+            font-size: 0.75em;
+            padding: 5px 8px;
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        .employee-table-view {
+            padding: 10px;
+        }
+
+        .header-section {
+            flex-direction: column;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .header-section h2 {
+            font-size: 1.5em;
+        }
+
+        table {
+            border: 0;
+            font-size: 0.85em;
+        }
+
+        table caption {
+            font-size: 1.3em;
+        }
+        
+        table thead {
+            border: none;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+        
+        table tr {
+            border-bottom: 3px solid #ddd;
+            display: block;
+            margin-bottom: .625em;
+            padding: 0;
+        }
+        
+        table td {
+            border-bottom: 1px solid #ddd;
+            display: block;
+            font-size: .8em;
+            text-align: right;
+            position: relative;
+            padding-left: 45%;
+            padding-right: 10px;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: none;
+        }
+        
+        table td::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 10px;
+            width: calc(45% - 20px);
+            padding-right: 10px;
+            white-space: nowrap;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: left;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75em;
+        }
+        
+        table td:last-child {
+            border-bottom: 0;
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+
+        .actions-buttons {
+            justify-content: flex-end;
+            padding: 8px 0;
+            min-height: auto;
+        }
+
+        .action-button {
+            padding: 6px 10px;
+            font-size: 0.75em;
+            min-width: 70px;
+        }
+
+        .status-dropdown {
+            max-width: none;
+            width: 100%;
+            font-size: 0.8em;
+        }
+
+        .remarks-textarea {
+            width: 100%;
+            font-size: 0.8em;
+        }
+
+        /* Remove fixed widths for mobile */
+        table th:nth-child(n),
+        table td:nth-child(n) {
+            width: auto;
+            min-width: auto;
+            max-width: none;
+        }
+    }
+
+    /* Additional fixes for very small screens */
+    @media screen and (max-width: 480px) {
+        table td {
+            padding-left: 40%;
+        }
+        
+        table td::before {
+            width: calc(40% - 15px);
+            font-size: 0.7em;
+        }
+
+        .actions-buttons {
+            flex-direction: column;
+            gap: 5px;
+            align-items: flex-end;
+        }
+
+        .action-button {
+            width: 100%;
+            max-width: 120px;
+            min-width: auto;
+        }
     }
 `;
 
@@ -386,6 +640,12 @@ const EmployeeTableView = () => {
         }
     };
 
+    // Helper function to truncate long text
+    const truncateText = (text, maxLength = 20) => {
+        if (!text) return '';
+        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    };
+
     return (
         <>
             <style>{pageSpecificStyles}</style>
@@ -422,12 +682,16 @@ const EmployeeTableView = () => {
                         {reservations.length > 0 ? (
                             reservations.map((reservation, index) => (
                                 <tr key={reservation.queueId || index}>
-                                    <td>{index + 1}</td>
-                                    <td>{reservation.time ? reservation.time.replace(/['=]/g, '') : ''}</td>
-                                    <td>{reservation.queueId || 'N/A'}</td>
-                                    <td>{reservation.fullName || 'N/A'}</td>
-                                    <td>{reservation.email || 'N/A'}</td>
-                                    <td>
+                                    <td data-label="Position">{index + 1}</td>
+                                    <td data-label="Time">{reservation.time ? reservation.time.replace(/['=]/g, '') : ''}</td>
+                                    <td data-label="Queue ID">{reservation.queueId || 'N/A'}</td>
+                                    <td data-label="Name" className="name-cell" title={reservation.fullName}>
+                                        {truncateText(reservation.fullName, 15)}
+                                    </td>
+                                    <td data-label="Email" className="email-cell" title={reservation.email}>
+                                        {truncateText(reservation.email, 20)}
+                                    </td>
+                                    <td data-label="Status">
                                         <select
                                             className="status-dropdown"
                                             style={{ color: statusColors[reservation.status] || '#333' }}
@@ -440,15 +704,16 @@ const EmployeeTableView = () => {
                                             <option value="Cancelled">Cancelled</option>
                                         </select>
                                     </td>
-                                    <td>
+                                    <td data-label="Remarks">
                                         <textarea
                                             className="remarks-textarea"
                                             value={reservation.remarks || ''}
                                             onChange={(e) => handleRemarksChange(index, e.target.value)}
                                             placeholder="Add remarks here..."
+                                            title={reservation.remarks}
                                         />
                                     </td>
-                                    <td>
+                                    <td data-label="Actions">
                                         <div className="actions-buttons">
                                             <button 
                                                 className="action-button reschedule-button"

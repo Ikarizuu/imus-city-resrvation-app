@@ -40,24 +40,28 @@ import CityProfile from './ClonePages/CityProfile';
   //User Layout
   function UserLayout({ children }) {
     return (
-      <>
+      <div style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
         <HeaderComponent />
-        {children}
+          <div style={{flex: 1}}>
+            {children}
+          </div>
         <FooterComponent />
         <BackToTopButton />
-      </>
+      </div>
     );
   }
 
   //Employee Layout
   function EmployeeLayout({ children }) {
     return (
-      <>
+      <div style={{minHeight: '100vh', display: 'flex', flexDirection: 'column'}}>
         <HeaderEmployeeComponent />
-        {children}
+        <div style={{flex: 1}}>
+          {children}
+        </div>
         <FooterComponent />
         <BackToTopButton />
-      </>
+      </div>
     );
   }
 

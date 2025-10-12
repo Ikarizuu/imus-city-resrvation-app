@@ -238,8 +238,9 @@ footer {
     clear: both;
     width: 100%;
     min-height: 50px;
-    bottom: auto;
-    position: relative;
+    bottom: 0;
+    position: sticky;
+    margin-top: auto;
 }
 
 .list-group li {
