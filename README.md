@@ -72,7 +72,15 @@ serve -s build
 		- App.js -> main router and layout
 		- index.js -> app entry and global imports
 		- Pages/ -> React pages grouped by feature (Home, Employee, Reservation, etc.)
+  			- UserPages:
+	  			- Home.js -> is a clone page from the [Imus City Government Website](https://www.cityofimus.gov.ph/home) as a landing page.
+	    		- ReservationSlot.js -> is a page that let the users choose what form to reserve (Calls ReservationModal where the users fill up ther information and chooses time and date).
+	      		- ReservationResult.js -> is a page that shows users the result of what they filled up in the ReservationModal with a generated QR code(Soon), and a print button so users can save a pdf of their details.
+         	- EmployeePages:
+          		- EmployeeLogIn.js -> is a page where employees log on.
+            	- EmployeeHome.js -> is a page where employees choose where and what office they are assigned to, to see the reservation list.
+             	- EmployeeTableView.js -> is a page where the data for the selected form is displayed as shown on the text upper right of the page's body, employee can choose date to see past, present, and upcoming records, employees can change status, add 													remarks, reschedule reserved users to a different time and date (using RescheduleModal then redirects them to a new tab with the ResevationResult), and delete data.
 		- Components/ -> shared UI components (Header, Footer, Modals, etc.)
-		- ClonePages/ -> clone pages from [Imus City Government Website](https://www.cityofimus.gov.ph/home)
+		- ClonePages/ -> other clone pages from [Imus City Government Website](https://www.cityofimus.gov.ph/home)
 		- Media/ -> images and banners
 		- App.css, index.css -> global styles
