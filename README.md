@@ -56,8 +56,8 @@ serve -s build
 ```
 
 ## What to test (quick checklist)
-- Confirm all main pages render without console errors: Home, Employee, Reservation, City Profile, etc.
-- Test modals: Reservation, Reschedule, Announcement.
+- Confirm all main pages render without console errors (non-clones): ReservationSlot, ReservationSlot | EmployeeLogIn, EmployeeHome, EmployeeViewTable
+- Test modals: Reservation, Reschedule.
 - Employee login: go to /employee-login and check the form UI and validation.
 - Reservation flow: try making and rescheduling a reservation.
 - Verify header and footer appear across pages and links use client-side routing (no full page reload).

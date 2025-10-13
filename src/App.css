@@ -221,15 +221,20 @@ h1 strong {
 }
 
 .list-group .list-group-item {
-    background-color: #053774;
+    background-color: #053774 !important;
     padding-left: 0;
-    color: white;
+    color: white !important;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .list-group-item a {
     text-decoration: none;
-    color: white;
+    color: white !important;
+}
+
+.list-group-item a:hover {
+    color: #18a54a !important;
 }
 
 footer {
