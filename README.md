@@ -11,8 +11,6 @@ Contents
 - **Build (production)**
 - **What to test (quick checklist)**
 - **Project structure & important files**
-- **How to contribute (PR process)**
-- **Useful links and references**
 
 ## Prerequisites
 - Node.js (>= 16 recommended) and npm
