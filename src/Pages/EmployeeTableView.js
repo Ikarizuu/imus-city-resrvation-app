@@ -408,6 +408,11 @@ const EmployeeTableView = () => {
 
     //Get form name from sessionStorage
     useEffect(() => {
+        if (!sessionStorage.getItem("loggedInUser")) {
+            window.location.href = "/EmployeeLogIn";
+            return;
+        }   
+
         const urlParams = new URLSearchParams(window.location.search);
         const form = urlParams.get('formName');
         if (form) {

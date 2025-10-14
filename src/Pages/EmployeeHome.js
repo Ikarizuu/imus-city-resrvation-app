@@ -137,7 +137,7 @@ const pageSpecificStyles = `
 const EmployeeHomePage = () => {
     useEffect(() => {
         if (!sessionStorage.getItem("loggedInUser")) {
-            window.location.href = "adminlogin.html";
+            window.location.href = "/EmployeeLogIn";
             return;
         }
 
