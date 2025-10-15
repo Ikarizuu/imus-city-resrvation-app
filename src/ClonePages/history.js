@@ -28,7 +28,7 @@ const History = () => {
                         </ul>
                     </div>
                 </div>
-
+                
                 <div className="col-md-8 col-sm-6">
                     <h4 style={{color: '#18a54a'}}><strong>HISTORY</strong> </h4>
                     <p>Imus, formerly a "visita" of Cavite Viejo (now Kawit), is one of the oldest administrative units of Cavite. Cavite Viejo was under

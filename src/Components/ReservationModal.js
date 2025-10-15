@@ -132,7 +132,7 @@ const ReservationModal = ({ isOpen, onClose, selectedForm }) => {
             const todayStr = `${year}-${month}-${day}`;
             setMinDate(todayStr);
             setDate(todayStr);
-            setTime('07:00');
+            setTime('08:00');
             setIsLoading(false);
         }
     }, [isOpen, selectedForm]);
@@ -332,8 +332,8 @@ const ReservationModal = ({ isOpen, onClose, selectedForm }) => {
                             type="time"
                             id="time"
                             step="1800" //30-minute intervals
-                            min="07:00" //Minimum Time
-                            max="17:00" //Cut-off Time
+                            min="08:00" //Minimum Time
+                            max="16:30" //Cut-off Time
                             value={time}
                             onChange={(e) => setTime(e.target.value)}
                             required
