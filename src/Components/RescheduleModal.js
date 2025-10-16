@@ -196,7 +196,7 @@ const RescheduleModal = ({ isOpen, onClose, reservation, onReschedule }) => {
         if (isOpen && reservation) {
             //Set initial date and time from the reservation, removing single quotes
             setDate(reservation.date ? reservation.date.replace(/'/g, '') : '');
-            setTime(reservation.time ? reservation.time.replace(/'/g, '') : '07:00');
+            setTime(reservation.time ? reservation.time.replace(/'/g, '') : '08:00');
 
             const today = new Date();
             const year = today.getFullYear();
@@ -280,9 +280,9 @@ const RescheduleModal = ({ isOpen, onClose, reservation, onReschedule }) => {
                         <input
                             type="time"
                             id="rescheduleTime"
-                            step="1800"
-                            min="07:00"
-                            max="17:00"
+                            step="1800" //30-minute intervals
+                            min="08:00" //Minimum Time
+                            max="16:30" //Cut-off Time
                             value={time}
                             onChange={(e) => setTime(e.target.value)}
                             required

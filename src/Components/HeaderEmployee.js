@@ -30,7 +30,7 @@ const EmployeeHeaderComponent = () => {
         const logoutBtn = document.getElementById('logoutBtn');
         const handleLogout = (e) => {
             e.preventDefault();
-            sessionStorage.removeItem('loggedInUser');
+            sessionStorage.removeItem('loggedInUser'); //Remove the logged-in user from session storage
             window.location.href = '/EmployeeLogIn'; //Redirect back to Employee Log In Page
         };
         if (logoutBtn) {
