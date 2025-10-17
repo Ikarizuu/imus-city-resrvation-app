@@ -1,3 +1,4 @@
+/*eslint-disable jsx-a11y/iframe-has-title*/
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
