@@ -26,6 +26,9 @@ const Services = () => {
               <li className="list-group-item">
                 <a href="/EBoss">EBoss</a>
               </li>
+              <li className="list-group-item">
+                <a href="/HomePage">Slot Reservation</a>
+              </li>
             </ul>
           </div>
         </div>
