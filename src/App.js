@@ -35,6 +35,7 @@ import BarangayOfficials from './ClonePages/barangayofficials';
 import CityCouncil from './ClonePages/citycouncil';
 import CityMayor from './ClonePages/citymayor';
 import CityProfile from './ClonePages/CityProfile';
+import EBoss from './ClonePages/eboss';
 
 //Layout Formats:
   //User Layout
@@ -95,6 +96,7 @@ function App() {
             <Route path='/CitizensCharcter' element={<UserLayout><CitizensCharcter /></UserLayout>} />
             <Route path='/Assisstance' element={<UserLayout><Assistance /></UserLayout>} />
             <Route path='/Services' element={<UserLayout><Services /></UserLayout>} />
+            <Route path='/EBoss' element={<UserLayout><EBoss /></UserLayout>} />
 
             {/*ABOUT IMUS*/}
             <Route path='/DepartmentsandUnits' element={<UserLayout><DepartmentsandUnits /></UserLayout>} />
