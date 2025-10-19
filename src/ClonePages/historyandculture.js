@@ -13,9 +13,9 @@ const HistoryAndCulture = () => {
                                     <h3>Tourism</h3>
                                 </li>
                                 <li className="list-group-item "><a href="/HistoryandCulture">Cultural and Historical Events</a></li>
-                                <li className="list-group-item "><a href="visitingimus.html">Visiting Imus</a></li>
-                                <li className="list-group-item "><a href="heroesofimus.html">Heroes of Imus</a></li>
-                                <li className="list-group-item "><a href="notableperson.html">Notable Imuseños</a></li>
+                                <li className="list-group-item "><a href="/VisitingImus">Visiting Imus</a></li>
+                                <li className="list-group-item "><a href="/HeroesofImus">Heroes of Imus</a></li>
+                                <li className="list-group-item "><a href="/NotablePerson">Notable Imuseños</a></li>
                             </ul>
                         </div>
                     </div>
