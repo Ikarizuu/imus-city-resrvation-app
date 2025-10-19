@@ -94,7 +94,7 @@ function App() {
 
             {/*SERVICES*/}
             <Route path='/CitizensCharcter' element={<UserLayout><CitizensCharcter /></UserLayout>} />
-            <Route path='/Assisstance' element={<UserLayout><Assistance /></UserLayout>} />
+            <Route path='/Assistance' element={<UserLayout><Assistance /></UserLayout>} />
             <Route path='/Services' element={<UserLayout><Services /></UserLayout>} />
             <Route path='/EBoss' element={<UserLayout><EBoss /></UserLayout>} />
 
