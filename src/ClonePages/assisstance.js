@@ -15,7 +15,7 @@ const Assistance = () => {
                 <h3>Services</h3>
               </li>
               <li className="list-group-item">
-                <a href="/CityPublicLibrary">City Public Library</a>
+                <a href="/Services">City Public Library</a>
               </li>
               <li className="list-group-item">
                 <a href="/Assistance">Assistance</a>
