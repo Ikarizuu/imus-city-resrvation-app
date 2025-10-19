@@ -1,6 +1,6 @@
 import React from "react";
 
-const CitizensCharter = () => {
+const CitizensCharcter = () => {
   return (
     <div className="container">
       <div className="row p-3">
@@ -21,7 +21,7 @@ const CitizensCharter = () => {
                 <a href="/Assistance">Assistance</a>
               </li>
               <li className="list-group-item">
-                <a href="/CitizensCharter">Citizen's Charter</a>
+                <a href="/CitizensCharcter">Citizen's Charter</a>
               </li>
               <li className="list-group-item">
                 <a href="/EBoss">EBoss</a>
@@ -242,4 +242,4 @@ const CitizensCharter = () => {
   );
 };
 
-export default CitizensCharter;
+export default CitizensCharcter;
