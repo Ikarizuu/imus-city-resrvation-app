@@ -31,10 +31,13 @@ const NotablePerson = () => {
         </div>
 
         {/* Main Content */}
-        <div className="col-md-10">
+        <div className="col-md-8 col-sm-6" style={{ backgroundColor: "white" }}>
           <div className="strike p-3">
-            <h2>Notable Imuseños</h2>
+            <span>
+              <h2>Notable Imuseños</h2>
+            </span>
           </div>
+
 
           {/* Prominent Figures */}
           <a
