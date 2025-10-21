@@ -3,7 +3,7 @@ import React from "react";
 
 const CityProfile = () => {
     return (
-        <div className="container">
+        <div className="container no-animations">
             <div className="row p-3">
                 <div className="col-md-2 col-xs-6">
                     <div className="text-center">

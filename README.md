@@ -10,7 +10,7 @@ Contents
 - **Run (development)**
 - **Build (production)**
 - **What to test (quick checklist)**
-- **Project structure & important files**
+- **Project structure & important files (with page details)**
 
 ## Prerequisites
 - Node.js (>= 16 recommended) and npm
@@ -77,8 +77,15 @@ serve -s build
          	- EmployeePages:
           		- EmployeeLogIn.js -> is a page where employees log on.
             	- EmployeeHome.js -> is a page where employees choose where and what office they are assigned to, to see the reservation list.
-             	- EmployeeTableView.js -> is a page where the data for the selected form is displayed as shown on the text upper right of the page's body, employee can choose date to see past, present, and upcoming records, employees can change status, add 													remarks, reschedule reserved users to a different time and date (using RescheduleModal then redirects them to a new tab with the ResevationResult), and delete data.
+             	- EmployeeTableView.js -> is a page where the data for the selected form is displayed as shown on the text upper right of the page's body, employee can choose date to see past, present, and upcoming records, employees can change status, add remarks, reschedule reserved users to a different time and date (using RescheduleModal then redirects them to a new tab with the ResevationResult), and delete data.
 		- Components/ -> shared UI components (Header, Footer, Modals, etc.)
+				- Header.js -> is the user's topbar + navbar. top bar shows the date and time, and other stuffs, while the nav bar shows the navigation to "Home", "AboutImus(Dropdown)", "Services(Dropdown)", "Tourism(Dropdown)", "Business".
+				- HeaderEmployee.js -> Is the employee's  topbar + navbar. employee's top bar only shows the date and time, and the employee's nav bar when they click the logo they'll go to EmployeeHome.js page and they have a LogOut button that will lead them back to EmployeeLogIn.js that is using the Header.js.
+				- Footer.js -> a clone of the footer from [Imus City Government Website](https://www.cityofimus.gov.ph/home)
+				- TopBtn.js -> Website wide back to top btn.
+				- AnnouncementModal.js -> a clone of the Announcement Modal from [Imus City Government Website](https://www.cityofimus.gov.ph/home)
+				- ReservationModal.js -> Accessible via Reservationslot.js. Users fill up ther information and chooses time and date.
+				- RescheduleModal.js -> Accessible via EmployeeTableView.js. Employees can reschedule the reservations.	
 		- ClonePages/ -> other clone pages from [Imus City Government Website](https://www.cityofimus.gov.ph/home)
-		- Media/ -> images and banners
+		- Media/ -> contains images and matterials from [Imus City Government Website](https://www.cityofimus.gov.ph/home)
 		- App.css, index.css -> global styles

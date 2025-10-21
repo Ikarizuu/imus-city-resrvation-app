@@ -2,7 +2,7 @@ import React from 'react';
 
 const VisitingImus = () => {
   return (
-    <div className="container">
+    <div className="container no-animations">
       <div className="row p-3">
         {/* Sidebar */}
         <div className="col-md-2 col-sm-6">

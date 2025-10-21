@@ -2,7 +2,7 @@ import React from "react";
 
 const Assistance = () => {
   return (
-    <div className="container">
+    <div className="container no-animations">
       <div className="row p-3">
         {/* Sidebar */}
         <div className="col-md-2 col-sm-6">
@@ -59,24 +59,24 @@ const Assistance = () => {
                   <strong>MEDICAL ASSISTANCE (REGULAR MEDICATION)</strong>
                 </h4>
                 <p>
-                  <i className="bi bi-file-check"></i> > Back-to-back xerox of
+                  <i className="bi bi-file-check"></i>{'>'} Back-to-back xerox of
                   valid ID of claimant/client and beneficiary/patient. Valid ID
                   must have an Imus address and not be expired.
                   <br />
-                  <i className="bi bi-file-check"></i> > Voter's Certification from
+                  <i className="bi bi-file-check"></i>{'>'} Voter's Certification from
                   COMELEC of the claimant/client and beneficiary/patient.
                   <br />
-                  <i className="bi bi-file-check"></i> > Barangay Certification of
+                  <i className="bi bi-file-check"></i>{'>'} Barangay Certification of
                   the claimant/client and beneficiary/patient.
                   <br />
-                  <i className="bi bi-file-check"></i> > Original or Certified True
+                  <i className="bi bi-file-check"></i>{'>'} Original or Certified True
                   Copy of the Medical Certificate with signature and license
                   number of doctor.
                   <br />
-                  <i className="bi bi-file-check"></i> > Xerox of prescription or
+                  <i className="bi bi-file-check"></i>{'>'} Xerox of prescription or
                   reseta with signature and license number of the same doctor.
                   <br />
-                  <i className="bi bi-file-check"></i> > Xerox of Laboratory
+                  <i className="bi bi-file-check"></i>{'>'} Xerox of Laboratory
                   Requests, if any.
                 </p>
               </div>
@@ -93,19 +93,19 @@ const Assistance = () => {
                   </strong>
                 </h4>
                 <p>
-                  <i className="bi bi-file-check"></i> > Back-to-back xerox of
+                  <i className="bi bi-file-check"></i>{'>'} Back-to-back xerox of
                   valid ID of claimant/client and beneficiary/patient.
                   <br />
-                  <i className="bi bi-file-check"></i> > Voter's Certification from
+                  <i className="bi bi-file-check"></i>{'>'} Voter's Certification from
                   COMELEC of the claimant/client and beneficiary/patient.
                   <br />
-                  <i className="bi bi-file-check"></i>  > Barangay Certification of
+                  <i className="bi bi-file-check"></i>{'>'}  Barangay Certification of
                   the claimant/client and beneficiary/patient.
                   <br />
-                  <i className="bi bi-file-check"></i> > Original or Certified True
+                  <i className="bi bi-file-check"></i>{'>'} Original or Certified True
                   Copy of the Medical Abstract.
                   <br />
-                  <i className="bi bi-file-check"></i> > Xerox of hospital bill or
+                  <i className="bi bi-file-check"></i>{'>'} Xerox of hospital bill or
                   promissory note if unpaid.
                 </p>
               </div>
@@ -120,19 +120,19 @@ const Assistance = () => {
                   <strong>MEDICAL ASSISTANCE (CHEMOTHERAPY/DIALYSIS)</strong>
                 </h4>
                 <p>
-                  <i className="bi bi-file-check"></i> > Back-to-back xerox of
+                  <i className="bi bi-file-check"></i>{'>'} Back-to-back xerox of
                   valid ID of claimant/client and beneficiary/patient.
                   <br />
-                  <i className="bi bi-file-check"></i> > Voter's Certification from
+                  <i className="bi bi-file-check"></i>{'>'} Voter's Certification from
                   COMELEC.
                   <br />
-                  <i className="bi bi-file-check"></i> > Barangay Certification of
+                  <i className="bi bi-file-check"></i>{'>'} Barangay Certification of
                   the claimant/client and beneficiary/patient.
                   <br />
-                  <i className="bi bi-file-check"></i> > Original or Certified True
+                  <i className="bi bi-file-check"></i>{'>'} Original or Certified True
                   Copy of the Medical Abstract.
                   <br />
-                  <i className="bi bi-file-check"></i> > Treatment Protocol or
+                  <i className="bi bi-file-check"></i>{'>'} Treatment Protocol or
                   price quotation with doctor’s signature.
                 </p>
               </div>
@@ -147,19 +147,19 @@ const Assistance = () => {
                   <strong>BURIAL ASSISTANCE</strong>
                 </h4>
                 <p>
-                  <i className="bi bi-file-check"></i> > Back-to-back photocopy of
+                  <i className="bi bi-file-check"></i>{'>'} Back-to-back photocopy of
                   valid ID of claimant/client and beneficiary/patient.
                   <br />
-                  <i className="bi bi-file-check"></i> > Voter's Certification from
+                  <i className="bi bi-file-check"></i>{'>'} Voter's Certification from
                   COMELEC.
                   <br />
-                  <i className="bi bi-file-check"></i> > Barangay Certification of
+                  <i className="bi bi-file-check"></i>{'>'} Barangay Certification of
                   the claimant/client and beneficiary/patient.
                   <br />
-                  <i className="bi bi-file-check"></i> > Certified True Copy of the
+                  <i className="bi bi-file-check"></i>{'>'} Certified True Copy of the
                   registered Death Certificate.
                   <br />
-                  <i className="bi bi-file-check"></i> > Funeral Contract.
+                  <i className="bi bi-file-check"></i>{'>'} Funeral Contract.
                 </p>
               </div>
             </div>
@@ -173,17 +173,17 @@ const Assistance = () => {
                   <strong>FINANCIAL ASSISTANCE (FIRE VICTIMS)</strong>
                 </h4>
                 <p>
-                  <i className="bi bi-file-check"></i> > Back-to-back photocopy of
+                  <i className="bi bi-file-check"></i>{'>'} Back-to-back photocopy of
                   valid ID of claimant/client and beneficiary/patient.
                   <br />
-                  <i className="bi bi-file-check"></i> > Voter's Certification from
+                  <i className="bi bi-file-check"></i>{'>'} Voter's Certification from
                   COMELEC.
                   <br />
-                  <i className="bi bi-file-check"></i> > Barangay Certification.
+                  <i className="bi bi-file-check"></i>{'>'} Barangay Certification.
                   <br />
-                  <i className="bi bi-file-check"></i> > Fire Incident Report.
+                  <i className="bi bi-file-check"></i>{'>'} Fire Incident Report.
                   <br />
-                  <i className="bi bi-file-check"></i> > Photo of house after the
+                  <i className="bi bi-file-check"></i>{'>'} Photo of house after the
                   fire incident.
                 </p>
               </div>
@@ -198,18 +198,18 @@ const Assistance = () => {
                   <strong>FINANCIAL ASSISTANCE (BALIK PROBINSIYA)</strong>
                 </h4>
                 <p>
-                  <i className="bi bi-file-check"></i> > Back-to-back photocopy of
+                  <i className="bi bi-file-check"></i>{'>'} Back-to-back photocopy of
                   valid ID of claimant/client and beneficiary/patient.
                   <br />
-                  <i className="bi bi-file-check"></i> > Voter's Certification from
+                  <i className="bi bi-file-check"></i>{'>'} Voter's Certification from
                   COMELEC.
                   <br />
-                  <i className="bi bi-file-check"></i> > Barangay Certification.
+                  <i className="bi bi-file-check"></i>{'>'} Barangay Certification.
                   <br />
-                  <i className="bi bi-file-check"></i> > Price quotation for
+                  <i className="bi bi-file-check"></i>{'>'} Price quotation for
                   transportation/fare.
                   <br />
-                  <i className="bi bi-file-check"></i> > Acceptance letter from the
+                  <i className="bi bi-file-check"></i>{'>'} Acceptance letter from the
                   province.
                 </p>
               </div>

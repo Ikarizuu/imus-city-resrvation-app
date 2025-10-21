@@ -4,7 +4,7 @@ import React from 'react';
 const HistoryAndCulture = () => {
     return (
         <>
-            <div className="container">
+            <div className="container no-animations">
                 <div className="row p-3">
                     <div className="col-md-2 col-sm-6">
                         <div className="text-center">

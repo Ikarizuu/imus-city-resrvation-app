@@ -556,6 +556,14 @@ footer a:hover {
     transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
+/* Disable animations for pages/components that opt out */
+.no-animations,
+.no-animations * {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+}
+
 /*Loading animation*/
 .loading {
     display: inline-block;

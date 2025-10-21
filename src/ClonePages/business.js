@@ -2,7 +2,7 @@ import React from "react";
 
 const Business = () => {
   return (
-    <div className="container">
+    <div className="container no-animations">
       <div className="row p-3">
     
 

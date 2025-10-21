@@ -2,7 +2,7 @@ import React from "react";
 
 const Services = () => {
   return (
-    <div className="container">
+    <div className="container no-animations">
       <div className="row p-3">
         {/* Sidebar */}
         <div className="col-md-2 col-sm-6">
@@ -57,18 +57,6 @@ const Services = () => {
                   Cavite.
                 </p>
                 <p>Open 8 a.m. to 5 p.m., Monday through Friday.</p>
-
-                <a
-                  href="https://forms.gle/isFMemdd9HDyuDrRA"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ textDecoration: "none", color: "white" }}
-                >
-                  <button type="button" className="btn btn-primary">
-                    <i className="bi bi-folder2"></i> Im CORA
-                  </button>
-                </a>
-                */}
               </div>
             </div>
           </div>
