@@ -64,28 +64,32 @@ serve -s build
 - Confirm assets (images/CSS) load and styles are applied.
 
 ## Project structure
-- imus-city-resrvation-app/
-	- public/ -> static public assets (index.html, manifest, robots.txt)
-	- src/
-		- App.js -> main router and layout
-		- index.js -> app entry and global imports
-		- Pages/ -> React pages grouped by feature (Home, Employee, Reservation, etc.)
-  			- UserPages:
-	  			- Home.js -> is a clone page from the [Imus City Government Website](https://www.cityofimus.gov.ph/home) as a landing page.
-	    		- ReservationSlot.js -> is a page that let the users choose what form to reserve (Calls ReservationModal where the users fill up ther information and chooses time and date).
-	      		- ReservationResult.js -> is a page that shows users the result of what they filled up in the ReservationModal with a generated QR code(Soon), and a print button so users can save a pdf of their details.
-         	- EmployeePages:
-          		- EmployeeLogIn.js -> is a page where employees log on.
-            	- EmployeeHome.js -> is a page where employees choose where and what office they are assigned to, to see the reservation list.
-             	- EmployeeTableView.js -> is a page where the data for the selected form is displayed as shown on the text upper right of the page's body, employee can choose date to see past, present, and upcoming records, employees can change status, add remarks, reschedule reserved users to a different time and date (using RescheduleModal then redirects them to a new tab with the ResevationResult), and delete data.
-		- Components/ -> shared UI components (Header, Footer, Modals, etc.)
- 				- Header.js -> is the user's topbar + navbar. top bar shows the date and time, and other stuffs, while the nav bar shows the navigation to "Home", "AboutImus(Dropdown)", "Services(Dropdown)", "Tourism(Dropdown)", "Business".
-				- HeaderEmployee.js -> Is the employee's  topbar + navbar. employee's top bar only shows the date and time, and the employee's nav bar when they click the logo they'll go to EmployeeHome.js page and they have a LogOut button that will lead them back to EmployeeLogIn.js that is using the Header.js.
-				- Footer.js -> a clone of the footer from [Imus City Government Website](https://www.cityofimus.gov.ph/home)
-				- TopBtn.js -> Website wide back to top btn.
-				- AnnouncementModal.js -> a clone of the Announcement Modal from [Imus City Government Website](https://www.cityofimus.gov.ph/home)
-				- ReservationModal.js -> Accessible via Reservationslot.js. Users fill up ther information and chooses time and date.
-				- RescheduleModal.js -> Accessible via EmployeeTableView.js. Employees can reschedule the reservations.	
-		- ClonePages/ -> other clone pages from [Imus City Government Website](https://www.cityofimus.gov.ph/home)
-		- Media/ -> contains images and matterials from [Imus City Government Website](https://www.cityofimus.gov.ph/home)
-		- App.css, index.css -> global styles
+imus-city-resrvation-app/
+├── public/                      # Static public assets (index.html, manifest, robots.txt)
+├── src/
+│   ├── App.js                   # Main router and layout
+│   ├── index.js                 # App entry and global imports
+│   ├── Pages/                   # React pages grouped by feature
+│   │   ├── UserPages/
+│   │   │   ├── Home.js               # Clone of Imus City Government Website landing page
+│   │   │   ├── ReservationSlot.js    # Lets users choose a form and reserve a slot (calls ReservationModal)
+│   │   │   └── ReservationResult.js  # Displays reservation result, QR (soon), and print option
+│   │   └── EmployeePages/
+│   │       ├── EmployeeLogIn.js      # Employee login page
+│   │       ├── EmployeeHome.js       # Choose office, view reservations
+│   │       └── EmployeeTableView.js  # Table of records, status updates, remarks, rescheduling
+│   │
+│   ├── Components/              # Shared UI components
+│   │   ├── Header.js            # User topbar + navbar (date/time, navigation dropdowns)
+│   │   ├── HeaderEmployee.js    # Employee topbar + navbar (logo = home, logout button)
+│   │   ├── Footer.js            # Clone of Imus City Website footer
+│   │   ├── TopBtn.js            # Back-to-top button (site-wide)
+│   │   ├── AnnouncementModal.js # Clone of the Announcement Modal from Imus City Website
+│   │   ├── ReservationModal.js  # Used in ReservationSlot.js for reservation input
+│   │   └── RescheduleModal.js   # Used in EmployeeTableView.js for rescheduling reservations
+│   │
+│   ├── ClonePages/              # Other clone pages from Imus City Government Website
+│   ├── Media/                   # Images and materials from Imus City Website
+│   ├── App.css                  # Global styles
+│   └── index.css                # Global styles
+
