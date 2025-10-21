@@ -6,9 +6,10 @@ import ReservationModal from '../Components/ReservationModal';
 const pageSpecificStyles = `
     h2 {
         color: #28a745;
-        font-size: 26px;
+        font-size: 30px;
         margin-bottom: 20px;
-        padding-top: 50px;
+        padding-top: 10px;
+        font-weight:bold;
     }
     .section {
         margin-bottom: 30px;
@@ -58,10 +59,39 @@ const ReservationSlot = () => {
     };
 
     return (
-        <>
+    <div className="container">
+      <div className="row p-3">
+        {/* Sidebar */}
+        <div className="col-md-2 col-sm-6">
+          <div className="text-center">
+            <ul className="list-group list-group-flush">
+              <li
+                className="list-group-item"
+                style={{ backgroundColor: "white", color: "#053774" }}
+              >
+                <h3>Services</h3>
+              </li>
+              <li className="list-group-item">
+                <a href="/Services">City Public Library</a>
+              </li>
+              <li className="list-group-item">
+                <a href="/Assistance">Assistance</a>
+              </li>
+              <li className="list-group-item">
+                <a href="/CitizensCharcter">Citizen's Charter</a>
+              </li>
+              <li className="list-group-item">
+                <a href="/EBoss">EBoss</a>
+              </li>
+              <li className="list-group-item">
+                <a href="/ReservationSlot">Slot Reservation</a>
+              </li>
+            </ul>
+          </div>
+        </div>
             <style>{pageSpecificStyles}</style>
-            <div className="container">
-                <h2>SCHEDULE YOUR SLOT NOW</h2>
+            <div className="col-md-9 col-sm-12">
+                <h2>Slot Reservation</h2>
 
                 <div className="section">
                     <h3>Bureau of Fire Protection (BFP)</h3>
@@ -269,7 +299,8 @@ const ReservationSlot = () => {
                 onClose={handleCloseModal}
                 selectedForm={selectedForm}
             />
-        </>
+        </div>
+    </div>
     );
 };
 
