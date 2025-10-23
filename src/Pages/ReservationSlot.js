@@ -61,7 +61,7 @@ const ReservationSlot = () => {
     return (
     <div className="container">
       <div className="row p-3">
-        {/* Sidebar */}
+        {/*Sidebar*/}
         <div className="col-md-2 col-sm-6">
           <div className="text-center">
             <ul className="list-group list-group-flush">
