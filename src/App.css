@@ -59,7 +59,9 @@ body {
 /*Carousel*/
 
 .carousel-item {
-    height: 500px;
+    height: 80vh; /*Set a dynamic height for the carousel*/
+    max-height: 700px; /*Maximum height limit*/
+    min-height: 500px; /*Minimum height limit*/
 }
 
 .carousel-item img {
@@ -72,26 +74,8 @@ body {
     background: rgba(0, 0, 0, 0.5);
     padding: 20px;
     border-radius: 10px;
-}
-
-#bannerhome {
-    font-size: 2.5vmin;
-    margin: 0;
-}
-
-#bannerhome2 {
-    font-size: 1.8vmin;
-    margin: 0;
-}
-
-.card-img-top {
-    height: 200px;
-    object-fit: cover;
-}
-
-.carousel-caption {
-    bottom: 3rem;
-    z-index: 10;
+    bottom: 10%; /*Move captions up for better view*/
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /*Improve text readability*/
 }
 
 #myCarousel .carousel-caption {
@@ -154,12 +138,42 @@ h1 strong {
     background-color: #18a54a;
 }
 
-.carousel .carousel-control-prev-icon {
-    background-color: grey;
+.carousel .carousel-control-prev-icon,
+.carousel .carousel-control-next-icon {
+    /*Controls enhancement*/
+    background-color: rgba(5, 55, 116, 0.5); /*blue with transparency and rounded*/
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
 }
 
-.carousel .carousel-control-next-icon {
-    background-color: grey;
+/*News Carousel Controls*/
+#myCarousel2 .carousel-control-prev-icon,
+#myCarousel2 .carousel-control-next-icon {
+    background-color: rgba(5, 55, 116, 0.5);
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+}
+
+/*News Carousel Indicator Fix - Line Format*/
+#myCarousel2 .carousel-indicators {
+    bottom: -40px;
+    margin-bottom: 0;
+}
+
+#myCarousel2 .carousel-indicators button {
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: #ccc;
+    margin: 0 5px;
+    border: none;
+}
+
+#myCarousel2 .carousel-indicators .active {
+    background-color: #18a54a;
+    width: 60px; /*Make active indicator wider*/
 }
 
 .navbar-nav .nav-link {
@@ -435,11 +449,17 @@ p {
 
 @media (max-width: 768px) {
     .carousel-item {
-        height: 250px;
+        height: 40vh; /*Reduced height for mobile*/
+        min-height: 250px;
     }
 
     .carousel-item>img {
-        height: 250px;
+        height: 100%;
+        min-height: 250px;
+    }
+
+    .carousel-caption {
+        bottom: 5%; /*Adjusted caption position*/
     }
 
     .carousel-caption h1 {
@@ -470,6 +490,7 @@ p {
 /*Card styles for news section*/
 .card {
     transition: transform 0.3s ease;
+    height: 100%; /*Make cards fill container height*/
 }
 
 .card:hover {
@@ -480,6 +501,62 @@ p {
 .card-img-top {
     height: 200px;
     object-fit: cover;
+}
+
+/*News Card Content Alignment - Fixed with Side-by-Side Date and Button*/
+.card-body {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    height: 100%; /*Make card body fill card height*/
+}
+
+.card-text {
+    flex-grow: 1;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    line-height: 1.4;
+    min-height: 80px; /*Ensure text area has minimum height*/
+    text-align: center; /*Center align text*/
+}
+
+/*Date and Button Row - Side by Side and Centered*/
+.card-body .date-button-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid #eaeaea;
+}
+
+.card-body .text-muted {
+    font-size: 0.9rem;
+    color: #6c757d !important;
+    margin: 0;
+    text-align: center;
+}
+
+.card-body .btn-group {
+    margin: 0;
+}
+
+/*Button styling for news cards*/
+.btn-group .btn-success {
+    padding: 6px 20px;
+    font-weight: 600;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    width: auto;
+    min-width: 80px;
+}
+
+.btn-group .btn-success:hover {
+    background-color: #128c3d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /*Button styles*/
@@ -617,5 +694,41 @@ footer a:hover {
     a {
         color: black !important;
         text-decoration: underline !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .card-img-top {
+        height: 150px;
+    }
+    
+    .card-body {
+        min-height: auto;
+        padding: 1rem;
+    }
+    
+    .card-text {
+        font-size: 0.9rem;
+        min-height: 70px;
+    }
+    
+    #myCarousel2 .carousel-control-prev-icon,
+    #myCarousel2 .carousel-control-next-icon {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    #myCarousel2 .carousel-indicators button {
+        width: 30px;
+        height: 3px;
+    }
+    
+    #myCarousel2 .carousel-indicators .active {
+        width: 40px;
+    }
+    
+    .card-body .date-button-row {
+        gap: 10px;
+        flex-wrap: wrap;
     }
 }

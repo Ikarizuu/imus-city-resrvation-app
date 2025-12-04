@@ -159,127 +159,139 @@ const HomePage = () => {
             </div>
 
             {/*News*/}
-            <div className="container" style={{ padding: '50px 0' }}>
-                <div className="text-center pb-5">
-                    <h1><strong>CITY NEWS</strong></h1>
-                </div>
-                <div id="myCarousel2" className="carousel slide" data-bs-ride="carousel">
-                    {/*News Carousel*/}
-                    <div className="carousel-indicators">
-                        <button type="button" data-bs-target="#myCarousel2" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#myCarousel2" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                    </div>
+<div className="container" style={{ padding: '50px 0' }}>
+    <div className="text-center pb-5">
+        <h1><strong>CITY NEWS</strong></h1>
+    </div>
+    <div id="myCarousel2" className="carousel slide" data-bs-ride="carousel">
+        {/*News Carousel*/}
+        <div className="carousel-indicators">
+            <button type="button" data-bs-target="#myCarousel2" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#myCarousel2" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        </div>
 
-                    <div className="carousel-inner">
-                        <div className="carousel-item active">
-                            <div className="row row-cols-1 row-cols-md-3 g-4 p-3">
-                                {/*Card 1*/}
-                                <div className="col">
-                                    <div className="card h-100 shadow-sm text-center">
-                                        <img src={require('../Media/News/2025_July_ImusPride.jpg')} className="card-img-top img-fluid" alt="Imus Pride" />
-                                        <div className="card-body">
-                                            <p className="card-text">Imus Pride 2025: Makulay ang Ating Layunin</p><br />
-                                            <small className="text-muted">July</small>
-                                            <div className="btn-group mt-2">
-                                                <a href="News/2025_July.html#Up_news426" className="btn btn-sm btn-success">View</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/*Card 2*/}
-                                <div className="col">
-                                    <div className="card h-100 shadow-sm text-center">
-                                        <img src={require('../Media/News/2025_July_ProstheticLegs.jpg')} className="card-img-top img-fluid" alt="Prosthetic Legs" />
-                                        <div className="card-body">
-                                            <p className="card-text">4 na Imuseño, hinandugan ni Mayor AA ng prosthetic legs</p><br />
-                                            <small className="text-muted">July</small>
-                                            <div className="btn-group mt-2">
-                                                <a href="News/2025_July.html#Up_news425" className="btn btn-sm btn-success">View</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/*Card 3*/}
-                                <div className="col">
-                                    <div className="card h-100 shadow-sm text-center">
-                                        <img src={require('../Media/News/2025_July_MayorNakatanggapNgPagkilalaSaBJMPCALABARZON.jpg')} className="card-img-top img-fluid" alt="Mayor Award" />
-                                        <div className="card-body">
-                                            <p className="card-text">Mayor AA, nakatanggap ng pagkilala mula BJMP CALABARZON</p><br />
-                                            <small className="text-muted">July 25</small>
-                                            <div className="btn-group mt-2">
-                                                <a href="News/2025_July.html#Up_news421" className="btn btn-sm btn-success">View</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="carousel-item">
-                            <div className="row row-cols-1 row-cols-md-3 g-4 p-3">
-                                {/*Card 4*/}
-                                <div className="col">
-                                    <div className="card h-100 shadow-sm text-center">
-                                        <img src={require('../Media/News/2025_July_CardinalTagleBumisitasaImusLGU.jpg')} className="card-img-top img-fluid" alt="Cardinal Tagle" />
-                                        <div className="card-body">
-                                            <p className="card-text">Cardinal Tagle bumisita sa Imus LGU</p><br /><br />
-                                            <small className="text-muted">July 21</small>
-                                            <div className="btn-group mt-2">
-                                                <a href="News/2025_July.html#Up_news420" className="btn btn-sm btn-success">View</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/*Card 5*/}
-                                <div className="col">
-                                    <div className="card h-100 shadow-sm text-center">
-                                        <img src={require('../Media/News/2025_July_BagongHalalnaOpisyalngHOA.jpg')} className="card-img-top img-fluid" alt="HOA Officials" />
-                                        <div className="card-body">
-                                            <p className="card-text">25 bagong halal na opisyal ng HOA sa Imus, nanumpa</p><br />
-                                            <small className="text-muted">July 14</small>
-                                            <div className="btn-group mt-2">
-                                                <a href="News/2025_July.html#Up_news418" className="btn btn-sm btn-success">View</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/*Card 6*/}
-                                <div className="col">
-                                    <div className="card h-100 shadow-sm text-center">
-                                        <img src={require('../Media/News/2025_July_ImusCentenarianSevillaAncheta.jpg')} className="card-img-top img-fluid" alt="Centenarian" />
-                                        <div className="card-body">
-                                            <p className="card-text">Mayor AA, binisita si Imuseño centenarian Sevilla Ancheta</p><br />
-                                            <small className="text-muted">July 9</small>
-                                            <div className="btn-group mt-2">
-                                                <a href="News/2025_July.html#Up_news414" className="btn btn-sm btn-success">View</a>
-                                            </div>
-                                        </div>
+        <div className="carousel-inner">
+            <div className="carousel-item active">
+                <div className="row row-cols-1 row-cols-md-3 g-4 p-3">
+                    {/*Card 1*/}
+                    <div className="col">
+                        <div className="card h-100 shadow-sm text-center">
+                            <img src={require('../Media/News/2025_July_ImusPride.jpg')} className="card-img-top img-fluid" alt="Imus Pride" />
+                            <div className="card-body">
+                                <p className="card-text">Imus Pride 2025: Makulay ang Ating Layunin</p>
+                                <div className="date-button-row">
+                                    <small className="text-muted">July</small>
+                                    <div className="btn-group">
+                                        <a href="News/2025_July.html#Up_news426" className="btn btn-sm btn-success">View</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/*News Carousel controls*/}
-                    <button className="carousel-control-prev" type="button" data-bs-target="#myCarousel2" data-bs-slide="prev">
-                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span className="visually-hidden">Previous</span>
-                    </button>
-                    <button className="carousel-control-next" type="button" data-bs-target="#myCarousel2" data-bs-slide="next">
-                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span className="visually-hidden">Next</span>
-                    </button>
-                </div>
+                    {/*Card 2*/}
+                    <div className="col">
+                        <div className="card h-100 shadow-sm text-center">
+                            <img src={require('../Media/News/2025_July_ProstheticLegs.jpg')} className="card-img-top img-fluid" alt="Prosthetic Legs" />
+                            <div className="card-body">
+                                <p className="card-text">4 na Imuseño, hinandugan ni Mayor AA ng prosthetic legs</p>
+                                <div className="date-button-row">
+                                    <small className="text-muted">July</small>
+                                    <div className="btn-group">
+                                        <a href="News/2025_July.html#Up_news425" className="btn btn-sm btn-success">View</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                {/*View more btn*/}
-                <div className="text-center pt-5">
-                    <a href="news.html"><button id="ViewMore" type="button" className="btn btn-success">View more</button></a>
+                    {/*Card 3*/}
+                    <div className="col">
+                        <div className="card h-100 shadow-sm text-center">
+                            <img src={require('../Media/News/2025_July_MayorNakatanggapNgPagkilalaSaBJMPCALABARZON.jpg')} className="card-img-top img-fluid" alt="Mayor Award" />
+                            <div className="card-body">
+                                <p className="card-text">Mayor AA, nakatanggap ng pagkilala mula BJMP CALABARZON</p>
+                                <div className="date-button-row">
+                                    <small className="text-muted">July 25</small>
+                                    <div className="btn-group">
+                                        <a href="News/2025_July.html#Up_news421" className="btn btn-sm btn-success">View</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <div className="carousel-item">
+                <div className="row row-cols-1 row-cols-md-3 g-4 p-3">
+                    {/*Card 4*/}
+                    <div className="col">
+                        <div className="card h-100 shadow-sm text-center">
+                            <img src={require('../Media/News/2025_July_CardinalTagleBumisitasaImusLGU.jpg')} className="card-img-top img-fluid" alt="Cardinal Tagle" />
+                            <div className="card-body">
+                                <p className="card-text">Cardinal Tagle bumisita sa Imus LGU</p>
+                                <div className="date-button-row">
+                                    <small className="text-muted">July 21</small>
+                                    <div className="btn-group">
+                                        <a href="News/2025_July.html#Up_news420" className="btn btn-sm btn-success">View</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/*Card 5*/}
+                    <div className="col">
+                        <div className="card h-100 shadow-sm text-center">
+                            <img src={require('../Media/News/2025_July_BagongHalalnaOpisyalngHOA.jpg')} className="card-img-top img-fluid" alt="HOA Officials" />
+                            <div className="card-body">
+                                <p className="card-text">25 bagong halal na opisyal ng HOA sa Imus, nanumpa</p>
+                                <div className="date-button-row">
+                                    <small className="text-muted">July 14</small>
+                                    <div className="btn-group">
+                                        <a href="News/2025_July.html#Up_news418" className="btn btn-sm btn-success">View</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/*Card 6*/}
+                    <div className="col">
+                        <div className="card h-100 shadow-sm text-center">
+                            <img src={require('../Media/News/2025_July_ImusCentenarianSevillaAncheta.jpg')} className="card-img-top img-fluid" alt="Centenarian" />
+                            <div className="card-body">
+                                <p className="card-text">Mayor AA, binisita si Imuseño centenarian Sevilla Ancheta</p>
+                                <div className="date-button-row">
+                                    <small className="text-muted">July 9</small>
+                                    <div className="btn-group">
+                                        <a href="News/2025_July.html#Up_news414" className="btn btn-sm btn-success">View</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {/*News Carousel controls*/}
+        <button className="carousel-control-prev" type="button" data-bs-target="#myCarousel2" data-bs-slide="prev">
+            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span className="visually-hidden">Previous</span>
+        </button>
+        <button className="carousel-control-next" type="button" data-bs-target="#myCarousel2" data-bs-slide="next">
+            <span className="carousel-control-next-icon" aria-hidden="true"></span>
+            <span className="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    {/*View more btn*/}
+    <div className="text-center pt-5">
+        <a href="news.html"><button id="ViewMore" type="button" className="btn btn-success">View more</button></a>
+    </div>
+</div>
 
             {/*Mission Vision*/}
             <section style={{ backgroundColor: 'white', padding: '50px 0' }}>
