@@ -16,6 +16,7 @@ import BackToTopButton from './Components/TopBtn';
 
   //Employee Pages
   import EmployeeLogInPage from './Pages/EmployeeLogIn';
+  import EmployeeAdmin from './Pages/EmployeeAdmin';
   import EmployeeHomePage from './Pages/EmployeeHome';
   import EmployeeTableView from './Pages/EmployeeTableView';
 
@@ -79,6 +80,7 @@ function App() {
 
           {/*EMPLOYEE PAGES*/}
           <Route path='/EmployeeHome' element={<EmployeeLayout><EmployeeHomePage /></EmployeeLayout>} />
+          <Route path='/EmployeeAdmin' element={<EmployeeLayout><EmployeeAdmin /></EmployeeLayout>} />
           <Route path='/EmployeeTableView' element={<EmployeeLayout><EmployeeTableView /></EmployeeLayout>} />
           <Route path='/RescheduleResult' element={<EmployeeLayout><ReservationResult /></EmployeeLayout>} />
 

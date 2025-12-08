@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
-//Import AOS
+import { QRCodeCanvas } from 'qrcode.react'; // Use QRCodeCanvas instead of default import
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -128,6 +127,14 @@ const ReservationResult = () => {
         window.print();
     };
 
+    // Create QR code data
+    const qrData = `Queue ID: ${reservationDetails.queueId}
+Name: ${reservationDetails.fullName}
+Form: ${reservationDetails.form}
+Date: ${reservationDetails.date}
+Time: ${reservationDetails.time}
+City Government of Imus`;
+
     return (
         <>
             <style>{pageSpecificStyles}</style>
@@ -150,11 +157,13 @@ const ReservationResult = () => {
                         <p><strong>Time of Reservation:</strong> <span id="reservationTime" style={{ paddingRight: '35px' }}>{reservationDetails.time}</span></p>
                     </div>
                     <div className="qr-code">
-                        {/* 
-                            SOON TO COME. USING LARAVEL PHP
-                            "QR CODE GENERATOR"
-                        */}
-                        <img src={require("../Media/qrcode_example.png")} alt="QR Code" id="qrCodeImage" />
+                        <QRCodeCanvas
+                            value={qrData}
+                            size={200}
+                            level="H"
+                            includeMargin={true}
+                            style={{ border: '1px solid #ddd', padding: '10px', background: 'white' }}
+                        />
                     </div>
                 </div>
 

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
-//Import Font Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import api from '../api/axiosConfig';
 
 const modalStyles = `
     .modal {
@@ -114,10 +113,6 @@ const modalStyles = `
     }
 `;
 
-//SheetDB API LINK
-const SHEETDB_API = "https://sheetdb.io/api/v1/qmacfljmu6hht"; //Curently Using Backup link1
-//main link = https://sheetdb.io/api/v1/z8baj0q36a3pl || Backup link1 = https://sheetdb.io/api/v1/qmacfljmu6hht || Backup link2 = https://sheetdb.io/api/v1/ustk92tozp65t
-
 const RescheduleModal = ({ isOpen, onClose, reservation, onReschedule }) => {
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
@@ -125,93 +120,49 @@ const RescheduleModal = ({ isOpen, onClose, reservation, onReschedule }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
-    //Generate new Queue ID function
-    const generateQueueId = async (selectedDate) => {
-        try {
-            //Get ALL reservations to find the highest queueId for the selected date
-            let res = await fetch(SHEETDB_API);
-            let allReservations = await res.json();
-
-            if (!allReservations || allReservations.length === 0) {
-                //If no reservations exist, start with 001
-                const reservationDate = new Date(selectedDate);
-                const year = String(reservationDate.getFullYear()).slice(-2);
-                const month = String(reservationDate.getMonth() + 1).padStart(2, '0');
-                const day = String(reservationDate.getDate()).padStart(2, '0');
-                const dateStr = year + month + day;
-                return dateStr + '001';
-            }
-
-            //Filter reservations for the same date and find the highest queueId
-            const reservationDate = new Date(selectedDate);
-            const year = String(reservationDate.getFullYear()).slice(-2);
-            const month = String(reservationDate.getMonth() + 1).padStart(2, '0');
-            const day = String(reservationDate.getDate()).padStart(2, '0');
-            const datePrefix = year + month + day;
-
-            //Find all queueIds that start with the same date prefix
-            const sameDayQueueIds = allReservations
-                .filter(reservation => reservation.queueId && reservation.queueId.startsWith(datePrefix))
-                .map(reservation => reservation.queueId);
-
-            if (sameDayQueueIds.length === 0) {
-                //No reservations for this date yet
-                return datePrefix + '001';
-            }
-
-            //Find the highest sequence number
-            const sequenceNumbers = sameDayQueueIds.map(queueId => {
-                const sequence = parseInt(queueId.slice(-3), 10);
-                return isNaN(sequence) ? 0 : sequence;
-            });
-
-            const maxSequence = Math.max(...sequenceNumbers);
-            const nextSequence = maxSequence + 1;
-
-            //Format with leading zeros (3 digits)
-            const sequenceStr = String(nextSequence).padStart(3, "0");
-            return datePrefix + sequenceStr;
-
-        } catch (error) {
-            console.error("Error generating queue ID:", error);
-            //Fallback: use timestamp-based ID
-            const reservationDate = new Date(selectedDate);
-            const year = String(reservationDate.getFullYear()).slice(-2);
-            const month = String(reservationDate.getMonth() + 1).padStart(2, '0');
-            const day = String(reservationDate.getDate()).padStart(2, '0');
-            const dateStr = year + month + day;
-            const fallbackSequence = Math.floor(Math.random() * 900) + 100;
-            return dateStr + fallbackSequence;
+    useEffect(() => {
+        if (isOpen && reservation) {
+            setDate(reservation.reservation_date || '');
+            setTime(reservation.reservation_time ? reservation.reservation_time.substring(0, 5) : '08:00');
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            setMinDate(todayStr);
+            setIsLoading(false);
+            setErrorMessage('');
         }
-    };
+    }, [isOpen, reservation]);
 
-    //Prevents Users to reserve during the weekends (Saturday & Sunday)
     const isWeekend = (selectedDate) => {
         const date = new Date(selectedDate);
         const dayOfWeek = date.getDay(); //0 = Sunday | 6 = Saturday
         return dayOfWeek === 0 || dayOfWeek === 6;
     };
 
-    useEffect(() => {
-        if (isOpen && reservation) {
-            //Set initial date and time from the reservation, removing single quotes
-            setDate(reservation.date ? reservation.date.replace(/'/g, '') : '');
-            setTime(reservation.time ? reservation.time.replace(/'/g, '') : '08:00');
-
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            setMinDate(`${year}-${month}-${day}`);
-            setIsLoading(false);
-            setErrorMessage('');
-        }
-    }, [isOpen, reservation]);
-
     const isPastDateTime = (selectedDate, selectedTime) => {
         const now = new Date();
         const selectedDateTime = new Date(`${selectedDate}T${selectedTime}`);
         return selectedDateTime < now;
+    };
+
+    const generateQueueId = async (selectedDate) => {
+        try {
+            // Use the new reschedule.php endpoint
+            const response = await api.get(`/reschedule.php?date=${selectedDate}`);
+            
+            if (response.data.success) {
+                return response.data.queueId;
+            } else {
+                throw new Error(response.data.message || "Failed to generate queue ID");
+            }
+        } catch (error) {
+            console.error("Error generating queue ID:", error);
+            // Fallback: generate locally
+            const year = String(new Date(selectedDate).getFullYear()).slice(-2);
+            const month = String(new Date(selectedDate).getMonth() + 1).padStart(2, '0');
+            const day = String(new Date(selectedDate).getDate()).padStart(2, '0');
+            const randomNum = Math.floor(Math.random() * 900) + 100;
+            return year + month + day + randomNum;
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -227,7 +178,6 @@ const RescheduleModal = ({ isOpen, onClose, reservation, onReschedule }) => {
             return;
         }
 
-        //Check if selected date is a weekend
         if (isWeekend(date)) {
             setErrorMessage("City Hall is closed during Saturdays and Sundays. Please select a weekday (Monday to Friday).");
             setIsLoading(false);
@@ -235,19 +185,17 @@ const RescheduleModal = ({ isOpen, onClose, reservation, onReschedule }) => {
         }
 
         try {
-            //Generate new QueueID here in the modal
+            // Generate new Queue ID using the new endpoint
             const newQueueId = await generateQueueId(date);
             
-            //Call the parent's onReschedule function with the new QueueID
             if (onReschedule) {
                 await onReschedule(date, time, newQueueId);
             }
         } catch (error) {
-            console.error("Error generating Queue ID:", error);
-            setErrorMessage("Error generating reservation ID. Please try again.");
+            console.error("Error in reschedule:", error);
+            setErrorMessage(error.message || "Error processing reschedule. Please try again.");
+            setIsLoading(false);
         }
-        
-        setIsLoading(false);
     };
 
     return (
@@ -259,9 +207,9 @@ const RescheduleModal = ({ isOpen, onClose, reservation, onReschedule }) => {
                     <h3>Reschedule Slot</h3>
                     {reservation && (
                         <p style={{marginBottom: '15px', color: '#555'}}>
-                            Rescheduling for: <strong>{reservation.fullName}</strong><br/>
-                            Current slot: {reservation.date ? reservation.date.replace(/'/g, '') : ''} at {reservation.time ? reservation.time.replace(/'/g, '') : ''}<br/>
-                            Queue ID: {reservation.queueId}
+                            Rescheduling for: <strong>{reservation.full_name}</strong><br/>
+                            Current slot: {reservation.reservation_date} at {reservation.reservation_time ? reservation.reservation_time.substring(0, 5) : ''}<br/>
+                            Queue ID: {reservation.queue_id}
                         </p>
                     )}
                     <form onSubmit={handleSubmit}>

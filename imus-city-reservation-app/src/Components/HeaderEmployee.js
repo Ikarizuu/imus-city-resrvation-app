@@ -1,11 +1,14 @@
 /*eslint-disable jsx-a11y/anchor-is-valid*/
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 //Import Font Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserCircle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faUserCircle, faSignOutAlt, faCrown } from '@fortawesome/free-solid-svg-icons';
 
-const EmployeeHeaderComponent = () => {
+const HeaderEmployeeComponent = () => {
+    const [employeeName, setEmployeeName] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false);
+
     useEffect(() => {
         const date_time = (id) => {
             const date = new Date();
@@ -22,18 +25,37 @@ const EmployeeHeaderComponent = () => {
             let s = date.getSeconds();
             if (s < 10) { s = "0" + s; }
             const result = ` ${months[month]} ${d}, ${year} | ${days[day]} \u00A0 \u00A0\u00A0 ${h} : ${m} : ${s}`;
-            document.getElementById(id).innerHTML = result;
+            if (document.getElementById(id)) {
+                document.getElementById(id).innerHTML = result;
+            }
             setTimeout(() => date_time(id), 1000);
         };
         date_time('date_time');
+
+        //Get employee info from sessionStorage
+        const firstName = sessionStorage.getItem("employeeFirstName") || '';
+        const lastName = sessionStorage.getItem("employeeLastName") || '';
+        const adminStatus = sessionStorage.getItem("isAdmin");
+        
+        if (firstName || lastName) {
+            setEmployeeName(`${firstName} ${lastName}`.trim());
+        }
+        
+        setIsAdmin(adminStatus === 'admin');
 
         //Logout functionality
         const logoutBtn = document.getElementById('logoutBtn');
         const handleLogout = (e) => {
             e.preventDefault();
-            sessionStorage.removeItem('loggedInUser'); //Remove the logged-in user from session storage
-            window.location.href = '/EmployeeLogIn'; //Redirect back to Employee Log In Page
+            //Clear all session storage
+            sessionStorage.removeItem('loggedInUser');
+            sessionStorage.removeItem('employeeFirstName');
+            sessionStorage.removeItem('employeeLastName');
+            sessionStorage.removeItem('isAdmin');
+            //Redirect to login page
+            window.location.href = '/EmployeeLogIn';
         };
+        
         if (logoutBtn) {
             logoutBtn.addEventListener('click', handleLogout);
         }
@@ -61,14 +83,35 @@ const EmployeeHeaderComponent = () => {
             {/*Nav Bar*/}
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container">
-                    <a className="navbar-brand" href="/EmployeeHome">
+                    <a className="navbar-brand" href={isAdmin ? "/EmployeeAdmin" : "/EmployeeHome"}>
                         <img src={require('../Media/Logo_City_Government_of_Imus.png')} alt="City of Imus Logo" />
                     </a>
 
                     <div className="navbar-collapse">
                         <ul className="navbar-nav ms-auto">
-                            <li className="nav-item" style={{ color: 'black', display: 'flex', alignItems: 'center' }}>
-                                City Government of Imus Employee Portal
+                            <li className="nav-item" style={{ 
+                                color: 'black', 
+                                display: 'flex', 
+                                alignItems: 'center',
+                                gap: '10px'
+                            }}>
+                                {employeeName ? `Welcome, ${employeeName}` : 'City Government of Imus Employee Portal'}
+                                {isAdmin && (
+                                    <span style={{
+                                        backgroundColor: '#ffc107',
+                                        color: '#212529',
+                                        padding: '2px 8px',
+                                        borderRadius: '12px',
+                                        fontSize: '0.8rem',
+                                        fontWeight: 'bold',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '4px'
+                                    }}>
+                                        <FontAwesomeIcon icon={faCrown} size="xs" />
+                                        Admin
+                                    </span>
+                                )}
                             </li>
 
                             <li className="nav-item dropdown">
@@ -77,7 +120,12 @@ const EmployeeHeaderComponent = () => {
                                     <FontAwesomeIcon icon={faUserCircle} className="user-icon" style={{ color: 'black' }} />
                                 </a>
                                 <ul className="dropdown-menu dropdown-menu-end">
-                                    <li><a className="dropdown-item" href="#" id="logoutBtn"><FontAwesomeIcon icon={faSignOutAlt} className="me-2" />Logout</a></li>
+                                    <li>
+                                        <a className="dropdown-item" href="#" id="logoutBtn">
+                                            <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
+                                            Logout
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
@@ -88,4 +136,4 @@ const EmployeeHeaderComponent = () => {
     );
 };
 
-export default EmployeeHeaderComponent;
+export default HeaderEmployeeComponent;

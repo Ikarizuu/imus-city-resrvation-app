@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "webdev_db";
+$dbname = "imus_city_reservation_db";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

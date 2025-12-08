@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../api/axiosConfig';
 
 const modalStyles = `
     .modal {
@@ -107,10 +108,6 @@ const modalStyles = `
     }
 `;
 
-//SheetDB API LINK
-const SHEETDB_API = "https://sheetdb.io/api/v1/qmacfljmu6hht"; //Curently Using Backup link1
-//main link = https://sheetdb.io/api/v1/z8baj0q36a3pl || Backup link1 = https://sheetdb.io/api/v1/qmacfljmu6hht || Backup link2 = https://sheetdb.io/api/v1/ustk92tozp65t
-
 const ReservationModal = ({ isOpen, onClose, selectedForm }) => {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
@@ -118,12 +115,14 @@ const ReservationModal = ({ isOpen, onClose, selectedForm }) => {
     const [time, setTime] = useState('');
     const [minDate, setMinDate] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         //Reset form
         if (isOpen) {
             setFullName('');
             setEmail('');
+            setError('');
             
             const today = new Date();
             const year = today.getFullYear();
@@ -151,63 +150,6 @@ const ReservationModal = ({ isOpen, onClose, selectedForm }) => {
         return dayOfWeek === 0 || dayOfWeek === 6; //0 = Sunday | 6 = Saturday
     };
 
-    const generateQueueId = async (selectedDate) => {
-        try {
-            //Get ALL reservations to find the latest QueueID for the selected date
-            let res = await fetch(SHEETDB_API);
-            let allReservations = await res.json();
-
-            if (!allReservations || allReservations.length === 0) {
-                //If no reservations exist, start with 001
-                const reservationDate = new Date(selectedDate);
-                const year = String(reservationDate.getFullYear()).slice(-2);
-                const month = String(reservationDate.getMonth() + 1).padStart(2, '0');
-                const day = String(reservationDate.getDate()).padStart(2, '0');
-                const dateStr = year + month + day;
-                return dateStr + '001';
-            }
-
-            //Filter reservations for the same date and find the latest QueueID
-            const reservationDate = new Date(selectedDate);
-            const year = String(reservationDate.getFullYear()).slice(-2);
-            const month = String(reservationDate.getMonth() + 1).padStart(2, '0');
-            const day = String(reservationDate.getDate()).padStart(2, '0');
-            const datePrefix = year + month + day;
-
-            //Find all QueueID with the same date
-            const sameDayQueueIds = allReservations
-                .filter(reservation => reservation.queueId && reservation.queueId.startsWith(datePrefix))
-                .map(reservation => reservation.queueId);
-
-            if (sameDayQueueIds.length === 0) {
-                //No reservations for this date yet
-                return datePrefix + '001';
-            }
-
-            //Finds the latest QueueID for that day
-            const sequenceNumbers = sameDayQueueIds.map(queueId => {
-                const sequence = parseInt(queueId.slice(-3), 10);
-                return isNaN(sequence) ? 0 : sequence;
-            });
-
-            const maxSequence = Math.max(...sequenceNumbers);
-            const nextSequence = maxSequence + 1;
-
-            const sequenceStr = String(nextSequence).padStart(3, "0");
-            return datePrefix + sequenceStr;
-
-        } catch (error) {
-            console.error("Error generating queue ID:", error);
-            const reservationDate = new Date(selectedDate);
-            const year = String(reservationDate.getFullYear()).slice(-2);
-            const month = String(reservationDate.getMonth() + 1).padStart(2, '0');
-            const day = String(reservationDate.getDate()).padStart(2, '0');
-            const dateStr = year + month + day;
-            const fallbackSequence = Math.floor(Math.random() * 900) + 100;
-            return dateStr + fallbackSequence;
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         
@@ -215,17 +157,18 @@ const ReservationModal = ({ isOpen, onClose, selectedForm }) => {
         if (isLoading) return;
         
         setIsLoading(true);
+        setError('');
 
         //Alert if date/time is in the past
         if (isPastDateTime(date, time)) {
-            alert("Cannot reserve a slot in the past. Please select a future date and time.");
+            setError("Cannot reserve a slot in the past. Please select a future date and time.");
             setIsLoading(false);
             return;
         }
 
         //Check if selected date is a weekend
         if (isWeekend(date)) {
-            alert("City Hall is closed during Saturdays and Sundays. Please select a weekday (Monday to Friday).");
+            setError("City Hall is closed during Saturdays and Sundays. Please select a weekday (Monday to Friday).");
             setIsLoading(false);
             return;
         }
@@ -234,53 +177,69 @@ const ReservationModal = ({ isOpen, onClose, selectedForm }) => {
         const actionDate = new Date().toISOString().split("T")[0];
 
         try {
-            //Check if slot is already taken for the selected form
-            let res = await fetch(`${SHEETDB_API}/search?form=${encodeURIComponent(selectedForm)}&date=${date}&time=${time}`);
-            let existing = await res.json();
+            // First check if slot is available
+            try {
+                const checkResponse = await api.get(`/reservations.php?date=${date}&form=${encodeURIComponent(selectedForm)}`);
+                const existingReservations = checkResponse.data;
+                
+                const slotTaken = existingReservations.some(reservation => 
+                    reservation.reservation_time.substring(0, 5) === time
+                );
+                
+                if (slotTaken) {
+                    setError(`This time slot is already taken for "${selectedForm}". Please choose another time.`);
+                    setIsLoading(false);
+                    return;
+                }
+            } catch (checkError) {
+                console.error("Error checking slot availability:", checkError);
+            }
 
-            if (existing && existing.length > 0) {
-                alert(`This time slot is already taken for "${selectedForm}". Please choose another time.`);
+            // Generate Queue ID
+            let queueId;
+            try {
+                const queueResponse = await api.post('/generate_queue_id.php', { date: date });
+                if (queueResponse.data.success) {
+                    queueId = queueResponse.data.queueId;
+                } else {
+                    throw new Error("Failed to generate queue ID");
+                }
+            } catch (queueError) {
+                console.error("Queue ID generation error:", queueError);
+                // Fallback queue ID generation
+                const reservationDate = new Date(date);
+                const year = String(reservationDate.getFullYear()).slice(-2);
+                const month = String(reservationDate.getMonth() + 1).padStart(2, '0');
+                const day = String(reservationDate.getDate()).padStart(2, '0');
+                const randomNum = Math.floor(Math.random() * 900) + 100;
+                queueId = year + month + day + randomNum;
+            }
+
+            // Save user details to PHP backend
+            const reservationData = {
+                queueId: queueId,
+                form: selectedForm,
+                fullName: fullName,
+                email: email,
+                date: date,
+                time: time,
+                actionDate: actionDate,
+                status: "Pending"
+            };
+
+            const response = await api.post('/reservations.php', reservationData);
+            
+            if (response.data.success) {
+                //Redirect to ReservationResult with data in URL
+                window.location.href = `/ReservationResult?queueId=${queueId}&form=${encodeURIComponent(selectedForm)}&fullName=${encodeURIComponent(fullName)}&email=${encodeURIComponent(email)}&date=${date}&time=${time}&actionDate=${actionDate}`;
+            } else {
+                setError(response.data.message || "Failed to create reservation");
                 setIsLoading(false);
-                return;
             }
-
-            //Generate Queue ID
-            const queueId = await generateQueueId(date);
-
-            //Format the date / time / actionDate to have ' at the start (to prevent automatic math equation) (sakit sa ulo)
-            const formattedDate = `'${date}`;
-            const formattedTime = `'${time}`;
-            const formattedActionDate = `'${actionDate}`;
-
-            //Save user details to SheetDB
-            const response = await fetch(SHEETDB_API, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    data: [{
-                        queueId, 
-                        form: selectedForm, 
-                        fullName, 
-                        email, 
-                        date: formattedDate, 
-                        time: formattedTime, 
-                        actionDate: formattedActionDate, 
-                        status: "Pending"
-                    }]
-                })
-            });
-
-            //Check if the response is successful
-            if (!response.ok) {
-                throw new Error('Failed to submit reservation');
-            }
-
-            //Redirect to ReservationResult with data in URL
-            window.location.href = `/ReservationResult?queueId=${queueId}&form=${encodeURIComponent(selectedForm)}&fullName=${encodeURIComponent(fullName)}&email=${encodeURIComponent(email)}&date=${date}&time=${time}&actionDate=${actionDate}`;
 
         } catch (error) {
             console.error("Reservation submission error:", error);
-            alert("An error occurred during reservation. Please try again.");
+            setError("An error occurred during reservation. Please try again.");
             setIsLoading(false);
         }
     };
@@ -339,6 +298,9 @@ const ReservationModal = ({ isOpen, onClose, selectedForm }) => {
                             required
                             disabled={isLoading}
                         />
+                        
+                        {error && <div className="error-message">{error}</div>}
+                        
                         <button type="submit" disabled={isLoading}>
                             {isLoading ? (
                                 <>

@@ -9,6 +9,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 
+//Import axios
+import api from '../api/axiosConfig';
+
 //CSS
 const pageSpecificStyles = `
     .login-container {
@@ -83,15 +86,17 @@ const EmployeeLogInPage = () => {
     const [loginMessage, setLoginMessage] = useState({ text: '', type: '' });
     const [isLoading, setIsLoading] = useState(false);
 
-    //SheetDB URL
-    const sheetdbURL = "https://sheetdb.io/api/v1/7vpnlt3ni2ehp";
-
     useEffect(() => {
         AOS.init();
 
         //Check if employee is already logged in
         if (sessionStorage.getItem("loggedInUser")) {
-            window.location.href = "/EmployeeHome";
+            const isAdmin = sessionStorage.getItem("isAdmin");
+            if (isAdmin === 'admin') {
+                window.location.href = "/EmployeeAdmin";
+            } else {
+                window.location.href = "/EmployeeHome";
+            }
         }
     }, []);
 
@@ -112,24 +117,30 @@ const EmployeeLogInPage = () => {
         setIsLoading(true);
 
         try {
-            const response = await fetch(sheetdbURL);
+            const response = await api.post('/auth.php', {
+                employeeid: employeeid,
+                password: password
+            });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            const user = data.find(entry =>
-                entry.employeeid === employeeid && entry.password === password
-            );
-
-            if (user) {
+            if (response.data.success) {
+                // Store employee info in sessionStorage
                 sessionStorage.setItem("loggedInUser", employeeid);
+                sessionStorage.setItem("employeeFirstName", response.data.firstName || '');
+                sessionStorage.setItem("employeeLastName", response.data.lastName || '');
+                sessionStorage.setItem("isAdmin", response.data.isAdmin || 'notAdmin');
+                
                 showMessage("Login successful! Redirecting...", "success");
+                
                 setTimeout(() => {
-                    window.location.href = "/EmployeeHome";
+                    // Redirect admins to EmployeeAdmin, others to EmployeeHome
+                    if (response.data.isAdmin === 'admin') {
+                        window.location.href = "/EmployeeAdmin";
+                    } else {
+                        window.location.href = "/EmployeeHome";
+                    }
                 }, 1000);
             } else {
-                showMessage("Invalid Employee ID or Password. Please try again.", "danger");
+                showMessage(response.data.message || "Invalid Employee ID or Password. Please try again.", "danger");
             }
         } catch (error) {
             console.error("Login error:", error);
