@@ -1,7 +1,8 @@
+/*eslint-disable jsx-a11y/iframe-has-title*/
 import React, { useState, useEffect, useRef } from 'react';
 import RescheduleModal from '../Components/RescheduleModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarAlt, faPen, faTrash, faQrcode, faSearch, faCamera, faUpload, faFile, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarAlt, faPen, faTrash, faQrcode, faSearch, faCamera, faTimes } from '@fortawesome/free-solid-svg-icons';
 import api from '../api/axiosConfig';
 
 const pageSpecificStyles = `
@@ -77,25 +78,6 @@ const pageSpecificStyles = `
 
     .qr-scanner-btn:hover {
         background-color: #218838;
-    }
-
-    .file-upload-btn {
-        background-color: #06428A;
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 0.95em;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: background-color 0.2s ease;
-        white-space: nowrap;
-    }
-
-    .file-upload-btn:hover {
-        background-color: #053774;
     }
 
     .date-picker-container {
@@ -208,6 +190,7 @@ const pageSpecificStyles = `
         align-items: center;
         gap: 5px;
         min-width: 120px;
+        justify-content: center;
     }
 
     .start-scanner-btn {
@@ -416,157 +399,6 @@ const pageSpecificStyles = `
         background-color: #053774;
     }
 
-    /* File Upload Modal */
-    .upload-modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0,0,0,0.7);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 2000;
-        padding: 20px;
-    }
-
-    .upload-modal-content {
-        background-color: white;
-        border-radius: 10px;
-        width: 100%;
-        max-width: 500px;
-        max-height: 90vh;
-        overflow-y: auto;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    }
-
-    .upload-section {
-        padding: 20px;
-    }
-
-    .upload-area {
-        border: 2px dashed #06428A;
-        border-radius: 10px;
-        padding: 40px 20px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-bottom: 20px;
-    }
-
-    .upload-area:hover {
-        background-color: #f8f9fa;
-        border-color: #053774;
-    }
-
-    .upload-area.dragover {
-        background-color: #e8f4fe;
-        border-color: #28a745;
-    }
-
-    .upload-area p {
-        margin: 10px 0;
-        color: #666;
-    }
-
-    .upload-area small {
-        color: #999;
-        font-size: 0.85em;
-    }
-
-    .file-list {
-        margin-top: 20px;
-    }
-
-    .file-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        background-color: #f8f9fa;
-        border-radius: 5px;
-        margin-bottom: 10px;
-    }
-
-    .file-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        overflow: hidden;
-        flex: 1;
-    }
-
-    .file-icon {
-        color: #06428A;
-    }
-
-    .file-details {
-        overflow: hidden;
-    }
-
-    .file-name {
-        font-weight: 500;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .file-size {
-        color: #666;
-        font-size: 0.85em;
-    }
-
-    .remove-file-btn {
-        background: none;
-        border: none;
-        color: #dc3545;
-        cursor: pointer;
-        padding: 5px;
-    }
-
-    .upload-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-        justify-content: flex-end;
-    }
-
-    .upload-btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 0.95em;
-        font-weight: 500;
-        min-width: 100px;
-    }
-
-    .upload-cancel-btn {
-        background-color: #6c757d;
-        color: white;
-    }
-
-    .upload-cancel-btn:hover {
-        background-color: #5a6268;
-    }
-
-    .upload-submit-btn {
-        background-color: #28a745;
-        color: white;
-    }
-
-    .upload-submit-btn:hover {
-        background-color: #218838;
-    }
-
-    .upload-submit-btn:disabled {
-        background-color: #6c757d;
-        cursor: not-allowed;
-        opacity: 0.7;
-    }
-
-    /* Loading and error states */
     .loading-spinner {
         display: inline-block;
         border: 3px solid #f3f3f3;
@@ -603,17 +435,16 @@ const pageSpecificStyles = `
         font-size: 0.9em;
     }
 
-    .info-message {
-        color: #0c5460;
-        background-color: #d1ecf1;
-        border: 1px solid #bee5eb;
+    .warning-message {
+        color: #856404;
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
         padding: 10px;
         border-radius: 5px;
         margin-top: 10px;
         font-size: 0.9em;
     }
 
-    /* Table Styles */
     table {
         border: 1px solid #ccc;
         border-collapse: collapse;
@@ -625,11 +456,6 @@ const pageSpecificStyles = `
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         border-radius: 8px;
         overflow: hidden;
-    }
-
-    table caption {
-        font-size: 1.5em;
-        margin: .5em 0 .75em;
     }
 
     table tr {
@@ -749,7 +575,6 @@ const pageSpecificStyles = `
         font-size: 0.9em;
     }
 
-    /* Search highlight */
     .highlight {
         background-color: #fff3cd !important;
         font-weight: bold;
@@ -762,7 +587,6 @@ const pageSpecificStyles = `
         100% { background-color: #fff3cd; }
     }
 
-    /* Responsive styles */
     @media (max-width: 768px) {
         .controls-section {
             flex-direction: column;
@@ -793,14 +617,6 @@ const pageSpecificStyles = `
         .manual-input-group {
             flex-direction: column;
         }
-        
-        .upload-actions {
-            flex-direction: column;
-        }
-        
-        .upload-btn {
-            width: 100%;
-        }
     }
 `;
 
@@ -820,7 +636,6 @@ const EmployeeTableView = () => {
     const [currentReservation, setCurrentReservation] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [showQRScanner, setShowQRScanner] = useState(false);
-    const [showFileUpload, setShowFileUpload] = useState(false);
     const [scannedReservation, setScannedReservation] = useState(null);
     const [qrError, setQrError] = useState('');
     const [qrSuccess, setQrSuccess] = useState('');
@@ -828,14 +643,12 @@ const EmployeeTableView = () => {
     const [isScanning, setIsScanning] = useState(false);
     const [availableCameras, setAvailableCameras] = useState([]);
     const [currentCamera, setCurrentCamera] = useState(null);
-    const [uploadedFiles, setUploadedFiles] = useState([]);
-    const [isUploading, setIsUploading] = useState(false);
     
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const streamRef = useRef(null);
-    const fileInputRef = useRef(null);
     const scanIntervalRef = useRef(null);
+    const videoReadyRef = useRef(false);
 
     useEffect(() => {
         if (!sessionStorage.getItem("loggedInUser")) {
@@ -896,7 +709,6 @@ const EmployeeTableView = () => {
         }
     }, [searchTerm, reservations]);
 
-    // QR Code Scanner Functions
     const handleOpenQRScanner = async () => {
         setShowQRScanner(true);
         setScannedReservation(null);
@@ -923,57 +735,62 @@ const EmployeeTableView = () => {
     const handleCloseQRScanner = () => {
         stopScanner();
         setShowQRScanner(false);
+        setScannedReservation(null);
+        setQrError('');
+        setQrSuccess('');
+        setManualQueueId('');
     };
 
     const startScanner = async () => {
-        if (!currentCamera) {
-            setQrError("No camera selected");
-            return;
-        }
+    if (!currentCamera) { setQrError('No camera selected'); return; }
+    setQrError(''); //clear old message
+    setIsScanning(true);
+
+    try {
+        const constraints = {
+            video: { deviceId: currentCamera.deviceId, facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+            audio: false
+        };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        attachStream(stream);
+    } catch (err) {
+        console.error('Preferred camera failed', err);
+        setQrError(err.message);
 
         try {
-            const constraints = {
-                video: {
-                    deviceId: currentCamera.deviceId,
-                    facingMode: currentCamera.label.toLowerCase().includes('back') ? 'environment' : 'user',
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                }
-            };
-
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            streamRef.current = stream;
-            
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-                videoRef.current.play();
-            }
-            
-            setIsScanning(true);
-            startQRCodeDetection();
-            
-        } catch (error) {
-            console.error("Error starting camera:", error);
-            setQrError("Failed to start camera. Please check permissions.");
+            const fallback = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            attachStream(fallback);
+        } catch (fbErr) {
+            console.error('Any camera also failed', fbErr);
+            setQrError('Camera blocked or no permission – use HTTPS and allow camera.');
+            setIsScanning(false);
         }
+    }
+
+    function attachStream(stream) {
+        streamRef.current = stream;
+        const vid = videoRef.current;
+        if (!vid) return;
+        vid.srcObject = stream;
+        vid.setAttribute('playsinline', '');
+        vid.muted = true;
+        vid.autoplay = true;
+        vid.onloadedmetadata = () => {
+            vid.play();
+            startQRCodeDetection();       // start scanning loop
+        };
+        vid.onerror = () => {
+            setQrError('Video element error');
+            stopScanner();
+        };
+    }
     };
 
     const stopScanner = () => {
-        if (scanIntervalRef.current) {
-            clearInterval(scanIntervalRef.current);
-            scanIntervalRef.current = null;
-        }
-        
-        if (streamRef.current) {
-            streamRef.current.getTracks().forEach(track => track.stop());
-            streamRef.current = null;
-        }
-        
-        if (videoRef.current) {
-            videoRef.current.srcObject = null;
-        }
-        
-        setIsScanning(false);
+    if (scanIntervalRef.current) { clearInterval(scanIntervalRef.current); scanIntervalRef.current = null; }
+    if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null; }
+    if (videoRef.current) { videoRef.current.srcObject = null; }
+    setIsScanning(false);
     };
 
     const switchCamera = () => {
@@ -984,61 +801,50 @@ const EmployeeTableView = () => {
         const nextIndex = (currentIndex + 1) % availableCameras.length;
         setCurrentCamera(availableCameras[nextIndex]);
         
-        // Restart with new camera
         setTimeout(startScanner, 100);
     };
 
     const startQRCodeDetection = () => {
-        scanIntervalRef.current = setInterval(async () => {
-            if (!videoRef.current || !canvasRef.current) return;
-            
-            const video = videoRef.current;
-            const canvas = canvasRef.current;
-            const context = canvas.getContext('2d');
-            
-            // Set canvas dimensions to match video
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            // Draw video frame to canvas
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Get image data from canvas
-            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-            
-            try {
-                // Load jsQR dynamically
-                const jsQR = (await import('jsqr')).default;
-                
-                // Attempt to decode QR code
-                const code = jsQR(imageData.data, imageData.width, imageData.height);
-                
-                if (code) {
-                    // QR code detected
-                    stopScanner();
-                    processScannedQRCode(code.data);
-                }
-            } catch (error) {
-                console.error("QR detection error:", error);
+    scanIntervalRef.current = setInterval(async () => {
+        const vid = videoRef.current;
+        const canvas = canvasRef.current;
+        if (!vid || !canvas || !vid.videoWidth || !vid.videoHeight) return;
+
+        const w = vid.videoWidth;
+        const h = vid.videoHeight;
+        const ctx = canvas.getContext('2d');
+        canvas.width = w;
+        canvas.height = h;
+        ctx.drawImage(vid, 0, 0, w, h);
+
+        try {
+            const jsQR = (await import('jsqr')).default;
+            const code = jsQR(ctx.getImageData(0, 0, w, h).data, w, h);
+            if (code) {
+                stopScanner();
+                processScannedQRCode(code.data);
             }
-        }, 500); // Check every 500ms
+        } catch (e) { /* ignore */ }
+    }, 500);
     };
 
     const processScannedQRCode = (decodedText) => {
-        // Extract queue ID from QR code data
         let queueId = decodedText;
         
-        // Try to find queue ID in the text
-        const queueIdMatch = decodedText.match(/(\d{9})/); // Look for 9-digit number
+        const queueIdMatch = decodedText.match(/Queue ID:\s*(\d{9})/i);
         if (queueIdMatch) {
             queueId = queueIdMatch[1];
+        } else {
+            const nineDigitMatch = decodedText.match(/(\d{9})/);
+            if (nineDigitMatch) {
+                queueId = nineDigitMatch[1];
+            }
         }
         
-        // Validate queue ID format
         if (/^\d{9}$/.test(queueId)) {
             fetchReservationByQueueId(queueId);
         } else {
-            setQrError("Invalid QR code format. Please scan a valid reservation QR code.");
+            setQrError("❌ Invalid QR code format. Please scan a valid reservation QR code with a 9-digit Queue ID.");
         }
     };
 
@@ -1047,17 +853,22 @@ const EmployeeTableView = () => {
             const response = await api.get(`/get_reservation.php?queue_id=${queueId}`);
             
             if (response.data.success) {
-                setScannedReservation(response.data.reservation);
+                const reservation = response.data.reservation;
+                setScannedReservation(reservation);
                 setQrError('');
-                setQrSuccess(`Found reservation for ${response.data.reservation.full_name}`);
+                setQrSuccess(`✅ Found reservation for ${reservation.full_name}`);
+                
+                if (formTitle !== 'All Reservations' && reservation.form_name !== formTitle) {
+                    setQrError(`⚠️ Form Mismatch: This Queue ID belongs to "${reservation.form_name}" but you are viewing "${formTitle}". Click "View in Table" to navigate to the correct form and date.`);
+                }
             } else {
-                setQrError(response.data.message || "Reservation not found");
+                setQrError(response.data.message || "❌ Reservation not found");
                 setScannedReservation(null);
                 setQrSuccess('');
             }
         } catch (error) {
             console.error("Error fetching reservation:", error);
-            setQrError("Failed to fetch reservation data. Please check your connection.");
+            setQrError("❌ Failed to fetch reservation data. Please check your connection.");
             setScannedReservation(null);
             setQrSuccess('');
         }
@@ -1065,7 +876,11 @@ const EmployeeTableView = () => {
 
     const handleManualSearch = () => {
         if (manualQueueId.trim()) {
-            fetchReservationByQueueId(manualQueueId);
+            if (/^\d{9}$/.test(manualQueueId)) {
+                fetchReservationByQueueId(manualQueueId);
+            } else {
+                setQrError("Queue ID must be exactly 9 digits");
+            }
         } else {
             setQrError("Please enter a Queue ID");
         }
@@ -1081,11 +896,9 @@ const EmployeeTableView = () => {
             });
 
             if (response.data.success) {
-                setQrSuccess(`Status updated to ${newStatus}`);
-                // Refresh the scanned reservation
+                setQrSuccess(`✅ Status updated to ${newStatus}`);
                 fetchReservationByQueueId(scannedReservation.queue_id);
                 
-                // Refresh the table data
                 let url = `/reservations.php?date=${selectedDate}`;
                 if (formTitle !== 'All Reservations') {
                     url += `&form=${encodeURIComponent(formTitle)}`;
@@ -1104,147 +917,35 @@ const EmployeeTableView = () => {
     };
 
     const goToReservationInTable = () => {
-        if (scannedReservation && scannedReservation.reservation_date) {
-            const reservationDate = new Date(scannedReservation.reservation_date);
-            const formattedDate = reservationDate.toISOString().split('T')[0];
-            
-            if (selectedDate === formattedDate) {
-                const element = document.querySelector(`[data-queue-id="${scannedReservation.queue_id}"]`);
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    element.classList.add('highlight');
-                    setTimeout(() => element.classList.remove('highlight'), 3000);
-                }
-            } else {
-                setSelectedDate(formattedDate);
-                if (scannedReservation.form_name !== formTitle) {
-                    setFormTitle(scannedReservation.form_name);
-                }
-                setShowQRScanner(false);
-            }
-        }
-    };
-
-    // File Upload Functions
-    const handleOpenFileUpload = () => {
-        setShowFileUpload(true);
-        setUploadedFiles([]);
-        setQrError('');
-        setQrSuccess('');
-    };
-
-    const handleCloseFileUpload = () => {
-        setShowFileUpload(false);
-        setUploadedFiles([]);
-        setIsUploading(false);
-    };
-
-    const handleFileSelect = (event) => {
-        const files = Array.from(event.target.files);
-        addFiles(files);
-    };
-
-    const handleDragOver = (event) => {
-        event.preventDefault();
-        event.currentTarget.classList.add('dragover');
-    };
-
-    const handleDragLeave = (event) => {
-        event.preventDefault();
-        event.currentTarget.classList.remove('dragover');
-    };
-
-    const handleDrop = (event) => {
-        event.preventDefault();
-        event.currentTarget.classList.remove('dragover');
+        if (!scannedReservation) return;
         
-        const files = Array.from(event.dataTransfer.files);
-        addFiles(files);
-    };
-
-    const addFiles = (files) => {
-        const validFiles = files.filter(file => {
-            // Accept common image, document, and PDF formats
-            const validTypes = [
-                'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp',
-                'application/pdf', 
-                'application/msword', 
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.ms-excel',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'text/plain',
-                'application/zip',
-                'application/x-rar-compressed'
-            ];
-            
-            if (!validTypes.includes(file.type)) {
-                alert(`File type not supported: ${file.name}. Please upload images, PDFs, or documents.`);
-                return false;
-            }
-            
-            if (file.size > 10 * 1024 * 1024) { // 10MB limit
-                alert(`File too large: ${file.name}. Maximum size is 10MB.`);
-                return false;
-            }
-            
-            return true;
-        });
-
-        setUploadedFiles(prev => [...prev, ...validFiles]);
-    };
-
-    const removeFile = (index) => {
-        setUploadedFiles(prev => prev.filter((_, i) => i !== index));
-    };
-
-    const handleFileUpload = async () => {
-        if (uploadedFiles.length === 0) {
-            setQrError("Please select files to upload");
-            return;
+        const reservationDate = scannedReservation.reservation_date;
+        const reservationForm = scannedReservation.form_name;
+        
+        if (reservationForm !== formTitle && formTitle !== 'All Reservations') {
+            alert(`⚠️ Form Mismatch!\n\nThis Queue ID belongs to: "${reservationForm}"\nYou are currently viewing: "${formTitle}"\n\nYou will be redirected to the correct form.`);
         }
-
-        setIsUploading(true);
-        setQrError('');
-        setQrSuccess('');
-
-        try {
-            const formData = new FormData();
-            
-            uploadedFiles.forEach((file, index) => {
-                formData.append(`files[${index}]`, file);
-            });
-
-            // Add metadata to the form data
-            formData.append('employeeId', sessionStorage.getItem("loggedInUser") || 'unknown');
-            formData.append('formName', formTitle);
-            formData.append('uploadDate', new Date().toISOString());
-            formData.append('reservationDate', selectedDate);
-
-            // For now, we'll simulate a successful upload since you don't want database changes
-            // In a real implementation, you would send this to your server
-            
-            // Simulate upload delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            setQrSuccess(`Successfully processed ${uploadedFiles.length} file(s) locally`);
-            
-            // You can store files locally or send to server
-            // For now, we'll just show success message
-            console.log('Files to upload:', uploadedFiles);
-            console.log('Form Data:', Object.fromEntries(formData));
-            
-            // Clear files after successful "upload"
-            setTimeout(() => {
-                setUploadedFiles([]);
-                setShowFileUpload(false);
-            }, 2000);
-            
-        } catch (error) {
-            console.error("Upload error:", error);
-            setQrError("Upload processing failed. Please try again.");
-        } finally {
-            setIsUploading(false);
+        
+        handleCloseQRScanner();
+        
+        if (reservationForm !== formTitle) {
+            setFormTitle(reservationForm);
+            const newUrl = `/EmployeeTableView?formName=${encodeURIComponent(reservationForm)}`;
+            window.history.pushState({}, '', newUrl);
         }
+        
+        if (reservationDate !== selectedDate) {
+            setSelectedDate(reservationDate);
+        }
+        
+        setTimeout(() => {
+            const element = document.querySelector(`[data-queue-id="${scannedReservation.queue_id}"]`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                element.classList.add('highlight');
+                setTimeout(() => element.classList.remove('highlight'), 5000);
+            }
+        }, 500);
     };
 
     const handleDateChange = (e) => {
@@ -1320,7 +1021,6 @@ const EmployeeTableView = () => {
         if (!currentReservation) return;
 
         try {
-            // Prepare reschedule data
             const rescheduleData = {
                 originalQueueId: currentReservation.queue_id,
                 queueId: newQueueId,
@@ -1334,11 +1034,9 @@ const EmployeeTableView = () => {
                 status: "Pending"
             };
 
-            // Send to reschedule.php endpoint
             const response = await api.post('/reschedule.php', rescheduleData);
             
             if (response.data.success) {
-                // Refresh table data
                 let url = `/reservations.php?date=${selectedDate}`;
                 if (formTitle !== 'All Reservations') {
                     url += `&form=${encodeURIComponent(formTitle)}`;
@@ -1352,7 +1050,6 @@ const EmployeeTableView = () => {
                 setCurrentReservation(null);
                 alert("Reservation successfully rescheduled!");
 
-                // Open ReservationResult in new tab
                 window.open(`/RescheduleResult?queueId=${newQueueId}&form=${encodeURIComponent(currentReservation.form_name)}&fullName=${encodeURIComponent(currentReservation.full_name)}&email=${encodeURIComponent(currentReservation.email)}&date=${newDate}&time=${newTime}&actionDate=${new Date().toISOString().split("T")[0]}`, '_blank');
 
             } else {
@@ -1368,14 +1065,6 @@ const EmployeeTableView = () => {
     const truncateText = (text, maxLength = 20) => {
         if (!text) return '';
         return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-    };
-
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
-            if (showQRScanner && manualQueueId) {
-                handleManualSearch();
-            }
-        }
     };
 
     return (
@@ -1404,10 +1093,6 @@ const EmployeeTableView = () => {
                             <FontAwesomeIcon icon={faQrcode} /> QR Scanner
                         </button>
 
-                        <button className="file-upload-btn" onClick={handleOpenFileUpload}>
-                            <FontAwesomeIcon icon={faUpload} /> Upload Files
-                        </button>
-
                         <div className="date-picker-container">
                             <label htmlFor="reservationDate">
                                 <FontAwesomeIcon icon={faCalendarAlt} /> Date:
@@ -1422,7 +1107,6 @@ const EmployeeTableView = () => {
                     </div>
                 </div>
 
-                {/* Table */}
                 <table>
                     <thead>
                         <tr>
@@ -1442,7 +1126,6 @@ const EmployeeTableView = () => {
                                 <tr 
                                     key={reservation.queue_id || index} 
                                     data-queue-id={reservation.queue_id}
-                                    className={scannedReservation?.queue_id === reservation.queue_id ? 'highlight' : ''}
                                 >
                                     <td data-label="Position">{index + 1}</td>
                                     <td data-label="Time">{reservation.reservation_time ? reservation.reservation_time.substring(0, 5) : ''}</td>
@@ -1513,7 +1196,6 @@ const EmployeeTableView = () => {
                     onReschedule={handleRescheduleSubmit}
                 />
 
-                {/* QR Scanner Modal */}
                 {showQRScanner && (
                     <div className="qr-modal-overlay" onClick={(e) => e.target.className === 'qr-modal-overlay' && handleCloseQRScanner()}>
                         <div className="qr-modal-content">
@@ -1616,6 +1298,12 @@ const EmployeeTableView = () => {
                                                 </span>
                                             </p>
 
+                                            {formTitle !== 'All Reservations' && scannedReservation.form_name !== formTitle && (
+                                                <div className="warning-message" style={{ marginTop: '15px' }}>
+                                                    ⚠️ <strong>Form Mismatch:</strong> This reservation is for "{scannedReservation.form_name}" but you are currently viewing "{formTitle}"
+                                                </div>
+                                            )}
+
                                             <div className="qr-actions">
                                                 <button 
                                                     className="qr-action-btn complete-btn"
@@ -1645,105 +1333,6 @@ const EmployeeTableView = () => {
                                         </div>
                                     </div>
                                 )}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* File Upload Modal */}
-                {showFileUpload && (
-                    <div className="upload-modal-overlay" onClick={(e) => e.target.className === 'upload-modal-overlay' && handleCloseFileUpload()}>
-                        <div className="upload-modal-content">
-                            <div className="qr-modal-header">
-                                <h3>Upload Files</h3>
-                                <button className="qr-close-btn" onClick={handleCloseFileUpload}>×</button>
-                            </div>
-
-                            <div className="upload-section">
-                                <div 
-                                    className="upload-area"
-                                    onDragOver={handleDragOver}
-                                    onDragLeave={handleDragLeave}
-                                    onDrop={handleDrop}
-                                    onClick={() => fileInputRef.current.click()}
-                                >
-                                    <FontAwesomeIcon icon={faUpload} size="3x" color="#06428A" />
-                                    <p><strong>Click or drag files to upload</strong></p>
-                                    <p>Supports images, PDFs, and documents (JPG, PNG, PDF, DOC, XLS)</p>
-                                    <small>Maximum file size: 10MB</small>
-                                </div>
-
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    style={{ display: 'none' }}
-                                    multiple
-                                    onChange={handleFileSelect}
-                                    accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip,.rar"
-                                />
-
-                                {uploadedFiles.length > 0 && (
-                                    <div className="file-list">
-                                        <h4>Selected Files ({uploadedFiles.length})</h4>
-                                        {uploadedFiles.map((file, index) => (
-                                            <div key={index} className="file-item">
-                                                <div className="file-info">
-                                                    <FontAwesomeIcon icon={faFile} className="file-icon" />
-                                                    <div className="file-details">
-                                                        <div className="file-name" title={file.name}>
-                                                            {file.name}
-                                                        </div>
-                                                        <div className="file-size">
-                                                            {(file.size / 1024).toFixed(2)} KB
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <button 
-                                                    className="remove-file-btn"
-                                                    onClick={() => removeFile(index)}
-                                                    title="Remove file"
-                                                >
-                                                    <FontAwesomeIcon icon={faTimes} />
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {qrError && (
-                                    <div className="error-message">
-                                        {qrError}
-                                    </div>
-                                )}
-
-                                {qrSuccess && !qrError && (
-                                    <div className="success-message">
-                                        {qrSuccess}
-                                    </div>
-                                )}
-
-                                <div className="upload-actions">
-                                    <button 
-                                        className="upload-btn upload-cancel-btn"
-                                        onClick={handleCloseFileUpload}
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button 
-                                        className="upload-btn upload-submit-btn"
-                                        onClick={handleFileUpload}
-                                        disabled={uploadedFiles.length === 0 || isUploading}
-                                    >
-                                        {isUploading ? (
-                                            <>
-                                                <span className="loading-spinner"></span>
-                                                Uploading...
-                                            </>
-                                        ) : (
-                                            `Upload (${uploadedFiles.length})`
-                                        )}
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>

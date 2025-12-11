@@ -195,7 +195,7 @@ const ReservationModal = ({ isOpen, onClose, selectedForm }) => {
                 console.error("Error checking slot availability:", checkError);
             }
 
-            // Generate Queue ID
+            //Generate Queue ID
             let queueId;
             try {
                 const queueResponse = await api.post('/generate_queue_id.php', { date: date });

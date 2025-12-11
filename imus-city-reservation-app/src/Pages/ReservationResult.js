@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { QRCodeCanvas } from 'qrcode.react'; // Use QRCodeCanvas instead of default import
+import { QRCodeCanvas } from 'qrcode.react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -127,13 +127,13 @@ const ReservationResult = () => {
         window.print();
     };
 
-    // Create QR code data
+    //Create QR code data
     const qrData = `Queue ID: ${reservationDetails.queueId}
-Name: ${reservationDetails.fullName}
-Form: ${reservationDetails.form}
-Date: ${reservationDetails.date}
-Time: ${reservationDetails.time}
-City Government of Imus`;
+        Name: ${reservationDetails.fullName}
+        Form: ${reservationDetails.form}
+        Date: ${reservationDetails.date}
+        Time: ${reservationDetails.time}
+        City Government of Imus`;
 
     return (
         <>
