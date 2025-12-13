@@ -29,7 +29,8 @@ switch ($method) {
 function handleGetEmployees() {
     global $conn;
     
-    $sql = "SELECT id, employeeid, first_name, last_name, created_at FROM employees ORDER BY last_name, first_name";
+    // Include isAdmin in the SELECT query
+    $sql = "SELECT id, employeeid, first_name, last_name, isAdmin, created_at FROM employees ORDER BY last_name, first_name";
     $result = $conn->query($sql);
     $employees = [];
     
@@ -48,7 +49,7 @@ function handleCreateEmployee() {
     $input = json_decode(file_get_contents("php://input"), true);
     
     if (!$input || !isset($input["employeeid"]) || !isset($input["password"]) || 
-        !isset($input["first_name"]) || !isset($input["last_name"])) {
+        !isset($input["first_name"]) || !isset($input["last_name"]) || !isset($input["isAdmin"])) {
         echo json_encode(["success" => false, "message" => "Missing required fields"]);
         return;
     }
@@ -57,6 +58,7 @@ function handleCreateEmployee() {
     $password = $conn->real_escape_string($input['password']);
     $firstName = $conn->real_escape_string($input['first_name']);
     $lastName = $conn->real_escape_string($input['last_name']);
+    $isAdmin = $conn->real_escape_string($input['isAdmin']);
     
     // Check if employeeid already exists
     $checkSql = "SELECT id FROM employees WHERE employeeid = '$employeeid'";
@@ -67,8 +69,9 @@ function handleCreateEmployee() {
         return;
     }
     
-    $sql = "INSERT INTO employees (employeeid, password, first_name, last_name) 
-            VALUES ('$employeeid', '$password', '$firstName', '$lastName')";
+    // Include isAdmin in the INSERT query
+    $sql = "INSERT INTO employees (employeeid, password, first_name, last_name, isAdmin) 
+            VALUES ('$employeeid', '$password', '$firstName', '$lastName', '$isAdmin')";
     
     if ($conn->query($sql)) {
         echo json_encode(["success" => true, "message" => "Employee created successfully"]);
@@ -101,6 +104,9 @@ function handleUpdateEmployee() {
     }
     if (isset($input['last_name'])) {
         $updates[] = "last_name = '" . $conn->real_escape_string($input['last_name']) . "'";
+    }
+    if (isset($input['isAdmin'])) {
+        $updates[] = "isAdmin = '" . $conn->real_escape_string($input['isAdmin']) . "'";
     }
     
     if (empty($updates)) {

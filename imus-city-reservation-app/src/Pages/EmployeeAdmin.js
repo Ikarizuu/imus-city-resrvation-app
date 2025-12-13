@@ -490,29 +490,33 @@ const EmployeeAdmin = () => {
         }
 
         try {
+            const employeeData = {
+                employeeid: currentEmployee.employeeid,
+                first_name: currentEmployee.first_name,
+                last_name: currentEmployee.last_name,
+                isAdmin: currentEmployee.isAdmin
+            };
+
             if (isEditMode) {
-                // If password field is empty in edit mode, don't send it (keep current password)
-                const updateData = {
-                    id: currentEmployee.id,
-                    first_name: currentEmployee.first_name,
-                    last_name: currentEmployee.last_name,
-                    isAdmin: currentEmployee.isAdmin
-                };
-                
-                // Only include employeeid if it was changed (optional)
-                if (currentEmployee.employeeid) {
-                    updateData.employeeid = currentEmployee.employeeid;
-                }
+                // Add the ID for updates
+                employeeData.id = currentEmployee.id;
                 
                 // Only include password if a new one was provided
                 if (currentEmployee.password.trim()) {
-                    updateData.password = currentEmployee.password;
+                    employeeData.password = currentEmployee.password;
                 }
                 
-                await api.put('/employees.php', updateData);
+                await api.put('/employees.php', employeeData);
                 alert("Employee updated successfully.");
             } else {
-                await api.post('/employees.php', currentEmployee);
+                // For new employees, password is required
+                if (!currentEmployee.password.trim()) {
+                    alert("Please enter Password for new employee");
+                    return;
+                }
+                employeeData.password = currentEmployee.password;
+                
+                await api.post('/employees.php', employeeData);
                 alert("Employee added successfully.");
             }
             

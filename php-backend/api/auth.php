@@ -29,7 +29,7 @@ if ($result && $result->num_rows > 0) {
         "employeeid" => $employee['employeeid'],
         "firstName" => $employee['first_name'],
         "lastName" => $employee['last_name'],
-        "isAdmin" => $employee['isAdmin']
+        "isAdmin" => $employee['isAdmin'] ? $employee['isAdmin'] : 'notAdmin'
     ]);
 } else {
     echo json_encode([
