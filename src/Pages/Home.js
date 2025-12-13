@@ -95,46 +95,43 @@ const HomePage = () => {
                 </button>
             </div>
 
-            {/*Banner*/}
-            <div className="d-xs-block p-1 text-white" style={{ backgroundColor: '#18a54a' }}>
-                <div className="container">
-                    <div className="row text-center">
-                        <div className="col-md-6">
-                            <div className="row">
-                                <div className="col">
-                                    <h1 id="bannerhome">539,743<br />
-                                        <p id="bannerhome2" className="text-center">population</p>
-                                    </h1>
-                                </div>
-                                <div className="col">
-                                    <h1 id="bannerhome">101.56<br />
-                                        <p id="bannerhome2" className="text-center">persons/sq.km.</p>
-                                    </h1>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-6">
-                            <div className="row">
-                                <div className="col">
-                                    <h1 id="bannerhome">130,814<br />
-                                        <p id="bannerhome2" className="text-center">estimated number of households</p>
-                                    </h1>
-                                </div>
-                                <div className="col">
-                                    <h1 id="bannerhome">4.24%<br />
-                                        <p id="bannerhome2" className="text-center">population growth rate</p>
-                                    </h1>
-                                </div>
-                                <div className="col">
-                                    <h1 id="bannerhome">97<br />
-                                        <p id="bannerhome2" className="text-center">barangays</p>
-                                    </h1>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div className="py-5 bg-white">
+  <div className="container">
+
+    <div className="d-flex flex-wrap justify-content-center gap-4">
+
+                {/* CARD */}
+                <div className="stat-card">
+                    <h4 className="m-0 fw-bold">539,743</h4>
+                    <p className="m-0">population</p>
                 </div>
+
+                <div className="stat-card">
+                    <h4 className="m-0 fw-bold">101.56</h4>
+                    <p className="m-0">persons/sq.km.</p>
+                </div>
+
+                <div className="stat-card">
+                    <h4 className="m-0 fw-bold">130,814</h4>
+                    <p className="m-0">number of households</p>
+                </div>
+
+                <div className="stat-card">
+                    <h4 className="m-0 fw-bold">4.24%</h4>
+                    <p className="m-0">population growth rate</p>
+                </div>
+
+                <div className="stat-card">
+                    <h4 className="m-0 fw-bold">97</h4>
+                    <p className="m-0">barangays</p>
+                </div>
+
+                </div>
+
             </div>
+            </div>
+
+
 
             {/*Message from the Mayor*/}
             <div data-aos="fade-up" data-aos-delay="400">

@@ -7,7 +7,51 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.nav-link, .dropdown-item {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', Montserrat
     monospace;
+}
+
+  .stat-card {
+  width: 230px;
+  background-color: #18a54a;
+  color: white !important;   
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-card h1,
+.stat-card h2,
+.stat-card h3,
+.stat-card h4,
+.stat-card h5,
+.stat-card p,
+.stat-card span {
+  color: white !important;
+}
+
+/* Hover animation */
+.stat-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
+}
+
+
+/* Hover effect */
+.stat-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
 }

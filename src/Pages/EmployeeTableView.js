@@ -7,6 +7,10 @@ import RescheduleModal from '../Components/RescheduleModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 
+import {
+    BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer
+} from 'recharts';
+
 const pageSpecificStyles = `
     .employee-table-view {
         padding: 20px;
@@ -405,6 +409,12 @@ const EmployeeTableView = () => {
     const [formTitle, setFormTitle] = useState('All Reservations');
     const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
     const [currentReservation, setCurrentReservation] = useState(null);
+    const [allReservations, setAllReservations] = useState([]);
+    const [period, setPeriod] = useState('Month'); // Week | Month | Year
+    const [showGraph, setShowGraph] = useState(true);
+    const [graphData, setGraphData] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+
 
     //Get form name from sessionStorage
     useEffect(() => {
@@ -479,24 +489,20 @@ const EmployeeTableView = () => {
         setSelectedDate(e.target.value);
     };
 
-    const handleStatusChange = async (index, newStatus) => {
-        const reservationToUpdate = reservations[index];
-        if (!reservationToUpdate || !reservationToUpdate.queueId) return;
+            //chart fetch
+            useEffect(() => {
+            const fetchAll = async () => {
+                try {
+                    const res = await fetch(SHEETDB_API);
+                    const data = await res.json();
+                    setAllReservations(Array.isArray(data) ? data : []);
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+            fetchAll();
+        }, []);
 
-        const updatedReservations = [...reservations];
-        updatedReservations[index].status = newStatus;
-        setReservations(updatedReservations);
-
-        try {
-            await fetch(`${SHEETDB_API}/queueId/${reservationToUpdate.queueId}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ data: { status: newStatus } })
-            });
-        } catch (error) {
-            console.error("Error updating status:", error);
-        }
-    };
 
     const handleRemarksChange = async (index, newRemarks) => {
         const reservationToUpdate = reservations[index];
@@ -651,12 +657,212 @@ const EmployeeTableView = () => {
         return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     };
 
+    
+    // Replace your getWeekNumber function with this ISO week calculation
+const getWeekNumber = (date) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + 4 - (d.getDay() || 7)); // Adjust to Thursday
+    const yearStart = new Date(d.getFullYear(), 0, 1);
+    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+};
+
+// Replace your buildGraphData function with this:
+const buildGraphData = () => {
+    const summary = {};
+    const sortableKeys = {};
+
+    allReservations.forEach(item => {
+        if (!item.date) return;
+
+        const cleanDate = item.date.replace(/['=]/g, '');
+        const d = new Date(cleanDate);
+        let key = '';
+        let sortKey = '';
+
+        if (period === 'Week') {
+            const year = d.getFullYear();
+            const weekNum = getWeekNumber(d);
+            const monthName = d.toLocaleString('default', { month: 'long' });
+            
+            // Create display key
+            key = `Week ${weekNum} – ${monthName} ${year}`;
+            
+            // Create sortable key (YYYY-WW format)
+            sortKey = `${year}-${weekNum.toString().padStart(2, '0')}`;
+            
+        } else if (period === 'Month') {
+            const year = d.getFullYear();
+            const month = d.getMonth(); // 0-indexed
+            
+            // Create display key
+            key = d.toLocaleString('default', { month: 'short', year: 'numeric' });
+            
+            // Create sortable key (YYYY-MM format)
+            sortKey = `${year}-${(month + 1).toString().padStart(2, '0')}`;
+            
+        } else {
+            const year = d.getFullYear();
+            key = year.toString();
+            sortKey = year.toString();
+        }
+
+        if (!summary[key]) {
+            summary[key] = 0;
+            sortableKeys[key] = sortKey;
+        }
+        summary[key] = (summary[key] || 0) + 1;
+    });
+
+     // Convert to array and sort by sortable key
+    // Just modify the buildGraphData function's return statement:
+return Object.keys(summary)
+    .map(k => ({
+        period: k,
+        total: summary[k]
+    }))
+    .sort((a, b) => {
+        // Extract week numbers for sorting
+        const weekA = parseInt(a.period.match(/Week (\d+)/)?.[1] || 0);
+        const weekB = parseInt(b.period.match(/Week (\d+)/)?.[1] || 0);
+        
+        // Extract year for sorting
+        const yearA = parseInt(a.period.match(/\d{4}$/)?.[0] || 0);
+        const yearB = parseInt(b.period.match(/\d{4}$/)?.[0] || 0);
+        
+        if (yearA !== yearB) return yearA - yearB;
+        return weekA - weekB;
+    })};
+
+
+
+// Also, add this useEffect to update graph data when period or allReservations changes:
+useEffect(() => {
+    if (allReservations.length > 0) {
+        setGraphData(buildGraphData());
+    }
+}, [period, allReservations]);
+
+// Remove the manual Show Graph button click handler since we're now auto-updating
+// and update the button to just refresh the data:
+<button
+    className="action-button reschedule-button"
+    onClick={() => {
+        setGraphData(buildGraphData());
+    }}
+>
+    Refresh Graph
+</button>
+
+
+
+const handleStatusChange = async (index, newStatus) => {
+        const reservationToUpdate = reservations[index];
+        if (!reservationToUpdate || !reservationToUpdate.queueId) return;
+
+        const updatedReservations = [...reservations];
+        updatedReservations[index].status = newStatus;
+        setReservations(updatedReservations);
+
+        try {
+            await fetch(`${SHEETDB_API}/queueId/${reservationToUpdate.queueId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ data: { status: newStatus } })
+            });
+        } catch (error) {
+            console.error("Error updating status:", error);
+        }
+    };
+
     return (
         <>
+
+
+
+{/*graphshow*/}
+
+        {showGraph && (
+    <div
+        style={{
+            background: '#fff',
+            padding: '20px',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}
+    >
+        {/* HEADER ROW */}
+        <div
+            style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '15px'
+            }}
+        >
+            <h3 style={{ color: '#053774', margin: 0 }}>
+                Reservation Summary by {period}
+            </h3>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+                <select
+                    value={period}
+                    onChange={(e) => setPeriod(e.target.value)}
+                    className="status-dropdown"
+                >
+                    <option value="Week">Week</option>
+                    <option value="Month">Month</option>
+                    <option value="Year">Year</option>
+                </select>
+
+                <button
+                    className="action-button reschedule-button"
+                    onClick={() => {
+                        setGraphData(buildGraphData());
+                        setShowGraph(true);
+                    }}
+                >
+                    Show Graph
+                </button>
+            </div>
+        </div>
+
+        {/* GRAPH */}
+        <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={graphData}>
+                <XAxis dataKey="period" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="total" fill="#053774" />
+            </BarChart>
+        </ResponsiveContainer>
+    </div>
+)}
+
             <style>{pageSpecificStyles}</style>
             <div className="employee-table-view">
                 <div className="header-section">
                     <h2>{formTitle}</h2>
+                    <div className="date-picker-container">
+
+        </div>
+
+        {/*search*/}
+                <input
+            type="text"
+            placeholder="Search Queue ID, Name, Email"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+                padding: '8px',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+                width: '260px',
+                marginInlineStart: '400px'
+            }}
+        />
+
                     <div className="date-picker-container">
                         <label htmlFor="reservationDate">
                             <FontAwesomeIcon icon={faCalendarAlt} /> Select Date:
@@ -684,66 +890,79 @@ const EmployeeTableView = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {reservations.length > 0 ? (
-                            reservations.map((reservation, index) => (
-                                <tr key={reservation.queueId || index}>
-                                    <td data-label="Position">{index + 1}</td>
-                                    <td data-label="Time">{reservation.time ? reservation.time.replace(/['=]/g, '') : ''}</td>
-                                    <td data-label="Queue ID">{reservation.queueId || 'N/A'}</td>
-                                    <td data-label="Name" className="name-cell" title={reservation.fullName}>
-                                        {truncateText(reservation.fullName, 15)}
-                                    </td>
-                                    <td data-label="Email" className="email-cell" title={reservation.email}>
-                                        {truncateText(reservation.email, 20)}
-                                    </td>
-                                    <td data-label="Status">
-                                        <select
-                                            className="status-dropdown"
-                                            style={{ color: statusColors[reservation.status] || '#333' }}
-                                            value={reservation.status || 'Pending'}
-                                            onChange={(e) => handleStatusChange(index, e.target.value)}
-                                        >
-                                            <option value="Pending">Pending</option>
-                                            <option value="Complete">Complete</option>
-                                            <option value="Rescheduled">Rescheduled</option>
-                                            <option value="Cancelled">Cancelled</option>
-                                        </select>
-                                    </td>
-                                    <td data-label="Remarks">
-                                        <textarea
-                                            className="remarks-textarea"
-                                            value={reservation.remarks || ''}
-                                            onChange={(e) => handleRemarksChange(index, e.target.value)}
-                                            placeholder="Add remarks here..."
-                                            title={reservation.remarks}
-                                        />
-                                    </td>
-                                    <td data-label="Actions">
-                                        <div className="actions-buttons">
-                                            <button 
-                                                className="action-button reschedule-button"
-                                                onClick={() => handleRescheduleClick(reservation)}
-                                            >
-                                                <FontAwesomeIcon icon={faPen} /> Reschedule
-                                            </button>
-                                            <button 
-                                                className="action-button delete-button"
-                                                onClick={() => handleDeleteClick(reservation)}
-                                            >
-                                                <FontAwesomeIcon icon={faTrash} /> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>
-                                    No reservations found for {selectedDate} {formTitle !== 'All Reservations' ? `for "${formTitle}"` : ''}.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
+    {reservations
+        .filter(res => {
+            if (!searchTerm.trim()) return true;
+
+            const keyword = searchTerm.toLowerCase();
+            return (
+                res.queueId?.toLowerCase().includes(keyword) ||
+                res.fullName?.toLowerCase().includes(keyword) ||
+                res.email?.toLowerCase().includes(keyword)
+            );
+        })
+        .map((reservation, index) => (
+            <tr key={reservation.queueId || index}>
+                <td data-label="Position">{index + 1}</td>
+                <td data-label="Time">
+                    {reservation.time ? reservation.time.replace(/['=]/g, '') : ''}
+                </td>
+                <td data-label="Queue ID">{reservation.queueId || 'N/A'}</td>
+                <td data-label="Name" className="name-cell">
+                    {truncateText(reservation.fullName, 15)}
+                </td>
+                <td data-label="Email" className="email-cell">
+                    {truncateText(reservation.email, 20)}
+                </td>
+                <td data-label="Status">
+                    <select
+                        className="status-dropdown"
+                        value={reservation.status || 'Pending'}
+                        onChange={(e) => handleStatusChange(index, e.target.value)}
+                        style={{ color: statusColors[reservation.status] || '#333' }}
+                    >
+                        <option value="Pending">Pending</option>
+                        <option value="Complete">Complete</option>
+                        <option value="Rescheduled">Rescheduled</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </td>
+                <td data-label="Remarks">
+                    <textarea
+                        className="remarks-textarea"
+                        value={reservation.remarks || ''}
+                        onChange={(e) => handleRemarksChange(index, e.target.value)}
+                    />
+                </td>
+                <td data-label="Actions">
+                    <div className="actions-buttons">
+                        <button
+                            className="action-button reschedule-button"
+                            onClick={() => handleRescheduleClick(reservation)}
+                        >
+                            <FontAwesomeIcon icon={faPen} /> Reschedule
+                        </button>
+                        <button
+                            className="action-button delete-button"
+                            onClick={() => handleDeleteClick(reservation)}
+                        >
+                            <FontAwesomeIcon icon={faTrash} /> Delete
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        ))}
+
+    {reservations.length === 0 && (
+        <tr>
+            <td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>
+                No reservations found
+            </td>
+        </tr>
+    )}
+</tbody>
+
+
                 </table>
             </div>
 
@@ -756,5 +975,6 @@ const EmployeeTableView = () => {
         </>
     );
 };
+
 
 export default EmployeeTableView;

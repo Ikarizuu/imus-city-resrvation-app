@@ -60,3 +60,4 @@ const AnnouncementModal = ({ showModal, handleCloseModal }) => {
 };
 
 export default AnnouncementModal;
+

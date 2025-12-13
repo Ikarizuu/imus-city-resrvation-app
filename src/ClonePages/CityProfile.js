@@ -11,7 +11,7 @@ const CityProfile = () => {
                             <li className="list-group-item" style={{backgroundColor: 'white', color: '#053774'}}><h3>Our City</h3></li>
                             <li className="list-group-item active"><a href="/CityProfile">City Profile</a></li>
                             
-                            <li className="list-group-item accordion" id="accordioncity">
+                            <li className="list-group-item accordion" id="accordioncity" >
                                 <a className="accordion collapsed" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                     City Government
                                 </a>
@@ -69,29 +69,34 @@ const CityProfile = () => {
                     <hr />
                     <br />
 
-                    <div className="d-block p-2 text-white" style={{backgroundColor: '#18a54a'}}>
-                        <div className="row text-center">
-                            <div className="row">
-                                <div className="col">
-                                    <h1 id="bannerhome">539,743<br /><p id="bannerhome2" className="text-center">population</p></h1>
-                                </div>
-                                <div className="col">
-                                    <h1 id="bannerhome">101.56<br /><p id="bannerhome2" className="text-center">persons/sq.km.</p></h1>
-                                </div>
-                            </div>
+                    {/* STAT CARDS */}
+                    <div className="d-flex flex-wrap justify-content-center gap-4">
 
-                            <div className="row">
-                                <div className="col">
-                                    <h1 id="bannerhome">130,814<br /><p id="bannerhome2" className="text-center">estimated number of households</p></h1>
-                                </div>
-                                <div className="col">
-                                    <h1 id="bannerhome">4.24%<br /><p id="bannerhome2" className="text-center">population growth rate</p></h1>
-                                </div>
-                                <div className="col">
-                                    <h1 id="bannerhome">97<br /><p id="bannerhome2" className="text-center">barangays</p></h1>
-                                </div>
-                            </div>
+                        <div className="stat-card">
+                            <h4 className="m-0 fw-bold">539,743</h4>
+                            <p className="m-0">population</p>
                         </div>
+
+                        <div className="stat-card">
+                            <h4 className="m-0 fw-bold">101.56</h4>
+                            <p className="m-0">persons/sq.km.</p>
+                        </div>
+
+                        <div className="stat-card">
+                            <h4 className="m-0 fw-bold">130,814</h4>
+                            <p className="m-0">number of households</p>
+                        </div>
+
+                        <div className="stat-card">
+                            <h4 className="m-0 fw-bold">4.24%</h4>
+                            <p className="m-0">population growth rate</p>
+                        </div>
+
+                        <div className="stat-card">
+                            <h4 className="m-0 fw-bold">97</h4>
+                            <p className="m-0">barangays</p>
+                        </div>
+
                     </div>
 
                     <br />
