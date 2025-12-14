@@ -6,7 +6,7 @@ header("Content-Type: application/json");
 
 require_once "../config.php";
 
-// Handle both GET and POST for flexibility
+//Handle both GET and POST for flexibility
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $date = isset($_GET['date']) ? $conn->real_escape_string($_GET['date']) : '';
     $time = isset($_GET['time']) ? $conn->real_escape_string($_GET['time']) : '';
@@ -23,7 +23,7 @@ if (empty($date) || empty($time) || empty($form)) {
     exit;
 }
 
-// Check if slot is available
+//Check if slot is available
 $sql = "SELECT id, queue_id, full_name FROM reservations 
         WHERE reservation_date = '$date' 
         AND reservation_time = '$time'

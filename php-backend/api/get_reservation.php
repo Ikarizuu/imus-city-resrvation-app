@@ -4,7 +4,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: GET, OPTIONS");
 header("Content-Type: application/json");
 
-// Handle preflight requests
+//Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -30,7 +30,7 @@ if (!$result) {
 if ($result->num_rows > 0) {
     $reservation = $result->fetch_assoc();
     
-    // Format time for display (remove seconds)
+    //Format time for display (remove seconds)
     if (isset($reservation['reservation_time'])) {
         $reservation['reservation_time_display'] = substr($reservation['reservation_time'], 0, 5);
     }

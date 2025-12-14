@@ -6,7 +6,7 @@ header("Content-Type: application/json");
 
 require_once "../config.php";
 
-// Get the HTTP method
+//Get the HTTP method
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
@@ -26,10 +26,11 @@ switch ($method) {
         echo json_encode(["success" => false, "message" => "Method not allowed"]);
 }
 
+//READ employees
 function handleGetEmployees() {
     global $conn;
     
-    // Include isAdmin in the SELECT query
+    //Include isAdmin in the SELECT query
     $sql = "SELECT id, employeeid, first_name, last_name, isAdmin, created_at FROM employees ORDER BY last_name, first_name";
     $result = $conn->query($sql);
     $employees = [];
@@ -43,6 +44,7 @@ function handleGetEmployees() {
     echo json_encode($employees);
 }
 
+//CREATE employee
 function handleCreateEmployee() {
     global $conn;
     
@@ -60,7 +62,7 @@ function handleCreateEmployee() {
     $lastName = $conn->real_escape_string($input['last_name']);
     $isAdmin = $conn->real_escape_string($input['isAdmin']);
     
-    // Check if employeeid already exists
+    //Check if employeeid already exists
     $checkSql = "SELECT id FROM employees WHERE employeeid = '$employeeid'";
     $checkResult = $conn->query($checkSql);
     
@@ -69,7 +71,7 @@ function handleCreateEmployee() {
         return;
     }
     
-    // Include isAdmin in the INSERT query
+    //Include isAdmin in the INSERT query
     $sql = "INSERT INTO employees (employeeid, password, first_name, last_name, isAdmin) 
             VALUES ('$employeeid', '$password', '$firstName', '$lastName', '$isAdmin')";
     
@@ -80,6 +82,7 @@ function handleCreateEmployee() {
     }
 }
 
+//UPDATE employee
 function handleUpdateEmployee() {
     global $conn;
     
@@ -123,6 +126,7 @@ function handleUpdateEmployee() {
     }
 }
 
+//DELETE employee
 function handleDeleteEmployee() {
     global $conn;
     

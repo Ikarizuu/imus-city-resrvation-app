@@ -6,7 +6,7 @@ header("Content-Type: application/json");
 
 require_once "../config.php";
 
-// Get the HTTP method
+//Get the HTTP method
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'POST') {
@@ -17,7 +17,7 @@ if ($method === 'POST') {
     echo json_encode(["success" => false, "message" => "Method not allowed"]);
 }
 
-// Handle rescheduling request
+//Handle rescheduling request
 function handleRescheduleRequest() {
     global $conn;
     
@@ -28,7 +28,7 @@ function handleRescheduleRequest() {
         return;
     }
     
-    // Check if it's a queue ID generation request
+    //Check if it's a queue ID generation request
     if (isset($input['action']) && $input['action'] === 'generateQueueId') {
         if (!isset($input['date'])) {
             echo json_encode(["success" => false, "message" => "Date is required"]);
@@ -38,7 +38,7 @@ function handleRescheduleRequest() {
         return;
     }
     
-    // Otherwise, it's a full reschedule request
+    //Otherwise, it's a full reschedule request
     $requiredFields = ['queueId', 'form', 'fullName', 'email', 'date', 'time', 'originalQueueId'];
     foreach ($requiredFields as $field) {
         if (!isset($input[$field]) || empty($input[$field])) {
@@ -47,14 +47,14 @@ function handleRescheduleRequest() {
         }
     }
     
-    // Check if new slot is available
+    //Check if new slot is available
     $date = $conn->real_escape_string($input['date']);
     $time = $conn->real_escape_string($input['time']);
     $form = $conn->real_escape_string($input['form']);
     $newQueueId = $conn->real_escape_string($input['queueId']);
     $originalQueueId = $conn->real_escape_string($input['originalQueueId']);
     
-    // Check if new slot is already taken (excluding the original reservation)
+    //Check if new slot is already taken (excluding the original reservation)
     $checkSql = "SELECT id FROM reservations 
         WHERE reservation_date = '$date' 
             AND reservation_time = '$time' 
@@ -69,18 +69,18 @@ function handleRescheduleRequest() {
         return;
     }
     
-    // Create new rescheduled reservation
+    //Create new rescheduled reservation
     $fullName = $conn->real_escape_string($input['fullName']);
     $email = $conn->real_escape_string($input['email']);
     $actionDate = date('Y-m-d'); // Current date
     $status = isset($input['status']) ? $conn->real_escape_string($input['status']) : 'Pending';
     $remarks = isset($input['remarks']) ? $conn->real_escape_string($input['remarks']) : '';
     
-    // Start transaction
+    //Start transaction
     $conn->begin_transaction();
     
     try {
-        // 1. Insert new rescheduled reservation
+        //1. Insert new rescheduled reservation
         $insertSql = "INSERT INTO reservations (queue_id, form_name, full_name, email, reservation_date, reservation_time, action_date, status, remarks) 
             VALUES ('$newQueueId', '$form', '$fullName', '$email', '$date', '$time', '$actionDate', '$status', '$remarks')";
         
@@ -88,7 +88,7 @@ function handleRescheduleRequest() {
             throw new Exception("Failed to create rescheduled reservation: " . $conn->error);
         }
         
-        // 2. Update original reservation to mark it as rescheduled
+        //2. Update original reservation to mark it as rescheduled
         $updateRemarks = "Rescheduled to $date at $time. New Queue ID: $newQueueId";
         if (isset($input['originalRemarks']) && !empty($input['originalRemarks'])) {
             $updateRemarks = $conn->real_escape_string($input['originalRemarks']) . "\n" . $updateRemarks;
@@ -103,7 +103,7 @@ function handleRescheduleRequest() {
             throw new Exception("Failed to update original reservation: " . $conn->error);
         }
         
-        // Commit transaction
+        //Commit transaction
         $conn->commit();
         
         echo json_encode([
@@ -114,7 +114,7 @@ function handleRescheduleRequest() {
         ]);
         
     } catch (Exception $e) {
-        // Rollback transaction on error
+        //Rollback transaction on error
         $conn->rollback();
         echo json_encode(["success" => false, "message" => $e->getMessage()]);
     }

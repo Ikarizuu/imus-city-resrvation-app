@@ -1,8 +1,8 @@
-/*eslint-disable jsx-a11y/iframe-has-title*/
 import React, { useState, useEffect, useRef } from 'react';
 import RescheduleModal from '../Components/RescheduleModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarAlt, faPen, faTrash, faQrcode, faSearch, faCamera, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarAlt, faPen, faTrash, faQrcode, faSearch, faCamera, faChartBar } from '@fortawesome/free-solid-svg-icons';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
 import api from '../api/axiosConfig';
 
 const pageSpecificStyles = `
@@ -80,6 +80,28 @@ const pageSpecificStyles = `
         background-color: #218838;
     }
 
+    .filter-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .filter-container label {
+        font-weight: bold;
+        color: #333;
+        white-space: nowrap;
+    }
+
+    .filter-dropdown {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1em;
+        min-width: 120px;
+        background-color: white;
+        cursor: pointer;
+    }
+
     .date-picker-container {
         display: flex;
         align-items: center;
@@ -92,12 +114,60 @@ const pageSpecificStyles = `
         white-space: nowrap;
     }
 
-    .date-picker-container input[type="date"] {
+    .date-picker-container input[type="date"],
+    .date-picker-container input[type="week"],
+    .date-picker-container input[type="month"],
+    .date-picker-container input[type="number"] {
         padding: 8px;
         border: 1px solid #ccc;
         border-radius: 5px;
         font-size: 1em;
         min-width: 150px;
+    }
+
+    /* Graph Styles */
+    .graph-container {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .graph-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .graph-header h3 {
+        color: #053774;
+        margin: 0;
+    }
+
+    .graph-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .toggle-graph-btn {
+        background-color: #06428A;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: background-color 0.2s ease;
+    }
+
+    .toggle-graph-btn:hover {
+        background-color: #053774;
     }
 
     /* QR Scanner Modal Styles */
@@ -247,6 +317,7 @@ const pageSpecificStyles = `
         display: flex;
         justify-content: center;
         align-items: center;
+        pointer-events: none;
     }
 
     .scanner-frame {
@@ -254,7 +325,7 @@ const pageSpecificStyles = `
         height: 250px;
         border: 2px solid #28a745;
         border-radius: 10px;
-        box-shadow: 0 0 0 5000px rgba(0, 0, 0, 0.7);
+        box-shadow: 0 0 0 5000px rgba(0, 0, 0, 0.5);
     }
 
     .scanner-status {
@@ -266,6 +337,7 @@ const pageSpecificStyles = `
         color: white;
         font-weight: bold;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        pointer-events: none;
     }
 
     .no-camera {
@@ -363,33 +435,6 @@ const pageSpecificStyles = `
         flex: 1;
     }
 
-    .complete-btn {
-        background-color: #28a745;
-        color: white;
-    }
-
-    .complete-btn:hover {
-        background-color: #218838;
-    }
-
-    .cancel-btn {
-        background-color: #dc3545;
-        color: white;
-    }
-
-    .cancel-btn:hover {
-        background-color: #c82333;
-    }
-
-    .pending-btn {
-        background-color: #ffc107;
-        color: #212529;
-    }
-
-    .pending-btn:hover {
-        background-color: #e0a800;
-    }
-
     .goto-btn {
         background-color: #06428A;
         color: white;
@@ -445,6 +490,7 @@ const pageSpecificStyles = `
         font-size: 0.9em;
     }
 
+    /* Table Styles */
     table {
         border: 1px solid #ccc;
         border-collapse: collapse;
@@ -499,10 +545,30 @@ const pageSpecificStyles = `
         font-size: 0.85em;
     }
 
-    .status-complete { color: #06402B; border-color: #06402B; }
-    .status-pending { color: #BA8E23; border-color: #BA8E23; }
-    .status-cancelled { color: #f70d1a; border-color: #f70d1a; }
-    .status-rescheduled { color: #04285c; border-color: #04285c; }
+    .status-dropdown option {
+        background-color: white;
+        color: #333;
+    }
+
+    .status-complete { 
+        color: #06402B; 
+        border-color: #06402B; 
+    }
+    
+    .status-pending { 
+        color: #BA8E23; 
+        border-color: #BA8E23; 
+    }
+    
+    .status-cancelled { 
+        color: #f70d1a; 
+        border-color: #f70d1a; 
+    }
+    
+    .status-rescheduled { 
+        color: #04285c; 
+        border-color: #04285c; 
+    }
 
     .remarks-textarea {
         width: 100%;
@@ -598,6 +664,18 @@ const pageSpecificStyles = `
             width: 100%;
         }
         
+        .filter-container,
+        .date-picker-container {
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .filter-dropdown,
+        .date-picker-container input {
+            width: 100%;
+        }
+        
         .scanner-controls {
             flex-direction: column;
         }
@@ -617,6 +695,56 @@ const pageSpecificStyles = `
         .manual-input-group {
             flex-direction: column;
         }
+
+        .graph-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .graph-controls {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        table {
+            font-size: 0.85em;
+        }
+
+        table thead {
+            display: none;
+        }
+
+        table tr {
+            display: block;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+
+        table td {
+            display: block;
+            text-align: right;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+            padding-left: 50%;
+        }
+
+        table td:before {
+            content: attr(data-label);
+            position: absolute;
+            left: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.75em;
+        }
+
+        table td:last-child {
+            border-bottom: none;
+        }
+
+        .actions-buttons {
+            justify-content: flex-end;
+        }
     }
 `;
 
@@ -630,6 +758,7 @@ const statusColors = {
 const EmployeeTableView = () => {
     const [reservations, setReservations] = useState([]);
     const [filteredReservations, setFilteredReservations] = useState([]);
+    const [allReservations, setAllReservations] = useState([]);
     const [selectedDate, setSelectedDate] = useState('');
     const [formTitle, setFormTitle] = useState('All Reservations');
     const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
@@ -644,11 +773,21 @@ const EmployeeTableView = () => {
     const [availableCameras, setAvailableCameras] = useState([]);
     const [currentCamera, setCurrentCamera] = useState(null);
     
+    // Graph states
+    const [showGraph, setShowGraph] = useState(false);
+    const [graphData, setGraphData] = useState([]);
+    const [graphPeriod, setGraphPeriod] = useState('Week');
+    
+    // Filter states
+    const [filterType, setFilterType] = useState('Day');
+    const [selectedWeek, setSelectedWeek] = useState('');
+    const [selectedMonth, setSelectedMonth] = useState('');
+    const [selectedYear, setSelectedYear] = useState('');
+    
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const streamRef = useRef(null);
     const scanIntervalRef = useRef(null);
-    const videoReadyRef = useRef(false);
 
     useEffect(() => {
         if (!sessionStorage.getItem("loggedInUser")) {
@@ -669,16 +808,58 @@ const EmployeeTableView = () => {
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
         setSelectedDate(`${year}-${month}-${day}`);
+        setSelectedMonth(`${year}-${month}`);
+        setSelectedYear(year.toString());
+        
+        // Set current week
+        const weekNum = getWeekNumber(today);
+        setSelectedWeek(`${year}-W${String(weekNum).padStart(2, '0')}`);
     }, []);
 
+    // Fetch all reservations for graph
     useEffect(() => {
-        if (!selectedDate) return;
+        const fetchAllReservations = async () => {
+            try {
+                const response = await api.get('/reservations.php');
+                setAllReservations(response.data);
+            } catch (error) {
+                console.error("Error fetching all reservations:", error);
+                setAllReservations([]);
+            }
+        };
+        fetchAllReservations();
+    }, []);
 
+    // Update graph when period or data changes
+    useEffect(() => {
+        if (allReservations.length > 0) {
+            setGraphData(buildGraphData());
+        }
+    }, [graphPeriod, allReservations]);
+
+    // Fetch reservations based on filter
+    useEffect(() => {
         const fetchReservations = async () => {
             try {
-                let url = `/reservations.php?date=${selectedDate}`;
+                let url = '/reservations.php';
+                
+                if (filterType === 'Day' && selectedDate) {
+                    url += `?date=${selectedDate}`;
+                } else if (filterType === 'Week' && selectedWeek) {
+                    // Get week range
+                    const [year, week] = selectedWeek.split('-W');
+                    const weekDates = getWeekDateRange(parseInt(year), parseInt(week));
+                    url += `?startDate=${weekDates.start}&endDate=${weekDates.end}`;
+                } else if (filterType === 'Month' && selectedMonth) {
+                    const [year, month] = selectedMonth.split('-');
+                    url += `?year=${year}&month=${month}`;
+                } else if (filterType === 'Year' && selectedYear) {
+                    url += `?year=${selectedYear}`;
+                }
+                
                 if (formTitle !== 'All Reservations') {
-                    url += `&form=${encodeURIComponent(formTitle)}`;
+                    url += url.includes('?') ? '&' : '?';
+                    url += `form=${encodeURIComponent(formTitle)}`;
                 }
                 
                 const response = await api.get(url);
@@ -692,7 +873,7 @@ const EmployeeTableView = () => {
         };
 
         fetchReservations();
-    }, [selectedDate, formTitle]);
+    }, [selectedDate, selectedWeek, selectedMonth, selectedYear, filterType, formTitle]);
 
     useEffect(() => {
         if (searchTerm.trim() === '') {
@@ -709,6 +890,107 @@ const EmployeeTableView = () => {
         }
     }, [searchTerm, reservations]);
 
+    // Helper function to get ISO week number
+    const getWeekNumber = (date) => {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+        const yearStart = new Date(d.getFullYear(), 0, 1);
+        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    };
+
+    // Helper function to get week date range
+    const getWeekDateRange = (year, week) => {
+        const simple = new Date(year, 0, 1 + (week - 1) * 7);
+        const dow = simple.getDay();
+        const ISOweekStart = simple;
+        if (dow <= 4)
+            ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+        else
+            ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+        
+        const weekEnd = new Date(ISOweekStart);
+        weekEnd.setDate(ISOweekStart.getDate() + 6);
+        
+        return {
+            start: ISOweekStart.toISOString().split('T')[0],
+            end: weekEnd.toISOString().split('T')[0]
+        };
+    };
+
+    // Build graph data based on period
+    const buildGraphData = () => {
+        const summary = {};
+        const sortableKeys = {};
+
+        allReservations.forEach(item => {
+            if (!item.reservation_date) return;
+
+            const d = new Date(item.reservation_date);
+            let key = '';
+            let sortKey = '';
+
+            if (graphPeriod === 'Week') {
+                const year = d.getFullYear();
+                const weekNum = getWeekNumber(d);
+                const monthName = d.toLocaleString('default', { month: 'long' });
+                key = `Week ${weekNum} – ${monthName} ${year}`;
+                sortKey = `${year}-${String(weekNum).padStart(2, '0')}`;
+            } else if (graphPeriod === 'Month') {
+                const year = d.getFullYear();
+                const month = d.getMonth();
+                key = d.toLocaleString('default', { month: 'short', year: 'numeric' });
+                sortKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+            } else {
+                const year = d.getFullYear();
+                key = year.toString();
+                sortKey = year.toString();
+            }
+
+            if (!summary[key]) {
+                summary[key] = 0;
+                sortableKeys[key] = sortKey;
+            }
+            summary[key]++;
+        });
+
+        return Object.keys(summary)
+            .map(k => ({
+                period: k,
+                total: summary[k]
+            }))
+            .sort((a, b) => {
+                const keyA = sortableKeys[a.period];
+                const keyB = sortableKeys[b.period];
+                return keyA.localeCompare(keyB);
+            });
+    };
+
+    const handleFilterTypeChange = (e) => {
+        setFilterType(e.target.value);
+    };
+
+    const handleDateChange = (e) => {
+        setSelectedDate(e.target.value);
+    };
+
+    const handleWeekChange = (e) => {
+        setSelectedWeek(e.target.value);
+    };
+
+    const handleMonthChange = (e) => {
+        setSelectedMonth(e.target.value);
+    };
+
+    const handleYearChange = (e) => {
+        setSelectedYear(e.target.value);
+    };
+
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+    };
+
+    // QR Scanner Functions
     const handleOpenQRScanner = async () => {
         setShowQRScanner(true);
         setScannedReservation(null);
@@ -742,55 +1024,57 @@ const EmployeeTableView = () => {
     };
 
     const startScanner = async () => {
-    if (!currentCamera) { setQrError('No camera selected'); return; }
-    setQrError(''); //clear old message
-    setIsScanning(true);
-
-    try {
-        const constraints = {
-            video: { deviceId: currentCamera.deviceId, facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
-            audio: false
-        };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        attachStream(stream);
-    } catch (err) {
-        console.error('Preferred camera failed', err);
-        setQrError(err.message);
+        if (!currentCamera) {
+            setQrError("No camera selected");
+            return;
+        }
 
         try {
-            const fallback = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-            attachStream(fallback);
-        } catch (fbErr) {
-            console.error('Any camera also failed', fbErr);
-            setQrError('Camera blocked or no permission – use HTTPS and allow camera.');
-            setIsScanning(false);
-        }
-    }
+            const constraints = {
+                video: {
+                    deviceId: currentCamera.deviceId,
+                    facingMode: currentCamera.label.toLowerCase().includes('back') ? 'environment' : 'user',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            };
 
-    function attachStream(stream) {
-        streamRef.current = stream;
-        const vid = videoRef.current;
-        if (!vid) return;
-        vid.srcObject = stream;
-        vid.setAttribute('playsinline', '');
-        vid.muted = true;
-        vid.autoplay = true;
-        vid.onloadedmetadata = () => {
-            vid.play();
-            startQRCodeDetection();       // start scanning loop
-        };
-        vid.onerror = () => {
-            setQrError('Video element error');
-            stopScanner();
-        };
-    }
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            streamRef.current = stream;
+            
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+                videoRef.current.onloadedmetadata = () => {
+                    videoRef.current.play();
+                    startQRCodeDetection();
+                };
+            }
+            
+            setIsScanning(true);
+            setQrError('');
+            
+        } catch (error) {
+            console.error("Error starting camera:", error);
+            setQrError("Failed to start camera. Please check permissions.");
+        }
     };
 
     const stopScanner = () => {
-    if (scanIntervalRef.current) { clearInterval(scanIntervalRef.current); scanIntervalRef.current = null; }
-    if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null; }
-    if (videoRef.current) { videoRef.current.srcObject = null; }
-    setIsScanning(false);
+        if (scanIntervalRef.current) {
+            clearInterval(scanIntervalRef.current);
+            scanIntervalRef.current = null;
+        }
+        
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach(track => track.stop());
+            streamRef.current = null;
+        }
+        
+        if (videoRef.current) {
+            videoRef.current.srcObject = null;
+        }
+        
+        setIsScanning(false);
     };
 
     const switchCamera = () => {
@@ -805,27 +1089,29 @@ const EmployeeTableView = () => {
     };
 
     const startQRCodeDetection = () => {
-    scanIntervalRef.current = setInterval(async () => {
-        const vid = videoRef.current;
-        const canvas = canvasRef.current;
-        if (!vid || !canvas || !vid.videoWidth || !vid.videoHeight) return;
+        scanIntervalRef.current = setInterval(async () => {
+            const vid = videoRef.current;
+            const canvas = canvasRef.current;
+            if (!vid || !canvas || !vid.videoWidth || !vid.videoHeight) return;
 
-        const w = vid.videoWidth;
-        const h = vid.videoHeight;
-        const ctx = canvas.getContext('2d');
-        canvas.width = w;
-        canvas.height = h;
-        ctx.drawImage(vid, 0, 0, w, h);
+            const w = vid.videoWidth;
+            const h = vid.videoHeight;
+            const ctx = canvas.getContext('2d');
+            canvas.width = w;
+            canvas.height = h;
+            ctx.drawImage(vid, 0, 0, w, h);
 
-        try {
-            const jsQR = (await import('jsqr')).default;
-            const code = jsQR(ctx.getImageData(0, 0, w, h).data, w, h);
-            if (code) {
-                stopScanner();
-                processScannedQRCode(code.data);
+            try {
+                const jsQR = (await import('jsqr')).default;
+                const code = jsQR(ctx.getImageData(0, 0, w, h).data, w, h);
+                if (code) {
+                    stopScanner();
+                    processScannedQRCode(code.data);
+                }
+            } catch (e) {
+                console.error("QR detection error:", e);
             }
-        } catch (e) { /* ignore */ }
-    }, 500);
+        }, 500);
     };
 
     const processScannedQRCode = (decodedText) => {
@@ -886,36 +1172,6 @@ const EmployeeTableView = () => {
         }
     };
 
-    const handleUpdateStatus = async (newStatus) => {
-        if (!scannedReservation) return;
-
-        try {
-            const response = await api.post('/update_status.php', {
-                queue_id: scannedReservation.queue_id,
-                status: newStatus
-            });
-
-            if (response.data.success) {
-                setQrSuccess(`✅ Status updated to ${newStatus}`);
-                fetchReservationByQueueId(scannedReservation.queue_id);
-                
-                let url = `/reservations.php?date=${selectedDate}`;
-                if (formTitle !== 'All Reservations') {
-                    url += `&form=${encodeURIComponent(formTitle)}`;
-                }
-                const refreshResponse = await api.get(url);
-                setReservations(refreshResponse.data);
-                setFilteredReservations(refreshResponse.data);
-                
-            } else {
-                setQrError(response.data.message || "Failed to update status");
-            }
-        } catch (error) {
-            console.error("Error updating status:", error);
-            setQrError("Failed to update status");
-        }
-    };
-
     const goToReservationInTable = () => {
         if (!scannedReservation) return;
         
@@ -934,9 +1190,9 @@ const EmployeeTableView = () => {
             window.history.pushState({}, '', newUrl);
         }
         
-        if (reservationDate !== selectedDate) {
-            setSelectedDate(reservationDate);
-        }
+        // Set filter to Day and date
+        setFilterType('Day');
+        setSelectedDate(reservationDate);
         
         setTimeout(() => {
             const element = document.querySelector(`[data-queue-id="${scannedReservation.queue_id}"]`);
@@ -946,14 +1202,6 @@ const EmployeeTableView = () => {
                 setTimeout(() => element.classList.remove('highlight'), 5000);
             }
         }, 500);
-    };
-
-    const handleDateChange = (e) => {
-        setSelectedDate(e.target.value);
-    };
-
-    const handleSearchChange = (e) => {
-        setSearchTerm(e.target.value);
     };
 
     const handleStatusChange = async (index, newStatus) => {
@@ -1037,25 +1285,18 @@ const EmployeeTableView = () => {
             const response = await api.post('/reschedule.php', rescheduleData);
             
             if (response.data.success) {
-                let url = `/reservations.php?date=${selectedDate}`;
-                if (formTitle !== 'All Reservations') {
-                    url += `&form=${encodeURIComponent(formTitle)}`;
-                }
-                
-                const refreshResponse = await api.get(url);
-                setReservations(refreshResponse.data);
-                setFilteredReservations(refreshResponse.data);
+                // Refresh data
+                const allResponse = await api.get('/reservations.php');
+                setAllReservations(allResponse.data);
 
                 setIsRescheduleModalOpen(false);
                 setCurrentReservation(null);
                 alert("Reservation successfully rescheduled!");
 
                 window.open(`/RescheduleResult?queueId=${newQueueId}&form=${encodeURIComponent(currentReservation.form_name)}&fullName=${encodeURIComponent(currentReservation.full_name)}&email=${encodeURIComponent(currentReservation.email)}&date=${newDate}&time=${newTime}&actionDate=${new Date().toISOString().split("T")[0]}`, '_blank');
-
             } else {
                 throw new Error(response.data.message);
             }
-
         } catch (error) {
             console.error("Reschedule error:", error);
             alert(error.message || "An error occurred during rescheduling. Please try again.");
@@ -1067,14 +1308,60 @@ const EmployeeTableView = () => {
         return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
     };
 
+    const getFilterLabel = () => {
+        if (filterType === 'All') return 'Showing all reservations';
+        if (filterType === 'Day') return `Showing reservations for: ${selectedDate}`;
+        if (filterType === 'Week') return `Showing reservations for: Week ${selectedWeek}`;
+        if (filterType === 'Month') return `Showing reservations for: ${selectedMonth}`;
+        if (filterType === 'Year') return `Showing reservations for: ${selectedYear}`;
+        return '';
+    };
+
     return (
         <>
             <style>{pageSpecificStyles}</style>
             <div className="employee-table-view">
+                {/* Graph Section */}
+                {showGraph && (
+                    <div className="graph-container">
+                        <div className="graph-header">
+                            <h3>Reservation Summary by {graphPeriod}</h3>
+                            <div className="graph-controls">
+                                <select
+                                    value={graphPeriod}
+                                    onChange={(e) => setGraphPeriod(e.target.value)}
+                                    className="filter-dropdown"
+                                >
+                                    <option value="Week">Week</option>
+                                    <option value="Month">Month</option>
+                                    <option value="Year">Year</option>
+                                </select>
+                                <button
+                                    className="toggle-graph-btn"
+                                    onClick={() => setShowGraph(false)}
+                                >
+                                    <FontAwesomeIcon icon={faChartBar} /> Hide Graph
+                                </button>
+                            </div>
+                        </div>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={graphData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="period" />
+                                <YAxis allowDecimals={false} />
+                                <Tooltip />
+                                <Legend />
+                                <Bar dataKey="total" fill="#053774" name="Total Reservations" />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
+
+                {/* Table Header */}
                 <div className="table-header-section">
                     <div className="table-title-section">
                         <h2>{formTitle}</h2>
-                        <small>Showing reservations for: {selectedDate}</small>
+                        <small>{getFilterLabel()}</small>
                     </div>
                     
                     <div className="controls-section">
@@ -1089,24 +1376,91 @@ const EmployeeTableView = () => {
                             />
                         </div>
 
+                        {!showGraph && (
+                            <button 
+                                className="qr-scanner-btn" 
+                                onClick={() => setShowGraph(true)}
+                                style={{ backgroundColor: '#06428A' }}
+                            >
+                                <FontAwesomeIcon icon={faChartBar} /> Show Graph
+                            </button>
+                        )}
+
                         <button className="qr-scanner-btn" onClick={handleOpenQRScanner}>
                             <FontAwesomeIcon icon={faQrcode} /> QR Scanner
                         </button>
 
-                        <div className="date-picker-container">
-                            <label htmlFor="reservationDate">
-                                <FontAwesomeIcon icon={faCalendarAlt} /> Date:
-                            </label>
-                            <input
-                                type="date"
-                                id="reservationDate"
-                                value={selectedDate}
-                                onChange={handleDateChange}
-                            />
+                        <div className="filter-container">
+                            <label htmlFor="filterType">Filter:</label>
+                            <select
+                                id="filterType"
+                                className="filter-dropdown"
+                                value={filterType}
+                                onChange={handleFilterTypeChange}
+                            >
+                                <option value="Day">Day</option>
+                                <option value="Week">Week</option>
+                                <option value="Month">Month</option>
+                                <option value="Year">Year</option>
+                                <option value="All">All</option>
+                            </select>
                         </div>
+
+                        {filterType === 'Day' && (
+                            <div className="date-picker-container">
+                                <label htmlFor="reservationDate">
+                                    <FontAwesomeIcon icon={faCalendarAlt} />
+                                </label>
+                                <input
+                                    type="date"
+                                    id="reservationDate"
+                                    value={selectedDate}
+                                    onChange={handleDateChange}
+                                />
+                            </div>
+                        )}
+
+                        {filterType === 'Week' && (
+                            <div className="date-picker-container">
+                                <label htmlFor="reservationWeek">Week:</label>
+                                <input
+                                    type="week"
+                                    id="reservationWeek"
+                                    value={selectedWeek}
+                                    onChange={handleWeekChange}
+                                />
+                            </div>
+                        )}
+
+                        {filterType === 'Month' && (
+                            <div className="date-picker-container">
+                                <label htmlFor="reservationMonth">Month:</label>
+                                <input
+                                    type="month"
+                                    id="reservationMonth"
+                                    value={selectedMonth}
+                                    onChange={handleMonthChange}
+                                />
+                            </div>
+                        )}
+
+                        {filterType === 'Year' && (
+                            <div className="date-picker-container">
+                                <label htmlFor="reservationYear">Year:</label>
+                                <input
+                                    type="number"
+                                    id="reservationYear"
+                                    value={selectedYear}
+                                    onChange={handleYearChange}
+                                    min="2020"
+                                    max="2100"
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
 
+                {/* Table */}
                 <table>
                     <thead>
                         <tr>
@@ -1138,8 +1492,7 @@ const EmployeeTableView = () => {
                                     </td>
                                     <td data-label="Status">
                                         <select
-                                            className="status-dropdown"
-                                            style={{ color: statusColors[reservation.status] || '#333' }}
+                                            className={`status-dropdown status-${reservation.status.toLowerCase()}`}
                                             value={reservation.status || 'Pending'}
                                             onChange={(e) => handleStatusChange(index, e.target.value)}
                                         >
@@ -1162,7 +1515,7 @@ const EmployeeTableView = () => {
                                         <div className="actions-buttons">
                                             <button 
                                                 className="action-button reschedule-button"
-                                                onClick={() => handleRescheduleClick(reservation)}
+						onClick={() => handleRescheduleClick(reservation)}
                                             >
                                                 <FontAwesomeIcon icon={faPen} /> Reschedule
                                             </button>
@@ -1181,7 +1534,7 @@ const EmployeeTableView = () => {
                                 <td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>
                                     {searchTerm ? 
                                         `No reservations found matching "${searchTerm}"` : 
-                                        `No reservations found for ${selectedDate} ${formTitle !== 'All Reservations' ? `for "${formTitle}"` : ''}.`
+                                        `No reservations found for the selected filter.`
                                     }
                                 </td>
                             </tr>
@@ -1196,6 +1549,7 @@ const EmployeeTableView = () => {
                     onReschedule={handleRescheduleSubmit}
                 />
 
+                {/* QR Scanner Modal */}
                 {showQRScanner && (
                     <div className="qr-modal-overlay" onClick={(e) => e.target.className === 'qr-modal-overlay' && handleCloseQRScanner()}>
                         <div className="qr-modal-content">
@@ -1251,7 +1605,7 @@ const EmployeeTableView = () => {
                                         <input
                                             type="text"
                                             className="manual-input"
-                                            placeholder="Enter Queue ID (e.g., 241001001)"
+                                            placeholder="Enter Queue ID (e.g., 251215001)"
                                             value={manualQueueId}
                                             onChange={(e) => setManualQueueId(e.target.value)}
                                             onKeyPress={(e) => e.key === 'Enter' && handleManualSearch()}
@@ -1304,25 +1658,8 @@ const EmployeeTableView = () => {
                                                 </div>
                                             )}
 
+                                            {/* Only show View in Table button when scanned */}
                                             <div className="qr-actions">
-                                                <button 
-                                                    className="qr-action-btn complete-btn"
-                                                    onClick={() => handleUpdateStatus('Complete')}
-                                                >
-                                                    Mark Complete
-                                                </button>
-                                                <button 
-                                                    className="qr-action-btn pending-btn"
-                                                    onClick={() => handleUpdateStatus('Pending')}
-                                                >
-                                                    Set Pending
-                                                </button>
-                                                <button 
-                                                    className="qr-action-btn cancel-btn"
-                                                    onClick={() => handleUpdateStatus('Cancelled')}
-                                                >
-                                                    Cancel
-                                                </button>
                                                 <button 
                                                     className="qr-action-btn goto-btn"
                                                     onClick={goToReservationInTable}

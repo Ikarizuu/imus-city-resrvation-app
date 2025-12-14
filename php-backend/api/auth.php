@@ -16,7 +16,7 @@ if (!$input || !isset($input["employeeid"]) || !isset($input["password"])) {
 $employeeid = $conn->real_escape_string($input["employeeid"]);
 $password = $conn->real_escape_string($input["password"]);
 
-// Check if employee exists
+//Check if employee exists
 $sql = "SELECT employeeid, first_name, last_name, isAdmin FROM employees 
         WHERE employeeid = '$employeeid' AND password = '$password'";
 $result = $conn->query($sql);

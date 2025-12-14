@@ -29,7 +29,7 @@ switch ($method) {
 function handleGet() {
     global $conn;
     
-    // Check if requesting available slots
+    //Check if requesting available slots
     if (isset($_GET['available_slots']) && $_GET['available_slots'] === 'true') {
         if (isset($_GET['date']) && isset($_GET['form'])) {
             $date = $conn->real_escape_string($_GET['date']);
@@ -46,19 +46,54 @@ function handleGet() {
         }
     }
     
-    // Check if filtering by date and form
-    if (isset($_GET['date']) && isset($_GET['form'])) {
+    //Check for date range (Week filter)
+    if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
+        $startDate = $conn->real_escape_string($_GET['startDate']);
+        $endDate = $conn->real_escape_string($_GET['endDate']);
+        $sql = "SELECT * FROM reservations WHERE reservation_date BETWEEN '$startDate' AND '$endDate'";
+        
+        if (isset($_GET['form']) && $_GET['form'] !== 'All Reservations') {
+            $form = $conn->real_escape_string($_GET['form']);
+            $sql .= " AND form_name = '$form'";
+        }
+        $sql .= " ORDER BY reservation_date, reservation_time";
+    }
+    //Check for month and year filter
+    elseif (isset($_GET['year']) && isset($_GET['month'])) {
+        $year = $conn->real_escape_string($_GET['year']);
+        $month = $conn->real_escape_string($_GET['month']);
+        $sql = "SELECT * FROM reservations WHERE YEAR(reservation_date) = '$year' AND MONTH(reservation_date) = '$month'";
+        
+        if (isset($_GET['form']) && $_GET['form'] !== 'All Reservations') {
+            $form = $conn->real_escape_string($_GET['form']);
+            $sql .= " AND form_name = '$form'";
+        }
+        $sql .= " ORDER BY reservation_date, reservation_time";
+    }
+    //Check for year only filter
+    elseif (isset($_GET['year'])) {
+        $year = $conn->real_escape_string($_GET['year']);
+        $sql = "SELECT * FROM reservations WHERE YEAR(reservation_date) = '$year'";
+        
+        if (isset($_GET['form']) && $_GET['form'] !== 'All Reservations') {
+            $form = $conn->real_escape_string($_GET['form']);
+            $sql .= " AND form_name = '$form'";
+        }
+        $sql .= " ORDER BY reservation_date, reservation_time";
+    }
+    //Check if filtering by date and form
+    elseif (isset($_GET['date']) && isset($_GET['form'])) {
         $date = $conn->real_escape_string($_GET['date']);
         $form = $conn->real_escape_string($_GET['form']);
         
         $sql = "SELECT * FROM reservations WHERE reservation_date = '$date' AND form_name = '$form' ORDER BY reservation_time";
     } 
-    // Check if filtering by date only
+    //Check if filtering by date only
     elseif (isset($_GET['date'])) {
         $date = $conn->real_escape_string($_GET['date']);
         $sql = "SELECT * FROM reservations WHERE reservation_date = '$date' ORDER BY reservation_time";
     }
-    // Get all reservations
+    //Get all reservations
     else {
         $sql = "SELECT * FROM reservations ORDER BY reservation_date DESC, reservation_time";
     }
@@ -85,7 +120,7 @@ function handlePost() {
         return;
     }
     
-    // Required fields validation
+    //Required fields validation
     $requiredFields = ['queueId', 'form', 'fullName', 'email', 'date', 'time', 'actionDate'];
     foreach ($requiredFields as $field) {
         if (!isset($input[$field]) || empty($input[$field])) {
@@ -94,12 +129,12 @@ function handlePost() {
         }
     }
     
-    // Check if slot already exists (only for new reservations)
+    //Check if slot already exists (only for new reservations)
     $date = $conn->real_escape_string($input['date']);
     $time = $conn->real_escape_string($input['time']);
     $form = $conn->real_escape_string($input['form']);
     
-    // Only check for duplicates if it's a new reservation (no queueId conflict)
+    //Only check for duplicates if it's a new reservation (no queueId conflict)
     if (!isset($input['isReschedule']) || !$input['isReschedule']) {
         $checkSql = "SELECT id FROM reservations WHERE reservation_date = '$date' AND reservation_time = '$time' AND form_name = '$form' AND status != 'Cancelled'";
         $checkResult = $conn->query($checkSql);
@@ -110,7 +145,7 @@ function handlePost() {
         }
     }
     
-    // Insert new reservation
+    //Insert new reservation
     $queueId = $conn->real_escape_string($input['queueId']);
     $fullName = $conn->real_escape_string($input['fullName']);
     $email = $conn->real_escape_string($input['email']);
@@ -198,7 +233,7 @@ function getAvailableSlots($date, $form) {
     $date = $conn->real_escape_string($date);
     $form = $conn->real_escape_string($form);
     
-    // Get all booked slots for this date and form
+    //Get all booked slots for this date and form
     $sql = "SELECT reservation_time FROM reservations 
             WHERE reservation_date = '$date' 
             AND form_name = '$form'
@@ -214,7 +249,7 @@ function getAvailableSlots($date, $form) {
         }
     }
     
-    // Generate all possible slots (8:00 AM to 4:30 PM, 30-minute intervals)
+    //Generate all possible slots (8:00 AM to 4:30 PM, 30-minute intervals)
     $allSlots = [];
     $startTime = strtotime('08:00');
     $endTime = strtotime('16:30');
