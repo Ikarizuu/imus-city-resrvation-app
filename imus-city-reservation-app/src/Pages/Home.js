@@ -1,6 +1,7 @@
 /*eslint-disable jsx-a11y/iframe-has-title*/
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
+import api from '../api/axiosConfig';
 
 //Import AOS
 import AOS from 'aos';
@@ -15,6 +16,8 @@ import AnnouncementModal from '../Components/AnnouncementModal';
 
 const HomePage = () => {
     const [showModal, setShowModal] = useState(false);
+    const [statistics, setStatistics] = useState([]);
+    const [statsLoading, setStatsLoading] = useState(true);
 
     useEffect(() => {
         AOS.init({ duration: 1000 });
@@ -22,6 +25,9 @@ const HomePage = () => {
         const timer = setTimeout(() => {
             setShowModal(true);
         }, 1000);
+
+        // Fetch statistics from backend
+        fetchStatistics();
 
         return () => {
             clearTimeout(timer);
@@ -31,6 +37,37 @@ const HomePage = () => {
 
     const handleCloseModal = () => {
         setShowModal(false);
+    };
+
+    const fetchStatistics = async () => {
+        setStatsLoading(true);
+        try {
+            const response = await api.get('/get_statistics.php');
+            if (response.data.success && response.data.statistics) {
+                setStatistics(response.data.statistics);
+            } else {
+                // Fallback to default statistics if API fails
+                setStatistics([
+                    { value: '539,743', label: 'Population' },
+                    { value: '101.56', label: 'Persons/sq.km.' },
+                    { value: '130,814', label: 'Number of households' },
+                    { value: '4.24%', label: 'Population growth rate' },
+                    { value: '97', label: 'Barangays' }
+                ]);
+            }
+        } catch (error) {
+            console.error("Error fetching statistics:", error);
+            // Fallback to default statistics on error
+            setStatistics([
+                { value: '539,743', label: 'Population' },
+                { value: '101.56', label: 'Persons/sq.km.' },
+                { value: '130,814', label: 'Number of households' },
+                { value: '4.24%', label: 'Population growth rate' },
+                { value: '97', label: 'Barangays' }
+            ]);
+        } finally {
+            setStatsLoading(false);
+        }
     };
 
     return (
@@ -90,33 +127,29 @@ const HomePage = () => {
                     </button>
                 </div>
 
+                {/* Dynamic Statistics Section */}
                 <div className="py-5 bg-white">
                     <div className="container">
                         <div className="d-flex flex-wrap justify-content-center gap-4">
-                            <div className="stat-card">
-                                <h4 className="m-0 fw-bold">539,743</h4>
-                                <p className="m-0">population</p>
-                            </div>
-
-                            <div className="stat-card">
-                                <h4 className="m-0 fw-bold">101.56</h4>
-                                <p className="m-0">persons/sq.km.</p>
-                            </div>
-
-                            <div className="stat-card">
-                                <h4 className="m-0 fw-bold">130,814</h4>
-                                <p className="m-0">number of households</p>
-                            </div>
-
-                            <div className="stat-card">
-                                <h4 className="m-0 fw-bold">4.24%</h4>
-                                <p className="m-0">population growth rate</p>
-                            </div>
-
-                            <div className="stat-card">
-                                <h4 className="m-0 fw-bold">97</h4>
-                                <p className="m-0">barangays</p>
-                            </div>
+                            {statsLoading ? (
+                                <div className="text-center">
+                                    <div className="spinner-border text-primary" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p className="mt-2">Loading statistics...</p>
+                                </div>
+                            ) : statistics.length > 0 ? (
+                                statistics.map((stat, index) => (
+                                    <div key={index} className="stat-card">
+                                        <h4 className="m-0 fw-bold">{stat.value}</h4>
+                                        <p className="m-0">{stat.label}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center">
+                                    <p>No statistics available</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

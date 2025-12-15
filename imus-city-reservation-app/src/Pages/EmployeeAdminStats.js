@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faChartBar } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faChartBar, faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const pageSpecificStyles = `
     /* Main Container */
@@ -11,7 +11,7 @@ const pageSpecificStyles = `
         background-color: var(--light-bg);
     }
     
-    /* Sidebar Styles - Wider and matching CityProfile */
+    /* Sidebar Styles - Wider and matching App.css */
     .admin-sidebar {
         width: 280px;
         min-width: 280px;
@@ -142,7 +142,7 @@ const pageSpecificStyles = `
         gap: 5px;
     }
     
-    .add-employee-btn {
+    .add-stat-btn {
         background-color: var(--secondary);
         color: white;
         border: none;
@@ -157,11 +157,11 @@ const pageSpecificStyles = `
         transition: background-color 0.3s ease;
     }
     
-    .add-employee-btn:hover {
+    .add-stat-btn:hover {
         background-color: #218838;
     }
     
-    .employee-table-container {
+    .stats-table-container {
         background: white;
         border-radius: 10px;
         box-shadow: 0 2px 15px rgba(0,0,0,0.1);
@@ -169,16 +169,16 @@ const pageSpecificStyles = `
         margin-bottom: 30px;
     }
     
-    .employee-table {
+    .stats-table {
         width: 100%;
         border-collapse: collapse;
     }
     
-    .employee-table thead {
+    .stats-table thead {
         background-color: var(--primary);
     }
     
-    .employee-table th {
+    .stats-table th {
         color: white;
         padding: 15px;
         text-align: left;
@@ -187,26 +187,37 @@ const pageSpecificStyles = `
         border-right: 1px solid rgba(255,255,255,0.1);
     }
     
-    .employee-table th:last-child {
+    .stats-table th:last-child {
         border-right: none;
     }
     
-    .employee-table td {
+    .stats-table td {
         padding: 15px;
         border-bottom: 1px solid #e0e0e0;
         color: #333;
         font-size: 0.95em;
     }
     
-    .employee-table tr:last-child td {
+    .stats-table tr:last-child td {
         border-bottom: none;
     }
     
-    .employee-table tr:hover {
+    .stats-table tr:hover {
         background-color: #f8f9fa;
     }
     
-    .role-badge {
+    .stat-value {
+        font-weight: bold;
+        color: var(--primary);
+        font-size: 1.1em;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 0.9em;
+    }
+    
+    .status-badge {
         padding: 4px 12px;
         border-radius: 12px;
         font-size: 0.85em;
@@ -214,12 +225,12 @@ const pageSpecificStyles = `
         display: inline-block;
     }
     
-    .role-admin {
-        background-color: #ffc107;
-        color: #212529;
+    .status-active {
+        background-color: var(--secondary);
+        color: white;
     }
     
-    .role-employee {
+    .status-inactive {
         background-color: #6c757d;
         color: white;
     }
@@ -281,7 +292,7 @@ const pageSpecificStyles = `
         background-color: white;
         border-radius: 10px;
         width: 100%;
-        max-width: 500px;
+        max-width: 600px;
         max-height: 90vh;
         overflow-y: auto;
         box-shadow: 0 5px 20px rgba(0,0,0,0.2);
@@ -359,11 +370,15 @@ const pageSpecificStyles = `
         margin-left: 4px;
     }
     
-    .password-note {
-        font-size: 0.85em;
-        color: #666;
-        margin-top: 5px;
-        font-style: italic;
+    .form-row {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .form-row .form-group {
+        flex: 1;
+        margin-bottom: 0;
     }
     
     .modal-footer {
@@ -400,11 +415,6 @@ const pageSpecificStyles = `
     
     .modal-btn-save:hover {
         background-color: #218838;
-    }
-    
-    .modal-btn-save:disabled {
-        background-color: #6c757d;
-        cursor: not-allowed;
     }
     
     /* Loading and Empty States */
@@ -481,11 +491,11 @@ const pageSpecificStyles = `
             align-items: flex-start;
         }
         
-        .employee-table-container {
+        .stats-table-container {
             overflow-x: auto;
         }
         
-        .employee-table {
+        .stats-table {
             min-width: 800px;
         }
         
@@ -506,6 +516,11 @@ const pageSpecificStyles = `
         .modal-content {
             max-height: 95vh;
         }
+        
+        .form-row {
+            flex-direction: column;
+            gap: 15px;
+        }
     }
     
     @media (max-width: 768px) {
@@ -513,22 +528,67 @@ const pageSpecificStyles = `
             padding: 15px;
         }
     }
+    
+    /* Statistics Preview */
+    .statistics-preview {
+        margin-top: 30px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .preview-title {
+        margin-bottom: 20px;
+        color: var(--primary);
+        font-size: 1.2em;
+        font-weight: 600;
+    }
+    
+    .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+    
+    .preview-card {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        border: 1px solid #e0e0e0;
+    }
+    
+    .preview-value {
+        font-weight: bold;
+        color: var(--primary);
+        font-size: 1.2em;
+        margin-bottom: 5px;
+    }
+    
+    .preview-label {
+        color: #666;
+        font-size: 0.9em;
+    }
 `;
 
-const EmployeeAdmin = () => {
-    const [employees, setEmployees] = useState([]);
+const EmployeeAdminStats = () => {
+    const [statistics, setStatistics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
-    const [currentEmployee, setCurrentEmployee] = useState({
+    const [currentStat, setCurrentStat] = useState({
         id: '',
-        employeeid: '',
-        password: '',
-        first_name: '',
-        last_name: '',
-        isAdmin: 'notAdmin'
+        stat_name: '',
+        stat_value: '',
+        stat_label: '',
+        display_order: 0,
+        is_active: true
     });
     const [isAdmin, setIsAdmin] = useState(false);
+    const [previewStats, setPreviewStats] = useState([]);
 
     useEffect(() => {
         // Check if user is admin
@@ -540,118 +600,108 @@ const EmployeeAdmin = () => {
         }
         
         setIsAdmin(true);
-        fetchEmployees();
+        fetchStatistics();
     }, []);
 
-    const fetchEmployees = async () => {
+    useEffect(() => {
+        // Update preview when statistics change
+        if (statistics.length > 0) {
+            const preview = statistics
+                .filter(stat => stat.is_active)
+                .sort((a, b) => a.display_order - b.display_order)
+                .slice(0, 5); // Show first 5 active stats in preview
+            setPreviewStats(preview);
+        }
+    }, [statistics]);
+
+    const fetchStatistics = async () => {
         setLoading(true);
         try {
-            const response = await api.get('/employees.php');
-            setEmployees(response.data);
+            const response = await api.get('/statistics.php');
+            if (response.data.success) {
+                setStatistics(response.data.statistics || []);
+            } else {
+                console.error("Error fetching statistics:", response.data.message);
+                setStatistics([]);
+            }
         } catch (error) {
-            console.error("Error fetching employees:", error);
-            alert("Failed to load employees. Please try again.");
+            console.error("Error fetching statistics:", error);
+            alert("Failed to load statistics. Please try again.");
         } finally {
             setLoading(false);
         }
     };
 
-    const handleAddEmployee = () => {
-        setCurrentEmployee({
+    const handleAddStat = () => {
+        setCurrentStat({
             id: '',
-            employeeid: '',
-            password: '',
-            first_name: '',
-            last_name: '',
-            isAdmin: 'notAdmin'
+            stat_name: '',
+            stat_value: '',
+            stat_label: '',
+            display_order: statistics.length + 1,
+            is_active: true
         });
         setIsEditMode(false);
         setShowModal(true);
     };
 
-    const handleEditEmployee = (employee) => {
-        setCurrentEmployee({
-            id: employee.id,
-            employeeid: employee.employeeid,
-            password: '', // Don't show current password
-            first_name: employee.first_name,
-            last_name: employee.last_name,
-            isAdmin: employee.isAdmin || 'notAdmin'
+    const handleEditStat = (stat) => {
+        setCurrentStat({
+            id: stat.id,
+            stat_name: stat.stat_name,
+            stat_value: stat.stat_value,
+            stat_label: stat.stat_label,
+            display_order: stat.display_order,
+            is_active: stat.is_active
         });
         setIsEditMode(true);
         setShowModal(true);
     };
 
-    const handleDeleteEmployee = async (id, employeeid) => {
-        if (window.confirm(`Are you sure you want to delete employee ${employeeid}? This action cannot be undone.`)) {
+    const handleDeleteStat = async (id, statName) => {
+        if (window.confirm(`Are you sure you want to deactivate statistic "${statName}"? This will hide it from public view.`)) {
             try {
-                await api.delete('/employees.php', {
+                await api.delete('/statistics.php', {
                     data: { id: id }
                 });
-                fetchEmployees();
-                alert("Employee deleted successfully.");
+                fetchStatistics();
+                alert("Statistic deactivated successfully.");
             } catch (error) {
-                console.error("Error deleting employee:", error);
-                alert("Failed to delete employee. Please try again.");
+                console.error("Error deleting statistic:", error);
+                alert("Failed to deactivate statistic. Please try again.");
             }
         }
     };
 
-    const handleSaveEmployee = async () => {
+    const handleSaveStat = async () => {
         // Validate form
-        if (!currentEmployee.employeeid.trim()) {
-            alert("Please enter Employee ID");
+        if (!currentStat.stat_name.trim()) {
+            alert("Please enter Statistic Name (unique identifier)");
             return;
         }
-        if (!currentEmployee.first_name.trim()) {
-            alert("Please enter First Name");
+        if (!currentStat.stat_value.trim()) {
+            alert("Please enter Statistic Value");
             return;
         }
-        if (!currentEmployee.last_name.trim()) {
-            alert("Please enter Last Name");
-            return;
-        }
-        if (!isEditMode && !currentEmployee.password.trim()) {
-            alert("Please enter Password for new employee");
+        if (!currentStat.stat_label.trim()) {
+            alert("Please enter Display Label");
             return;
         }
 
         try {
-            const employeeData = {
-                employeeid: currentEmployee.employeeid,
-                first_name: currentEmployee.first_name,
-                last_name: currentEmployee.last_name,
-                isAdmin: currentEmployee.isAdmin
-            };
-
             if (isEditMode) {
-                // Add the ID for updates
-                employeeData.id = currentEmployee.id;
-                
-                // Only include password if a new one was provided
-                if (currentEmployee.password.trim()) {
-                    employeeData.password = currentEmployee.password;
-                }
-                
-                await api.put('/employees.php', employeeData);
-                alert("Employee updated successfully.");
+                await api.put('/statistics.php', currentStat);
+                alert("Statistic updated successfully.");
             } else {
-                // For new employees, password is required
-                if (!currentEmployee.password.trim()) {
-                    alert("Please enter Password for new employee");
-                    return;
-                }
-                employeeData.password = currentEmployee.password;
-                
-                await api.post('/employees.php', employeeData);
-                alert("Employee added successfully.");
+                await api.post('/statistics.php', currentStat);
+                alert("Statistic added successfully.");
             }
             
             setShowModal(false);
-            fetchEmployees();
+            fetchStatistics();
         } catch (error) {
-            console.error("Error saving employee:", error);
-            const errorMsg = error.response?.data?.message || "Failed to save employee. Please try again.";
+            console.error("Error saving statistic:", error);
+            const errorMsg = error.response?.data?.message || "Failed to save statistic. Please try again.";
             alert(errorMsg);
         }
     };
@@ -661,10 +711,12 @@ const EmployeeAdmin = () => {
     };
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setCurrentEmployee(prev => ({
+        const { name, value, type } = e.target;
+        setCurrentStat(prev => ({
             ...prev,
-            [name]: value
+            [name]: type === 'checkbox' ? e.target.checked : 
+                    name === 'display_order' ? parseInt(value) || 0 : 
+                    value
         }));
     };
 
@@ -691,13 +743,13 @@ const EmployeeAdmin = () => {
                     </div>
                     
                     <ul className="admin-sidebar-menu">
-                        <li className="active">
+                        <li>
                             <a href="/EmployeeAdmin">
                                 <FontAwesomeIcon icon={faUsers} className="icon" />
                                 Employee Management
                             </a>
                         </li>
-                        <li>
+                        <li className="active">
                             <a href="/EmployeeAdminStats">
                                 <FontAwesomeIcon icon={faChartBar} className="icon" />
                                 Statistics Management
@@ -710,61 +762,92 @@ const EmployeeAdmin = () => {
                 <div className="admin-content-container">
                     <div className="admin-header">
                         <div>
-                            <h2>Employee Administration</h2>
+                            <h2>Statistics Management</h2>
                             <span className="admin-badge">Administrator Access</span>
+                            <p style={{color: '#666', marginTop: '10px', fontSize: '0.95em'}}>
+                                Manage statistics displayed on Home page and City Profile
+                            </p>
                         </div>
-                        <button className="add-employee-btn" onClick={handleAddEmployee}>
-                            <span>+</span> Add New Employee
+                        <button className="add-stat-btn" onClick={handleAddStat}>
+                            <FontAwesomeIcon icon={faPlus} />
+                            Add New Statistic
                         </button>
+                    </div>
+
+                    {/* Statistics Preview */}
+                    <div className="statistics-preview">
+                        <div className="preview-title">Preview (How it appears on Home page):</div>
+                        <div className="preview-grid">
+                            {previewStats.length > 0 ? (
+                                previewStats.map(stat => (
+                                    <div key={stat.id} className="preview-card">
+                                        <div className="preview-value">{stat.stat_value}</div>
+                                        <div className="preview-label">{stat.stat_label}</div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="preview-card" style={{gridColumn: '1/-1'}}>
+                                    <div className="preview-label">No active statistics to preview</div>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {loading ? (
                         <div className="loading-container">
                             <div className="loading-spinner"></div>
-                            <p>Loading employees...</p>
+                            <p>Loading statistics...</p>
                         </div>
-                    ) : employees.length === 0 ? (
+                    ) : statistics.length === 0 ? (
                         <div className="empty-state">
-                            <p>No employees found. Add your first employee.</p>
+                            <p>No statistics found. Add your first statistic.</p>
                         </div>
                     ) : (
-                        <div className="employee-table-container">
-                            <table className="employee-table">
+                        <div className="stats-table-container">
+                            <table className="stats-table">
                                 <thead>
                                     <tr>
-                                        <th>Employee ID</th>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
-                                        <th>Role</th>
+                                        <th>Statistic Name</th>
+                                        <th>Value</th>
+                                        <th>Label</th>
+                                        <th>Order</th>
+                                        <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {employees.map(employee => (
-                                        <tr key={employee.id}>
-                                            <td>{employee.employeeid}</td>
-                                            <td>{employee.first_name}</td>
-                                            <td>{employee.last_name}</td>
+                                    {statistics
+                                        .sort((a, b) => a.display_order - b.display_order)
+                                        .map(stat => (
+                                        <tr key={stat.id}>
                                             <td>
-                                                <span className={`role-badge ${employee.isAdmin === 'admin' ? 'role-admin' : 'role-employee'}`}>
-                                                    {employee.isAdmin === 'admin' ? 'Administrator' : 'Employee'}
+                                                <strong>{stat.stat_name}</strong>
+                                                <br />
+                                                <small style={{color: '#666'}}>ID: {stat.id}</small>
+                                            </td>
+                                            <td className="stat-value">{stat.stat_value}</td>
+                                            <td className="stat-label">{stat.stat_label}</td>
+                                            <td>{stat.display_order}</td>
+                                            <td>
+                                                <span className={`status-badge ${stat.is_active ? 'status-active' : 'status-inactive'}`}>
+                                                    {stat.is_active ? 'Active' : 'Inactive'}
                                                 </span>
                                             </td>
                                             <td>
                                                 <div className="action-buttons">
                                                     <button 
                                                         className="action-btn edit-btn"
-                                                        onClick={() => handleEditEmployee(employee)}
+                                                        onClick={() => handleEditStat(stat)}
                                                     >
+                                                        <FontAwesomeIcon icon={faEdit} />
                                                         Edit
                                                     </button>
                                                     <button 
                                                         className="action-btn delete-btn"
-                                                        onClick={() => handleDeleteEmployee(employee.id, employee.employeeid)}
-                                                        disabled={employee.employeeid === sessionStorage.getItem("loggedInUser")}
-                                                        title={employee.employeeid === sessionStorage.getItem("loggedInUser") ? "Cannot delete your own account" : ""}
+                                                        onClick={() => handleDeleteStat(stat.id, stat.stat_name)}
                                                     >
-                                                        Delete
+                                                        <FontAwesomeIcon icon={faTrash} />
+                                                        {stat.is_active ? 'Deactivate' : 'Delete'}
                                                     </button>
                                                 </div>
                                             </td>
@@ -775,89 +858,90 @@ const EmployeeAdmin = () => {
                         </div>
                     )}
 
-                    {/* Add/Edit Employee Modal */}
+                    {/* Add/Edit Statistic Modal */}
                     {showModal && (
                         <div className="modal-overlay" onClick={(e) => e.target.className === 'modal-overlay' && handleCloseModal()}>
                             <div className="modal-content">
                                 <div className="modal-header">
-                                    <h3>{isEditMode ? 'Edit Employee' : 'Add New Employee'}</h3>
+                                    <h3>{isEditMode ? 'Edit Statistic' : 'Add New Statistic'}</h3>
                                     <button className="close-btn" onClick={handleCloseModal}>×</button>
                                 </div>
                                 <div className="modal-body">
                                     <div className="form-group">
                                         <label>
-                                            Employee ID <span className="required-star">*</span>
+                                            Statistic Name (Unique ID) <span className="required-star">*</span>
                                         </label>
                                         <input
                                             type="text"
-                                            name="employeeid"
-                                            value={currentEmployee.employeeid}
+                                            name="stat_name"
+                                            value={currentStat.stat_name}
                                             onChange={handleInputChange}
                                             disabled={isEditMode}
-                                            placeholder="e.g., EMP001"
+                                            placeholder="e.g., population, density, barangays"
                                         />
+                                        <small style={{color: '#666'}}>This is used as an identifier. Use lowercase with underscores.</small>
                                     </div>
                                     
-                                    <div className="form-group">
-                                        <label>
-                                            First Name <span className="required-star">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="first_name"
-                                            value={currentEmployee.first_name}
-                                            onChange={handleInputChange}
-                                            placeholder="Enter first name"
-                                        />
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>
+                                                Statistic Value <span className="required-star">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="stat_value"
+                                                value={currentStat.stat_value}
+                                                onChange={handleInputChange}
+                                                placeholder="e.g., 539,743 or ₱1.2 Billion"
+                                            />
+                                        </div>
+                                        
+                                        <div className="form-group">
+                                            <label>
+                                                Display Label <span className="required-star">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="stat_label"
+                                                value={currentStat.stat_label}
+                                                onChange={handleInputChange}
+                                                placeholder="e.g., Population, Annual Budget"
+                                            />
+                                        </div>
                                     </div>
                                     
-                                    <div className="form-group">
-                                        <label>
-                                            Last Name <span className="required-star">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="last_name"
-                                            value={currentEmployee.last_name}
-                                            onChange={handleInputChange}
-                                            placeholder="Enter last name"
-                                        />
-                                    </div>
-                                    
-                                    <div className="form-group">
-                                        <label>
-                                            {isEditMode ? 'New Password (leave blank to keep current)' : 'Password'} 
-                                            {!isEditMode && <span className="required-star">*</span>}
-                                        </label>
-                                        <input
-                                            type="password"
-                                            name="password"
-                                            value={currentEmployee.password}
-                                            onChange={handleInputChange}
-                                            placeholder={isEditMode ? "Enter new password or leave blank" : "Enter password"}
-                                        />
-                                        {isEditMode && (
-                                            <p className="password-note">Leave password field empty to keep the current password</p>
-                                        )}
-                                    </div>
-                                    
-                                    <div className="form-group">
-                                        <label>Role</label>
-                                        <select
-                                            name="isAdmin"
-                                            value={currentEmployee.isAdmin}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value="notAdmin">Employee</option>
-                                            <option value="admin">Administrator</option>
-                                        </select>
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label>Display Order</label>
+                                            <input
+                                                type="number"
+                                                name="display_order"
+                                                value={currentStat.display_order}
+                                                onChange={handleInputChange}
+                                                min="0"
+                                                placeholder="0"
+                                            />
+                                            <small style={{color: '#666'}}>Lower numbers appear first</small>
+                                        </div>
+                                        
+                                        <div className="form-group">
+                                            <label>Status</label>
+                                            <select
+                                                name="is_active"
+                                                value={currentStat.is_active ? 'true' : 'false'}
+                                                onChange={(e) => setCurrentStat(prev => ({...prev, is_active: e.target.value === 'true'}))}
+                                            >
+                                                <option value="true">Active (Visible)</option>
+                                                <option value="false">Inactive (Hidden)</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="modal-footer">
                                     <button className="modal-btn modal-btn-cancel" onClick={handleCloseModal}>
                                         Cancel
                                     </button>
-                                    <button className="modal-btn modal-btn-save" onClick={handleSaveEmployee}>
+                                    <button className="modal-btn modal-btn-save" onClick={handleSaveStat}>
                                         {isEditMode ? 'Update' : 'Save'}
                                     </button>
                                 </div>
@@ -870,4 +954,4 @@ const EmployeeAdmin = () => {
     );
 };
 
-export default EmployeeAdmin;
+export default EmployeeAdminStats;
