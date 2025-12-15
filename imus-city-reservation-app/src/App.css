@@ -270,6 +270,7 @@ table thead th {
     right: 0;
     width: 100%;
     padding: 40px 20px;
+    padding-bottom: 125px;
     background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
     text-align: center;
     border-radius: 0;

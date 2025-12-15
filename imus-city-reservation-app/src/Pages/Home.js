@@ -1,43 +1,31 @@
-/*eslint-disable jsx-a11y/iframe-has-title*/
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import api from '../api/axiosConfig';
-
-//Import AOS
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-
-//Import Font Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook } from '@fortawesome/free-brands-svg-icons';
-
-//Import Modal
 import AnnouncementModal from '../Components/AnnouncementModal';
 
 const HomePage = () => {
     const [showModal, setShowModal] = useState(false);
     const [statistics, setStatistics] = useState([]);
     const [statsLoading, setStatsLoading] = useState(true);
+    const [newsItems, setNewsItems] = useState([]);
+    const [newsLoading, setNewsLoading] = useState(true);
 
     useEffect(() => {
         AOS.init({ duration: 1000 });
-
-        const timer = setTimeout(() => {
-            setShowModal(true);
-        }, 1000);
-
-        // Fetch statistics from backend
+        const timer = setTimeout(() => setShowModal(true), 1000);
         fetchStatistics();
-
+        fetchNewsItems();
         return () => {
             clearTimeout(timer);
             window.onscroll = null;
         };
     }, []);
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
+    const handleCloseModal = () => setShowModal(false);
 
     const fetchStatistics = async () => {
         setStatsLoading(true);
@@ -46,7 +34,6 @@ const HomePage = () => {
             if (response.data.success && response.data.statistics) {
                 setStatistics(response.data.statistics);
             } else {
-                // Fallback to default statistics if API fails
                 setStatistics([
                     { value: '539,743', label: 'Population' },
                     { value: '101.56', label: 'Persons/sq.km.' },
@@ -57,7 +44,6 @@ const HomePage = () => {
             }
         } catch (error) {
             console.error("Error fetching statistics:", error);
-            // Fallback to default statistics on error
             setStatistics([
                 { value: '539,743', label: 'Population' },
                 { value: '101.56', label: 'Persons/sq.km.' },
@@ -68,6 +54,51 @@ const HomePage = () => {
         } finally {
             setStatsLoading(false);
         }
+    };
+
+    const fetchNewsItems = async () => {
+        setNewsLoading(true);
+        try {
+            const response = await api.get('/news-carousel-display.php?limit=6&offset=0');
+            if (response.data.success && response.data.news) {
+                setNewsItems(response.data.news);
+            } else {
+                setNewsItems([]);
+            }
+        } catch (error) {
+            console.error("Error fetching news:", error);
+            setNewsItems([]);
+        } finally {
+            setNewsLoading(false);
+        }
+    };
+
+    // Helper function to get display date
+    const getDisplayDate = (newsItem) => {
+        if (newsItem.news_date && newsItem.news_date.trim() !== '') {
+            return newsItem.news_date;
+        }
+        
+        // Fallback: check title for month/year
+        if (newsItem.title) {
+            const title = newsItem.title.toLowerCase();
+            if (title.includes('july')) return 'July';
+            if (title.includes('august')) return 'August';
+            if (title.includes('september')) return 'September';
+            if (title.includes('october')) return 'October';
+            if (title.includes('november')) return 'November';
+            if (title.includes('december')) return 'December';
+            if (title.includes('january')) return 'January';
+            if (title.includes('february')) return 'February';
+            if (title.includes('march')) return 'March';
+            if (title.includes('april')) return 'April';
+            if (title.includes('may')) return 'May';
+            if (title.includes('june')) return 'June';
+            if (title.includes('2024')) return '2024';
+            if (title.includes('2025')) return '2025';
+        }
+        
+        return 'Recent';
     };
 
     return (
@@ -87,8 +118,7 @@ const HomePage = () => {
                             <img src={require('../Media/newcityhall.jpg')} className="d-block w-100" alt="City Government Center" />
                             <div className="carousel-caption">
                                 <h1 style={{ fontSize: '3vw' }}>Imus City Government Center</h1>
-                                <p style={{ fontSize: '2vw', textAlign: 'center' }}>
-                                    Imus Boulevard, Brgy. Malagasang I-G City of Imus, Cavite </p>
+                                <p style={{ fontSize: '2vw', textAlign: 'center' }}>Imus Boulevard, Brgy. Malagasang I-G City of Imus, Cavite</p>
                                 <a className="btn btn-primary" href="https://www.facebook.com/CityofImus" target="_blank" rel="noopener noreferrer">Visit us</a>
                             </div>
                         </div>
@@ -127,7 +157,6 @@ const HomePage = () => {
                     </button>
                 </div>
 
-                {/* Dynamic Statistics Section */}
                 <div className="py-5 bg-white">
                     <div className="container">
                         <div className="d-flex flex-wrap justify-content-center gap-4">
@@ -187,91 +216,76 @@ const HomePage = () => {
                         </div>
 
                         <div className="carousel-inner">
-                            <div className="carousel-item active">
-                                <div className="row row-cols-1 row-cols-md-3 g-4 px-4">
-                                    <div className="col">
-                                        <div className="card h-100">
-                                            <img src={require('../Media/News/2025_July_ImusPride.jpg')} className="card-img-top" alt="Imus Pride" />
-                                            <div className="card-body">
-                                                <p className="card-text">Imus Pride 2025: Makulay ang Ating Layunin</p>
-                                                <div className="d-flex justify-content-between align-items-center mt-auto">
-                                                    <small className="text-muted">July</small>
-                                                    <a href="News/2025_July.html#Up_news426" className="btn btn-sm btn-success">View</a>
-                                                </div>
-                                            </div>
-                                        </div>
+                            {newsLoading ? (
+                                <div className="text-center">
+                                    <div className="spinner-border text-success" role="status">
+                                        <span className="visually-hidden">Loading news...</span>
                                     </div>
-
-                                    <div className="col">
-                                        <div className="card h-100">
-                                            <img src={require('../Media/News/2025_July_ProstheticLegs.jpg')} className="card-img-top" alt="Prosthetic Legs" />
-                                            <div className="card-body">
-                                                <p className="card-text">4 na Imuseño, hinandugan ni Mayor AA ng prosthetic legs</p>
-                                                <div className="d-flex justify-content-between align-items-center mt-auto">
-                                                    <small className="text-muted">July</small>
-                                                    <a href="News/2025_July.html#Up_news425" className="btn btn-sm btn-success">View</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="col">
-                                        <div className="card h-100">
-                                            <img src={require('../Media/News/2025_July_MayorNakatanggapNgPagkilalaSaBJMPCALABARZON.jpg')} className="card-img-top" alt="Mayor Award" />
-                                            <div className="card-body">
-                                                <p className="card-text">Mayor AA, nakatanggap ng pagkilala mula BJMP CALABARZON</p>
-                                                <div className="d-flex justify-content-between align-items-center mt-auto">
-                                                    <small className="text-muted">July 25</small>
-                                                    <a href="News/2025_July.html#Up_news421" className="btn btn-sm btn-success">View</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <p className="mt-3">Loading city news...</p>
                                 </div>
-                            </div>
-
-                            <div className="carousel-item">
-                                <div className="row row-cols-1 row-cols-md-3 g-4 px-4">
-                                    <div className="col">
-                                        <div className="card h-100">
-                                            <img src={require('../Media/News/2025_July_CardinalTagleBumisitasaImusLGU.jpg')} className="card-img-top" alt="Cardinal Tagle" />
-                                            <div className="card-body">
-                                                <p className="card-text">Cardinal Tagle bumisita sa Imus LGU</p>
-                                                <div className="d-flex justify-content-between align-items-center mt-auto">
-                                                    <small className="text-muted">July 21</small>
-                                                    <a href="News/2025_July.html#Up_news420" className="btn btn-sm btn-success">View</a>
+                            ) : newsItems.length > 0 ? (
+                                <>
+                                    <div className="carousel-item active">
+                                        <div className="row row-cols-1 row-cols-md-3 g-4 px-4">
+                                            {newsItems.slice(0, 3).map((item, index) => (
+                                                <div key={item.id} className="col">
+                                                    <div className="card h-100">
+                                                        <img 
+                                                            src={`http://localhost/imus-city-reservation-app/php-backend/uploads/news-carousel/${item.image_path}`} 
+                                                            className="card-img-top" 
+                                                            alt={item.image_alt || item.title}
+                                                            onError={(e) => {
+                                                                e.target.src = require('../Media/News/default_news.jpg');
+                                                            }}
+                                                        />
+                                                        <div className="card-body">
+                                                            <p className="card-text">{item.excerpt}</p>
+                                                            <div className="d-flex justify-content-between align-items-center mt-auto">
+                                                                <small className="text-muted">{getDisplayDate(item)}</small>
+                                                                {item.link && (
+                                                                    <a href={item.link} className="btn btn-sm btn-success" target="_blank" rel="noopener noreferrer">View</a>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            ))}
                                         </div>
                                     </div>
 
-                                    <div className="col">
-                                        <div className="card h-100">
-                                            <img src={require('../Media/News/2025_July_BagongHalalnaOpisyalngHOA.jpg')} className="card-img-top" alt="HOA Officials" />
-                                            <div className="card-body">
-                                                <p className="card-text">25 bagong halal na opisyal ng HOA sa Imus, nanumpa</p>
-                                                <div className="d-flex justify-content-between align-items-center mt-auto">
-                                                    <small className="text-muted">July 14</small>
-                                                    <a href="News/2025_July.html#Up_news418" className="btn btn-sm btn-success">View</a>
+                                    <div className="carousel-item">
+                                        <div className="row row-cols-1 row-cols-md-3 g-4 px-4">
+                                            {newsItems.slice(3, 6).map((item, index) => (
+                                                <div key={item.id} className="col">
+                                                    <div className="card h-100">
+                                                        <img 
+                                                            src={`http://localhost/imus-city-reservation-app/php-backend/uploads/news-carousel/${item.image_path}`} 
+                                                            className="card-img-top" 
+                                                            alt={item.image_alt || item.title}
+                                                            onError={(e) => {
+                                                                e.target.src = require('../Media/News/default_news.jpg');
+                                                            }}
+                                                        />
+                                                        <div className="card-body">
+                                                            <p className="card-text">{item.excerpt}</p>
+                                                            <div className="d-flex justify-content-between align-items-center mt-auto">
+                                                                <small className="text-muted">{getDisplayDate(item)}</small>
+                                                                {item.link && (
+                                                                    <a href={item.link} className="btn btn-sm btn-success" target="_blank" rel="noopener noreferrer">View</a>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            ))}
                                         </div>
                                     </div>
-
-                                    <div className="col">
-                                        <div className="card h-100">
-                                            <img src={require('../Media/News/2025_July_ImusCentenarianSevillaAncheta.jpg')} className="card-img-top" alt="Centenarian" />
-                                            <div className="card-body">
-                                                <p className="card-text">Mayor AA, binisita si Imuseño centenarian Sevilla Ancheta</p>
-                                                <div className="d-flex justify-content-between align-items-center mt-auto">
-                                                    <small className="text-muted">July 9</small>
-                                                    <a href="News/2025_July.html#Up_news414" className="btn btn-sm btn-success">View</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                </>
+                            ) : (
+                                <div className="text-center">
+                                    <p>No news items available at this time.</p>
                                 </div>
-                            </div>
+                            )}
                         </div>
 
                         <button className="carousel-control-prev" type="button" data-bs-target="#myCarousel2" data-bs-slide="prev">
@@ -294,8 +308,7 @@ const HomePage = () => {
                         <div className="section" data-aos="fade-right" data-aos-delay="400">
                             <div className="container text-center">
                                 <h1 style={{ color: '#06428A', fontWeight: 900 }}>Vision</h1>
-                                <h3>The model city in the region, with secured and healthy citizenry, living in a smart, green and sustainable environment in a technology-driven economy, governed with integrity and transparency.
-                                </h3>
+                                <h3>The model city in the region, with secured and healthy citizenry, living in a smart, green and sustainable environment in a technology-driven economy, governed with integrity and transparency.</h3>
                             </div>
                         </div>
 
@@ -308,38 +321,33 @@ const HomePage = () => {
                     </div>
                 </section>
 
-                <section style={{ padding: '50px 0' }}>
-                    <div id="fb-root"></div>
-                    <script async defer crossOrigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v14.0" nonce="lvt8jSpP"></script>
-
-                    <div className="container">
-                        <div className="text-center pb-5">
-                            <h1><strong>Stay Connected!</strong></h1>
+                <div className="container" style={{ padding: '50px 0' }}>
+                    <div className="text-center pb-5">
+                        <h1><strong>Stay Connected!</strong></h1>
+                    </div>
+                    <div className="row p-2">
+                        <div className="col-md-6 p-2 text-center">
+                            <div className="ratio ratio-16x9">
+                                <iframe src="https://www.youtube.com/embed/xGNOCWXM9pM" title="AAngat ang Imus" allowFullScreen></iframe>
+                            </div>
                         </div>
-                        <div className="row p-2">
-                            <div className="col-md-6 p-2 text-center">
-                                <div className="ratio ratio-16x9">
-                                    <iframe src="https://www.youtube.com/embed/xGNOCWXM9pM" title="AAngat ang Imus" allowFullScreen></iframe>
-                                </div>
+                        <div className="col-md-3 text-center">
+                            <div className="fb-page" data-href="https://www.facebook.com/alexladvincula" data-tabs="timeline" data-width="" data-height="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                                <blockquote cite="https://www.facebook.com/alexladvincula" className="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/alexladvincula">Alex Advincula</a></blockquote>
                             </div>
-                            <div className="col-md-3 text-center">
-                                <div className="fb-page" data-href="https://www.facebook.com/alexladvincula" data-tabs="timeline" data-width="" data-height="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
-                                    <blockquote cite="https://www.facebook.com/alexladvincula" className="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/alexladvincula">Alex Advincula</a></blockquote>
-                                </div>
-                                <br />
-                                <p>Mayor Alex Advincula FB Page <i className="fab fa-facebook"><FontAwesomeIcon icon={faFacebook} /></i></p>
-                            </div>
+                            <br />
+                            <p>Mayor Alex Advincula FB Page <i className="fab fa-facebook"><FontAwesomeIcon icon={faFacebook} /></i></p>
+                        </div>
 
-                            <div className="col-md-3 text-center">
-                                <div className="fb-page" data-href="https://www.facebook.com/CityofImus/" data-tabs="timeline" data-width="" data-height="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
-                                    <blockquote cite="https://www.facebook.com/CityofImus/" className="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/CityofImus/">City Government of Imus</a></blockquote>
-                                </div>
-                                <br />
-                                <p>City Government of Imus FB Page <i className="fab fa-facebook"><FontAwesomeIcon icon={faFacebook} /></i></p>
+                        <div className="col-md-3 text-center">
+                            <div className="fb-page" data-href="https://www.facebook.com/CityofImus/" data-tabs="timeline" data-width="" data-height="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                                <blockquote cite="https://www.facebook.com/CityofImus/" className="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/CityofImus/">City Government of Imus</a></blockquote>
                             </div>
+                            <br />
+                            <p>City Government of Imus FB Page <i className="fab fa-facebook"><FontAwesomeIcon icon={faFacebook} /></i></p>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 <section style={{ backgroundColor: 'white', padding: '50px 0' }}>
                     <div className="container text-center">
@@ -351,8 +359,7 @@ const HomePage = () => {
                             </div>
                             <div className="col-lg-4 d-flex align-items-center">
                                 <div>
-                                    <h3 style={{ color: '#053774' }}>Imus Boulevard, Brgy. Malagasang I-G<br /> City of Imus, Cavite
-                                    </h3>
+                                    <h3 style={{ color: '#053774' }}>Imus Boulevard, Brgy. Malagasang I-G<br /> City of Imus, Cavite</h3>
                                     <br />
                                     <h3 style={{ color: '#053774' }}>Open Monday to Friday <br /> 08:00 am - 05:00 pm</h3>
                                 </div>
@@ -363,7 +370,7 @@ const HomePage = () => {
 
                 <section style={{ color: 'white', padding: '50px 0' }}>
                     <div className="container p-5" style={{ backgroundColor: '#053774', width: '75%' }}>
-                        <div className="row ">
+                        <div className="row">
                             <div className="col">City Government of Imus Landline</div>
                         </div>
                         <div className="row">
@@ -379,7 +386,7 @@ const HomePage = () => {
                             <div className="col text-end">(For Emergency) - (046) 888 9911</div>
                         </div>
                         <hr />
-                        <div className="row ">
+                        <div className="row">
                             <div className="col">City Disaster Risk Reduction Management Office (CDRRMO)</div>
                         </div>
                         <div className="row">
