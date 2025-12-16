@@ -17,7 +17,7 @@ const VisitingImus = () => {
               <li className="list-group-item">
                 <a href="/HistoryandCulture">Cultural and Historical Events</a>
               </li>
-              <li className="list-group-item">
+              <li className="list-group-item active">
                 <a href="/VisitingImus">Visiting Imus</a>
               </li>
               <li className="list-group-item">

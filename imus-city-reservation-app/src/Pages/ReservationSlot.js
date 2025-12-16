@@ -83,7 +83,7 @@ const ReservationSlot = () => {
               <li className="list-group-item">
                 <a href="/EBoss">EBoss</a>
               </li>
-              <li className="list-group-item">
+              <li className="list-group-item active">
                 <a href="/ReservationSlot">Slot Reservation</a>
               </li>
             </ul>

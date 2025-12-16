@@ -1,3 +1,5 @@
+/*eslint-disable react-hooks/exhaustive-deps*/
+/*eslint-disable no-unused-vars*/
 import React, { useState, useEffect, useRef } from 'react';
 import RescheduleModal from '../Components/RescheduleModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -765,7 +767,7 @@ const EmployeeTableView = () => {
     const [availableCameras, setAvailableCameras] = useState([]);
     const [currentCamera, setCurrentCamera] = useState(null);
     
-    // Graph states - cascading filter system (ONLY FOR GRAPH)
+    //Graph states
     const [showGraph, setShowGraph] = useState(false);
     const [graphData, setGraphData] = useState([]);
     const [graphFilterType, setGraphFilterType] = useState('Week');
@@ -773,7 +775,7 @@ const EmployeeTableView = () => {
     const [graphSelectedMonth, setGraphSelectedMonth] = useState('');
     const [graphSelectedYear, setGraphSelectedYear] = useState('');
     
-    // Table filter states - ORIGINAL SYSTEM (UNCHANGED)
+    //Table filter states
     const [filterType, setFilterType] = useState('Day');
     const [selectedWeek, setSelectedWeek] = useState('');
     const [selectedMonth, setSelectedMonth] = useState('');
@@ -809,12 +811,12 @@ const EmployeeTableView = () => {
         setGraphSelectedYear(year.toString());
         setGraphSelectedWeek(`${year}-W${String(getWeekNumber(today)).padStart(2, '0')}`);
         
-        // Set current week
+        //Set current week
         const weekNum = getWeekNumber(today);
         setSelectedWeek(`${year}-W${String(weekNum).padStart(2, '0')}`);
     }, []);
 
-    // Fetch all reservations for graph
+    //Fetch all reservations for graph
     useEffect(() => {
         const fetchAllReservations = async () => {
             try {
@@ -828,14 +830,14 @@ const EmployeeTableView = () => {
         fetchAllReservations();
     }, []);
 
-    // Update graph when period or data changes
+    //Update graph when period or data changes
     useEffect(() => {
         if (allReservations.length > 0) {
             setGraphData(buildGraphData());
         }
     }, [graphFilterType, allReservations, graphSelectedWeek, graphSelectedMonth, graphSelectedYear]);
 
-    // Fetch reservations based on ORIGINAL table filter system (UNCHANGED)
+    //Fetch reservations based on ORIGINAL table filter system (UNCHANGED)
     useEffect(() => {
         const fetchReservations = async () => {
             try {
@@ -844,7 +846,7 @@ const EmployeeTableView = () => {
                 if (filterType === 'Day' && selectedDate) {
                     url += `?date=${selectedDate}`;
                 } else if (filterType === 'Week' && selectedWeek) {
-                    // Get week range
+                    //Get week range
                     const [year, week] = selectedWeek.split('-W');
                     const weekDates = getWeekDateRange(parseInt(year), parseInt(week));
                     url += `?startDate=${weekDates.start}&endDate=${weekDates.end}`;
@@ -888,7 +890,7 @@ const EmployeeTableView = () => {
         }
     }, [searchTerm, reservations]);
 
-    // Helper function to get ISO week number
+    //Helper function to get ISO week number
     const getWeekNumber = (date) => {
         const d = new Date(date);
         d.setHours(0, 0, 0, 0);
@@ -897,7 +899,7 @@ const EmployeeTableView = () => {
         return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
     };
 
-    // Helper function to get week date range
+    //Helper function to get week date range
     const getWeekDateRange = (year, week) => {
         const simple = new Date(year, 0, 1 + (week - 1) * 7);
         const dow = simple.getDay();
@@ -916,7 +918,7 @@ const EmployeeTableView = () => {
         };
     };
 
-    // Build graph data based on cascading filter settings (ONLY FOR GRAPH)
+    //Build graph data
     const buildGraphData = () => {
         const summary = {};
         const sortableKeys = {};
@@ -929,7 +931,7 @@ const EmployeeTableView = () => {
             let sortKey = '';
             let includeInData = true;
 
-            // Filter based on cascading graph filter settings
+            //Filter based on cascading graph filter settings
             if (graphFilterType === 'Day' && graphSelectedWeek) {
                 const [year, week] = graphSelectedWeek.split('-W');
                 const weekDates = getWeekDateRange(parseInt(year), parseInt(week));
@@ -940,33 +942,33 @@ const EmployeeTableView = () => {
             } else if (graphFilterType === 'Month' && graphSelectedYear) {
                 includeInData = d.getFullYear() === parseInt(graphSelectedYear);
             } else if (graphFilterType === 'Year') {
-                // Show all years - no filtering needed
+                //Show all years - no filtering needed
                 includeInData = true;
             }
 
             if (!includeInData) return;
 
             if (graphFilterType === 'Day') {
-                // For day filter, show individual days of the week
+                //For day filter, show individual days of the week
                 const dayName = d.toLocaleString('default', { weekday: 'short' });
                 const dayNum = d.getDate();
                 key = `${dayName} ${dayNum}`;
                 sortKey = d.toISOString().split('T')[0];
             } else if (graphFilterType === 'Week') {
-                // For week filter, show weeks of the month
+                //For week filter, show weeks of the month
                 const year = d.getFullYear();
                 const weekNum = getWeekNumber(d);
                 const monthName = d.toLocaleString('default', { month: 'long' });
                 key = `Week ${weekNum} – ${monthName} ${year}`;
                 sortKey = `${year}-${String(weekNum).padStart(2, '0')}`;
             } else if (graphFilterType === 'Month') {
-                // For month filter, show months of the year
+                //For month filter, show months of the year
                 const year = d.getFullYear();
                 const month = d.getMonth();
                 key = d.toLocaleString('default', { month: 'short', year: 'numeric' });
                 sortKey = `${year}-${String(month + 1).padStart(2, '0')}`;
             } else if (graphFilterType === 'Year') {
-                // For year filter, show all years
+                //For year filter, show all years
                 const year = d.getFullYear();
                 key = year.toString();
                 sortKey = year.toString();
@@ -991,7 +993,7 @@ const EmployeeTableView = () => {
             });
     };
 
-    // Table filter handlers - ORIGINAL SYSTEM (UNCHANGED)
+    //Table filter handlers
     const handleFilterTypeChange = (e) => {
         setFilterType(e.target.value);
     };
@@ -1016,7 +1018,7 @@ const EmployeeTableView = () => {
         setSearchTerm(e.target.value);
     };
 
-    // Graph filter handlers - CASCADING SYSTEM (ONLY FOR GRAPH)
+    //Graph filter handlers
     const handleGraphFilterTypeChange = (e) => {
         setGraphFilterType(e.target.value);
     };
@@ -1033,7 +1035,7 @@ const EmployeeTableView = () => {
         setGraphSelectedYear(e.target.value);
     };
 
-    // QR Scanner Functions - using your working code
+    //QR Scanner Functions
     const handleOpenQRScanner = async () => {
         setShowQRScanner(true);
         setScannedReservation(null);
@@ -1068,8 +1070,8 @@ const EmployeeTableView = () => {
 
     const startScanner = async () => {
         if (!currentCamera) { setQrError('No camera selected'); return; }
-        setQrError('');                       // clear old message
-        setIsScanning(true);                  // disable button instantly
+        setQrError('');
+        setIsScanning(true);
 
         try {
             const constraints = {
@@ -1080,15 +1082,15 @@ const EmployeeTableView = () => {
             attachStream(stream);
         } catch (err) {
             console.error('Preferred camera failed', err);
-            setQrError(err.message);          // show user the real reason
-            // ---- fallback: any camera ----
+            setQrError(err.message);
+            //fallback: any camera
             try {
                 const fallback = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                 attachStream(fallback);
             } catch (fbErr) {
                 console.error('Any camera also failed', fbErr);
                 setQrError('Camera blocked or no permission – use HTTPS and allow camera.');
-                setIsScanning(false);         // re-enable button
+                setIsScanning(false);
             }
         }
 
@@ -1102,7 +1104,7 @@ const EmployeeTableView = () => {
             vid.autoplay = true;
             vid.onloadedmetadata = () => {
                 vid.play();
-                startQRCodeDetection();       // start scanning loop
+                startQRCodeDetection();
             };
             vid.onerror = () => {
                 setQrError('Video element error');
@@ -1231,7 +1233,7 @@ const EmployeeTableView = () => {
             window.history.pushState({}, '', newUrl);
         }
         
-        // Set filter to Day and date (original system)
+        //Set filter to Day and date
         setFilterType('Day');
         setSelectedDate(reservationDate);
         
@@ -1326,7 +1328,7 @@ const EmployeeTableView = () => {
             const response = await api.post('/reschedule.php', rescheduleData);
             
             if (response.data.success) {
-                // Refresh data
+                //Refresh data
                 const allResponse = await api.get('/reservations.php');
                 setAllReservations(allResponse.data);
 
@@ -1451,7 +1453,7 @@ const EmployeeTableView = () => {
                     </div>
                 )}
 
-                {/* Table Header - ORIGINAL FILTER SYSTEM (UNCHANGED) */}
+                {/*Table Header*/}
                 <div className="table-header-section">
                     <div className="table-title-section">
                         <h2>{formTitle}</h2>
@@ -1730,8 +1732,8 @@ const EmployeeTableView = () => {
                                             <p><strong>Status:</strong> 
                                                 <span style={{
                                                     color: scannedReservation.status === 'Complete' ? '#28a745' : 
-                                                           scannedReservation.status === 'Cancelled' ? '#dc3545' : 
-                                                           scannedReservation.status === 'Pending' ? '#ffc107' : '#06428A',
+                                                        scannedReservation.status === 'Cancelled' ? '#dc3545' : 
+                                                        scannedReservation.status === 'Pending' ? '#ffc107' : '#06428A',
                                                     fontWeight: 'bold',
                                                     marginLeft: '8px'
                                                 }}>

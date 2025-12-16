@@ -1,3 +1,4 @@
+/*eslint-disable jsx-a11y/iframe-has-title*/
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import api from '../api/axiosConfig';
@@ -73,13 +74,13 @@ const HomePage = () => {
         }
     };
 
-    // Helper function to get display date
+    //Helper function to get display date
     const getDisplayDate = (newsItem) => {
         if (newsItem.news_date && newsItem.news_date.trim() !== '') {
             return newsItem.news_date;
         }
         
-        // Fallback: check title for month/year
+        //Fallback: check title for month/year
         if (newsItem.title) {
             const title = newsItem.title.toLowerCase();
             if (title.includes('july')) return 'July';

@@ -23,7 +23,7 @@ const NotablePerson = () => {
               <li className="list-group-item">
                 <a href="/HeroesofImus">Heroes of Imus</a>
               </li>
-              <li className="list-group-item">
+              <li className="list-group-item active">
                 <a href="/NotablePerson">Notable Imuseños</a>
               </li>
             </ul>

@@ -25,7 +25,7 @@ const PastMayors = () => {
                             <li className="list-group-item"><a href="/DepartmentsandUnits">Departments and Units</a></li>
                             <li className="list-group-item"><a href="/BarangayOfficials">Barangay Officials</a></li>
                             <li className="list-group-item"><a href="/History">History</a></li>
-                            <li className="list-group-item"><a href="/PastMayors">Past Mayors</a></li>
+                            <li className="list-group-item active"><a href="/PastMayors">Past Mayors</a></li>
                         </ul>
                     </div>
                 </div>

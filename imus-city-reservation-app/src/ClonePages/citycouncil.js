@@ -19,7 +19,7 @@ const CityCouncil = () => {
                             
                             <div id="collapseThree" className="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordioncity">
                                 <li className="list-group-item"><a href="/CityMayor">City Mayor</a></li>
-                                <li className="list-group-item"><a href="/CityCouncil">City Council</a></li>
+                                <li className="list-group-item active"><a href="/CityCouncil">City Council</a></li>
                             </div>
                             
                             <li className="list-group-item"><a href="/DepartmentsandUnits">Departments and Units</a></li>

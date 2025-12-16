@@ -12,7 +12,7 @@ const HistoryAndCulture = () => {
                                 <li className="list-group-item" style={{ backgroundColor: 'white', color: '#053774' }}>
                                     <h3>Tourism</h3>
                                 </li>
-                                <li className="list-group-item "><a href="/HistoryandCulture">Cultural and Historical Events</a></li>
+                                <li className="list-group-item active"><a href="/HistoryandCulture">Cultural and Historical Events</a></li>
                                 <li className="list-group-item "><a href="/VisitingImus">Visiting Imus</a></li>
                                 <li className="list-group-item "><a href="/HeroesofImus">Heroes of Imus</a></li>
                                 <li className="list-group-item "><a href="/NotablePerson">Notable Imuseños</a></li>

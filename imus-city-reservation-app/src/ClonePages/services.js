@@ -14,7 +14,7 @@ const Services = () => {
               >
                 <h3>Services</h3>
               </li>
-              <li className="list-group-item">
+              <li className="list-group-item active">
                 <a href="/Services">City Public Library</a>
               </li>
               <li className="list-group-item">

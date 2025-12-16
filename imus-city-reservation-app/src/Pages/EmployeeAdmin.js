@@ -1,135 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axiosConfig';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faChartBar } from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faChartBar, faNewspaper, faPlus, faEdit, faTrash, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const pageSpecificStyles = `
-    /* Main Container */
-    .admin-main-container {
-        display: flex;
-        min-height: calc(100vh - 150px);
-        background-color: var(--light-bg);
+    .admin-view-container {
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        border: 1px solid #e0e0e0;
     }
-    
-    /* Sidebar Styles - Wider and matching CityProfile */
-    .admin-sidebar {
-        width: 280px;
-        min-width: 280px;
-        background-color: var(--primary);
-        color: white;
-        padding: 0;
-        border-radius: 0 16px 16px 0;
-        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
-        margin-right: 20px;
-        position: sticky;
-        top: 0;
-        height: fit-content;
-        overflow: hidden;
-    }
-    
-    .admin-sidebar-header {
-        padding: 20px 25px;
-        border-bottom: 2px solid rgba(255,255,255,0.1);
-        margin-bottom: 0;
-        background-color: var(--primary);
-        color: white;
-        border-radius: 0 16px 0 0;
-    }
-    
-    .admin-sidebar-header h3 {
-        color: white;
-        font-size: 1.4rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin: 0;
-    }
-    
-    .admin-sidebar-menu {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        background-color: var(--primary);
-        border-radius: 0 0 16px 16px;
-    }
-    
-    .admin-sidebar-menu li {
-        margin: 0;
-        padding: 0;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    
-    .admin-sidebar-menu li:last-child {
-        border-bottom: none;
-        border-radius: 0 0 16px 16px;
-        overflow: hidden;
-    }
-    
-    .admin-sidebar-menu li:last-child a {
-        border-radius: 0 0 16px 16px;
-    }
-    
-    .admin-sidebar-menu li:last-child a:hover,
-    .admin-sidebar-menu li:last-child.active a {
-        border-radius: 0 0 16px 16px;
-        background-color: var(--secondary);
-    }
-    
-    .admin-sidebar-menu li a {
-        display: flex;
-        align-items: center;
-        padding: 15px 25px;
-        color: #bbd2f0;
-        font-weight: 500;
-        font-size: 0.95rem;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        position: relative;
-        text-decoration: none;
-        white-space: normal;
-    }
-    
-    .admin-sidebar-menu li a:hover,
-    .admin-sidebar-menu li.active a {
-        background-color: var(--secondary);
-        color: white;
-        font-weight: 700;
-        padding-left: 30px;
-    }
-    
-    .admin-sidebar-menu li a .icon {
-        margin-right: 12px;
-        font-size: 1.2em;
-        width: 20px;
-        text-align: center;
-        color: inherit;
-    }
-    
-    .admin-sidebar-menu li.active a .icon {
-        color: white;
-    }
-    
-    /* Content Area */
-    .admin-content-container {
-        flex: 1;
-        padding: 30px;
-        max-width: calc(100% - 300px);
-    }
-    
-    .admin-header {
+
+    .table-header-section {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-        border-bottom: 2px solid var(--primary);
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+        border-bottom: 2px solid #053774;
+        padding-bottom: 15px;
     }
-    
-    .admin-header h2 {
-        color: var(--primary);
-        margin: 0;
+
+    .table-title-section h2 {
+        color: #053774;
         font-size: 2em;
+        margin: 0;
     }
-    
+
     .admin-badge {
         background-color: #ffc107;
         color: #212529;
@@ -137,75 +37,97 @@ const pageSpecificStyles = `
         border-radius: 20px;
         font-weight: bold;
         font-size: 0.9em;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
+        margin-left: 10px;
     }
-    
-    .add-employee-btn {
-        background-color: var(--secondary);
+
+    /*TABLE STYLES*/
+    table {
+        border: 1px solid #ccc;
+        border-collapse: collapse;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        table-layout: auto;
+        background-color: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    table tr {
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        padding: .35em;
+    }
+
+    table th,
+    table td {
+        padding: 12px 8px;
+        text-align: center;
+        border: 1px solid #e0e0e0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    table th {
+        background-color: #053774;
         color: white;
+        font-size: 0.8em;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f8f8f8;
+    }
+
+    /*BUTTON STYLES*/
+    .actions-buttons {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        min-height: 50px;
+    }
+
+    .action-button {
+        padding: 6px 10px;
         border: none;
-        padding: 10px 20px;
-        border-radius: 6px;
+        border-radius: 5px;
         cursor: pointer;
-        font-weight: 500;
-        font-size: 1em;
+        font-size: 0.8em;
         display: flex;
         align-items: center;
-        gap: 8px;
-        transition: background-color 0.3s ease;
-    }
-    
-    .add-employee-btn:hover {
-        background-color: #218838;
-    }
-    
-    .employee-table-container {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-        overflow: hidden;
-        margin-bottom: 30px;
-    }
-    
-    .employee-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    .employee-table thead {
-        background-color: var(--primary);
-    }
-    
-    .employee-table th {
+        justify-content: center;
+        gap: 4px;
+        transition: background-color 0.2s ease;
+        white-space: nowrap;
+        min-width: 90px;
         color: white;
-        padding: 15px;
-        text-align: left;
-        font-weight: 600;
-        font-size: 0.95em;
-        border-right: 1px solid rgba(255,255,255,0.1);
     }
-    
-    .employee-table th:last-child {
-        border-right: none;
+
+    .add-button {
+        background-color: #18a54a;
+        color: white;
+        padding: 8px 15px;
+        font-size: 1em;
     }
-    
-    .employee-table td {
-        padding: 15px;
-        border-bottom: 1px solid #e0e0e0;
-        color: #333;
-        font-size: 0.95em;
+    .add-button:hover { background-color: #128c3d; }
+
+    .edit-button {
+        background-color: #053774;
     }
-    
-    .employee-table tr:last-child td {
-        border-bottom: none;
+    .edit-button:hover { background-color: #04285c; }
+
+    .delete-button {
+        background-color: #dc3545;
     }
-    
-    .employee-table tr:hover {
-        background-color: #f8f9fa;
-    }
-    
+    .delete-button:hover { background-color: #c82333; }
+    .delete-button:disabled { background-color: #6c757d; cursor: not-allowed; }
+
     .role-badge {
         padding: 4px 12px;
         border-radius: 12px;
@@ -213,70 +135,20 @@ const pageSpecificStyles = `
         font-weight: 500;
         display: inline-block;
     }
-    
-    .role-admin {
-        background-color: #ffc107;
-        color: #212529;
-    }
-    
-    .role-employee {
-        background-color: #6c757d;
-        color: white;
-    }
-    
-    .action-buttons {
-        display: flex;
-        gap: 10px;
-    }
-    
-    .action-btn {
-        padding: 6px 12px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.9em;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        min-width: 80px;
-        justify-content: center;
-    }
-    
-    .edit-btn {
-        background-color: var(--primary);
-        color: white;
-    }
-    
-    .edit-btn:hover {
-        background-color: #053774;
-    }
-    
-    .delete-btn {
-        background-color: #dc3545;
-        color: white;
-    }
-    
-    .delete-btn:hover {
-        background-color: #c82333;
-    }
-    
-    /* Modal Styles */
+    .role-admin { background-color: #ffc107; color: #212529; }
+    .role-employee { background-color: #6c757d; color: white; }
+
+    /*Modal Styles*/
     .modal-overlay {
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0,0,0,0.5);
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(0,0,0,0.7);
         display: flex;
         justify-content: center;
         align-items: center;
-        z-index: 1000;
+        z-index: 2000;
         padding: 20px;
     }
-    
     .modal-content {
         background-color: white;
         border-radius: 10px;
@@ -284,234 +156,52 @@ const pageSpecificStyles = `
         max-width: 500px;
         max-height: 90vh;
         overflow-y: auto;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
     }
-    
     .modal-header {
         padding: 20px;
         border-bottom: 1px solid #e0e0e0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        display: flex; justify-content: space-between; align-items: center;
     }
-    
-    .modal-header h3 {
-        margin: 0;
-        color: var(--primary);
-        font-size: 1.5em;
+    .modal-header h3 { margin: 0; color: #053774; font-size: 1.5em; }
+    .modal-body { padding: 20px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
+    .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    .modal-footer { padding: 20px; border-top: 1px solid #e0e0e0; display: flex; justify-content: flex-end; gap: 10px; }
+
+    /*Password Toggle Styles*/
+    .password-wrapper {
+        position: relative;
+        width: 100%;
     }
-    
-    .close-btn {
+    .password-wrapper input {
+        width: 100%;
+        padding-right: 40px;
+    }
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
         background: none;
         border: none;
-        font-size: 1.5em;
         cursor: pointer;
         color: #666;
         padding: 0;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
     }
-    
-    .close-btn:hover {
-        background-color: #f8f9fa;
-        color: #333;
+    .toggle-password:hover {
+        color: #053774;
     }
-    
-    .modal-body {
-        padding: 20px;
-    }
-    
-    .form-group {
-        margin-bottom: 20px;
-    }
-    
-    .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 500;
-        color: #333;
-    }
-    
-    .form-group input,
-    .form-group select {
-        width: 100%;
-        padding: 10px 12px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 1em;
-        box-sizing: border-box;
-        transition: border-color 0.2s ease;
-    }
-    
-    .form-group input:focus,
-    .form-group select:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 2px rgba(5, 55, 116, 0.1);
-    }
-    
-    .required-star {
-        color: #dc3545;
-        margin-left: 4px;
-    }
-    
-    .password-note {
-        font-size: 0.85em;
-        color: #666;
-        margin-top: 5px;
-        font-style: italic;
-    }
-    
-    .modal-footer {
-        padding: 20px;
-        border-top: 1px solid #e0e0e0;
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
-    
-    .modal-btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 1em;
-        font-weight: 500;
-        min-width: 100px;
-    }
-    
-    .modal-btn-cancel {
-        background-color: #6c757d;
-        color: white;
-    }
-    
-    .modal-btn-cancel:hover {
-        background-color: #5a6268;
-    }
-    
-    .modal-btn-save {
-        background-color: var(--secondary);
-        color: white;
-    }
-    
-    .modal-btn-save:hover {
-        background-color: #218838;
-    }
-    
-    .modal-btn-save:disabled {
-        background-color: #6c757d;
-        cursor: not-allowed;
-    }
-    
-    /* Loading and Empty States */
-    .loading-container,
-    .empty-state {
-        text-align: center;
-        padding: 50px;
-        color: #666;
-    }
-    
-    .loading-spinner {
-        border: 3px solid #f3f3f3;
-        border-top: 3px solid var(--primary);
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 20px;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    .access-denied {
-        text-align: center;
-        padding: 100px 20px;
-        color: #dc3545;
-    }
-    
-    .access-denied h2 {
-        margin-bottom: 20px;
-    }
-    
-    .back-btn {
-        background-color: var(--primary);
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 1em;
-        margin-top: 20px;
-    }
-    
-    .back-btn:hover {
-        background-color: #053774;
-    }
-    
-    /* Responsive Design */
-    @media (max-width: 992px) {
-        .admin-main-container {
-            flex-direction: column;
-        }
-        
-        .admin-sidebar {
-            width: 100%;
-            min-width: 100%;
-            margin-right: 0;
-            margin-bottom: 20px;
-            border-radius: 0 0 16px 16px;
-            position: relative;
-        }
-        
-        .admin-content-container {
-            max-width: 100%;
-            padding: 20px;
-        }
-        
-        .admin-header {
-            flex-direction: column;
-            gap: 15px;
-            align-items: flex-start;
-        }
-        
-        .employee-table-container {
-            overflow-x: auto;
-        }
-        
-        .employee-table {
-            min-width: 800px;
-        }
-        
-        .action-buttons {
-            flex-direction: column;
-            gap: 5px;
-        }
-        
-        .action-btn {
-            min-width: 70px;
-            font-size: 0.85em;
-        }
-        
-        .modal-overlay {
-            padding: 10px;
-        }
-        
-        .modal-content {
-            max-height: 95vh;
-        }
-    }
-    
+
     @media (max-width: 768px) {
-        .admin-content-container {
-            padding: 15px;
-        }
+        table { font-size: 0.85em; }
+        table thead { display: none; }
+        table tr { display: block; margin-bottom: 15px; border: 1px solid #ddd; }
+        table td { display: block; text-align: right; padding: 10px; border-bottom: 1px solid #ddd; position: relative; padding-left: 50%; }
+        table td:before { content: attr(data-label); position: absolute; left: 10px; font-weight: bold; text-transform: uppercase; font-size: 0.75em; }
+        table td:last-child { border-bottom: none; }
+        .actions-buttons { justify-content: flex-end; }
     }
 `;
 
@@ -520,25 +210,18 @@ const EmployeeAdmin = () => {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [currentEmployee, setCurrentEmployee] = useState({
-        id: '',
-        employeeid: '',
-        password: '',
-        first_name: '',
-        last_name: '',
-        isAdmin: 'notAdmin'
+        id: '', employeeid: '', password: '', first_name: '', last_name: '', isAdmin: 'notAdmin'
     });
     const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
-        // Check if user is admin
         const adminStatus = sessionStorage.getItem("isAdmin");
-        
         if (adminStatus !== 'admin') {
             window.location.href = "/EmployeeHome";
             return;
         }
-        
         setIsAdmin(true);
         fetchEmployees();
     }, []);
@@ -550,321 +233,197 @@ const EmployeeAdmin = () => {
             setEmployees(response.data);
         } catch (error) {
             console.error("Error fetching employees:", error);
-            alert("Failed to load employees. Please try again.");
         } finally {
             setLoading(false);
         }
     };
 
     const handleAddEmployee = () => {
-        setCurrentEmployee({
-            id: '',
-            employeeid: '',
-            password: '',
-            first_name: '',
-            last_name: '',
-            isAdmin: 'notAdmin'
-        });
+        setCurrentEmployee({ id: '', employeeid: '', password: '', first_name: '', last_name: '', isAdmin: 'notAdmin' });
         setIsEditMode(false);
+        setShowPassword(false);
         setShowModal(true);
     };
 
     const handleEditEmployee = (employee) => {
-        setCurrentEmployee({
-            id: employee.id,
-            employeeid: employee.employeeid,
-            password: '', // Don't show current password
-            first_name: employee.first_name,
-            last_name: employee.last_name,
-            isAdmin: employee.isAdmin || 'notAdmin'
-        });
+        setCurrentEmployee(employee); 
         setIsEditMode(true);
+        setShowPassword(false);
         setShowModal(true);
     };
 
-    const handleDeleteEmployee = async (id, employeeid) => {
-        if (window.confirm(`Are you sure you want to delete employee ${employeeid}? This action cannot be undone.`)) {
-            try {
-                await api.delete('/employees.php', {
-                    data: { id: id }
-                });
-                fetchEmployees();
-                alert("Employee deleted successfully.");
-            } catch (error) {
-                console.error("Error deleting employee:", error);
-                alert("Failed to delete employee. Please try again.");
-            }
-        }
-    };
-
     const handleSaveEmployee = async () => {
-        // Validate form
-        if (!currentEmployee.employeeid.trim()) {
-            alert("Please enter Employee ID");
-            return;
-        }
-        if (!currentEmployee.first_name.trim()) {
-            alert("Please enter First Name");
-            return;
-        }
-        if (!currentEmployee.last_name.trim()) {
-            alert("Please enter Last Name");
-            return;
-        }
-        if (!isEditMode && !currentEmployee.password.trim()) {
-            alert("Please enter Password for new employee");
-            return;
-        }
-
         try {
-            const employeeData = {
-                employeeid: currentEmployee.employeeid,
-                first_name: currentEmployee.first_name,
-                last_name: currentEmployee.last_name,
-                isAdmin: currentEmployee.isAdmin
-            };
-
-            if (isEditMode) {
-                // Add the ID for updates
-                employeeData.id = currentEmployee.id;
-                
-                // Only include password if a new one was provided
-                if (currentEmployee.password.trim()) {
-                    employeeData.password = currentEmployee.password;
-                }
-                
-                await api.put('/employees.php', employeeData);
-                alert("Employee updated successfully.");
-            } else {
-                // For new employees, password is required
-                if (!currentEmployee.password.trim()) {
-                    alert("Please enter Password for new employee");
-                    return;
-                }
-                employeeData.password = currentEmployee.password;
-                
-                await api.post('/employees.php', employeeData);
-                alert("Employee added successfully.");
-            }
-            
+            if (isEditMode) await api.put('/employees.php', currentEmployee);
+            else await api.post('/employees.php', currentEmployee);
             setShowModal(false);
             fetchEmployees();
         } catch (error) {
-            console.error("Error saving employee:", error);
-            const errorMsg = error.response?.data?.message || "Failed to save employee. Please try again.";
-            alert(errorMsg);
+            alert("Operation failed");
         }
     };
 
-    const handleCloseModal = () => {
-        setShowModal(false);
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setCurrentEmployee(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    if (!isAdmin) {
-        return (
-            <div className="access-denied">
-                <h2>Access Denied</h2>
-                <p>You do not have permission to access this page.</p>
-                <button className="back-btn" onClick={() => window.location.href = "/EmployeeHome"}>
-                    Go to Home
-                </button>
-            </div>
-        );
+    const handleDeleteEmployee = async (id) => {
+        if(window.confirm("Delete Employee?")) {
+            await api.delete('/employees.php', {data: {id}});
+            fetchEmployees();
+        }
     }
+
+    if (!isAdmin) return null;
 
     return (
         <>
             <style>{pageSpecificStyles}</style>
-            <div className="admin-main-container">
-                {/* Wider Sidebar with proper bottom styling */}
-                <div className="admin-sidebar">
-                    <div className="admin-sidebar-header">
-                        <h3>Admin Panel</h3>
-                    </div>
-                    
-                    <ul className="admin-sidebar-menu">
-                        <li className="active">
-                            <a href="/EmployeeAdmin">
-                                <FontAwesomeIcon icon={faUsers} className="icon" />
-                                Employee Management
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/EmployeeAdminStats">
-                                <FontAwesomeIcon icon={faChartBar} className="icon" />
-                                Statistics Management
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                
-                {/* Main Content */}
-                <div className="admin-content-container">
-                    <div className="admin-header">
-                        <div>
-                            <h2>Employee Administration</h2>
-                            <span className="admin-badge">Administrator Access</span>
+            <div className="container no-animations">
+                <div className="row p-3">
+                    {/*Sidebar*/}
+                    <div className="col-md-2 col-sm-12">
+                        <div className="text-center">
+                            <ul className="list-group list-group-flush">
+                                <li className="list-group-item" style={{ backgroundColor: 'white', color: '#053774' }}>
+                                    <h3>Admin Panel</h3>
+                                </li>
+                                <li className="list-group-item active">
+                                    <a href="/EmployeeAdmin"><FontAwesomeIcon icon={faUsers} className="me-2"/> Employee Mgmt</a>
+                                </li>
+                                <li className="list-group-item">
+                                    <a href="/EmployeeAdminStats"><FontAwesomeIcon icon={faChartBar} className="me-2"/> Statistics Mgmt</a>
+                                </li>
+                                <li className="list-group-item">
+                                    <a href="/EmployeeAdminNews"><FontAwesomeIcon icon={faNewspaper} className="me-2"/> News Mgmt</a>
+                                </li>
+                            </ul>
                         </div>
-                        <button className="add-employee-btn" onClick={handleAddEmployee}>
-                            <span>+</span> Add New Employee
-                        </button>
                     </div>
 
-                    {loading ? (
-                        <div className="loading-container">
-                            <div className="loading-spinner"></div>
-                            <p>Loading employees...</p>
-                        </div>
-                    ) : employees.length === 0 ? (
-                        <div className="empty-state">
-                            <p>No employees found. Add your first employee.</p>
-                        </div>
-                    ) : (
-                        <div className="employee-table-container">
-                            <table className="employee-table">
-                                <thead>
-                                    <tr>
-                                        <th>Employee ID</th>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
-                                        <th>Role</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {employees.map(employee => (
-                                        <tr key={employee.id}>
-                                            <td>{employee.employeeid}</td>
-                                            <td>{employee.first_name}</td>
-                                            <td>{employee.last_name}</td>
-                                            <td>
-                                                <span className={`role-badge ${employee.isAdmin === 'admin' ? 'role-admin' : 'role-employee'}`}>
-                                                    {employee.isAdmin === 'admin' ? 'Administrator' : 'Employee'}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <div className="action-buttons">
-                                                    <button 
-                                                        className="action-btn edit-btn"
-                                                        onClick={() => handleEditEmployee(employee)}
-                                                    >
-                                                        Edit
-                                                    </button>
-                                                    <button 
-                                                        className="action-btn delete-btn"
-                                                        onClick={() => handleDeleteEmployee(employee.id, employee.employeeid)}
-                                                        disabled={employee.employeeid === sessionStorage.getItem("loggedInUser")}
-                                                        title={employee.employeeid === sessionStorage.getItem("loggedInUser") ? "Cannot delete your own account" : ""}
-                                                    >
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                            </td>
+                    {/*Content*/}
+                    <div className="col-md-10 col-sm-12">
+                        <div className="admin-view-container">
+                            <div className="table-header-section">
+                                <div className="table-title-section">
+                                    <h2>Employee Administration</h2>
+                                    <span className="admin-badge">Administrator Access</span>
+                                </div>
+                                <button className="action-button add-button" onClick={handleAddEmployee}>
+                                    <FontAwesomeIcon icon={faPlus} /> Add Employee
+                                </button>
+                            </div>
+
+                            {loading ? <p>Loading...</p> : (
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Role</th>
+                                            <th>Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {employees.map(employee => (
+                                            <tr key={employee.id}>
+                                                <td data-label="ID">{employee.employeeid}</td>
+                                                <td data-label="First Name">{employee.first_name}</td>
+                                                <td data-label="Last Name">{employee.last_name}</td>
+                                                <td data-label="Role">
+                                                    <span className={`role-badge ${employee.isAdmin === 'admin' ? 'role-admin' : 'role-employee'}`}>
+                                                        {employee.isAdmin === 'admin' ? 'Administrator' : 'Employee'}
+                                                    </span>
+                                                </td>
+                                                <td data-label="Actions">
+                                                    <div className="actions-buttons">
+                                                        <button className="action-button edit-button" onClick={() => handleEditEmployee(employee)}>
+                                                            <FontAwesomeIcon icon={faEdit} /> Edit
+                                                        </button>
+                                                        <button 
+                                                            className="action-button delete-button" 
+                                                            onClick={() => handleDeleteEmployee(employee.id)}
+                                                            disabled={employee.employeeid === sessionStorage.getItem("loggedInUser")}
+                                                        >
+                                                            <FontAwesomeIcon icon={faTrash} /> Delete
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        {employees.length === 0 && <tr><td colSpan="5">No employees found.</td></tr>}
+                                    </tbody>
+                                </table>
+                            )}
                         </div>
-                    )}
+                    </div>
+                </div>
 
-                    {/* Add/Edit Employee Modal */}
-                    {showModal && (
-                        <div className="modal-overlay" onClick={(e) => e.target.className === 'modal-overlay' && handleCloseModal()}>
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h3>{isEditMode ? 'Edit Employee' : 'Add New Employee'}</h3>
-                                    <button className="close-btn" onClick={handleCloseModal}>×</button>
+                {/*Modal*/}
+                {showModal && (
+                    <div className="modal-overlay" onClick={(e) => e.target.className === 'modal-overlay' && setShowModal(false)}>
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h3>{isEditMode ? 'Edit Employee' : 'Add Employee'}</h3>
+                                <button style={{background:'none', border:'none', fontSize:'1.5rem', cursor:'pointer'}} onClick={() => setShowModal(false)}>×</button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label>Employee ID</label>
+                                    <input 
+                                        value={currentEmployee.employeeid} 
+                                        onChange={e => setCurrentEmployee({...currentEmployee, employeeid: e.target.value})} 
+                                        disabled={isEditMode} 
+                                        placeholder="e.g. EMP01"
+                                    />
                                 </div>
-                                <div className="modal-body">
-                                    <div className="form-group">
-                                        <label>
-                                            Employee ID <span className="required-star">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="employeeid"
-                                            value={currentEmployee.employeeid}
-                                            onChange={handleInputChange}
-                                            disabled={isEditMode}
-                                            placeholder="e.g., EMP001"
+                                <div className="form-group">
+                                    <label>First Name</label>
+                                    <input 
+                                        value={currentEmployee.first_name} 
+                                        onChange={e => setCurrentEmployee({...currentEmployee, first_name: e.target.value})} 
+                                        placeholder="e.g. Juan"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Last Name</label>
+                                    <input 
+                                        value={currentEmployee.last_name} 
+                                        onChange={e => setCurrentEmployee({...currentEmployee, last_name: e.target.value})} 
+                                        placeholder="e.g. Dela Cruz"
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Password</label>
+                                    <div className="password-wrapper">
+                                        <input 
+                                            type={showPassword ? "text" : "password"} 
+                                            value={currentEmployee.password} 
+                                            onChange={e => setCurrentEmployee({...currentEmployee, password: e.target.value})} 
+                                            placeholder={isEditMode ? "Leave blank to keep current" : "Enter password"} 
                                         />
-                                    </div>
-                                    
-                                    <div className="form-group">
-                                        <label>
-                                            First Name <span className="required-star">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="first_name"
-                                            value={currentEmployee.first_name}
-                                            onChange={handleInputChange}
-                                            placeholder="Enter first name"
-                                        />
-                                    </div>
-                                    
-                                    <div className="form-group">
-                                        <label>
-                                            Last Name <span className="required-star">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="last_name"
-                                            value={currentEmployee.last_name}
-                                            onChange={handleInputChange}
-                                            placeholder="Enter last name"
-                                        />
-                                    </div>
-                                    
-                                    <div className="form-group">
-                                        <label>
-                                            {isEditMode ? 'New Password (leave blank to keep current)' : 'Password'} 
-                                            {!isEditMode && <span className="required-star">*</span>}
-                                        </label>
-                                        <input
-                                            type="password"
-                                            name="password"
-                                            value={currentEmployee.password}
-                                            onChange={handleInputChange}
-                                            placeholder={isEditMode ? "Enter new password or leave blank" : "Enter password"}
-                                        />
-                                        {isEditMode && (
-                                            <p className="password-note">Leave password field empty to keep the current password</p>
-                                        )}
-                                    </div>
-                                    
-                                    <div className="form-group">
-                                        <label>Role</label>
-                                        <select
-                                            name="isAdmin"
-                                            value={currentEmployee.isAdmin}
-                                            onChange={handleInputChange}
+                                        <button 
+                                            type="button" 
+                                            className="toggle-password" 
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            title={showPassword ? "Hide Password" : "Show Password"}
                                         >
-                                            <option value="notAdmin">Employee</option>
-                                            <option value="admin">Administrator</option>
-                                        </select>
+                                            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="modal-footer">
-                                    <button className="modal-btn modal-btn-cancel" onClick={handleCloseModal}>
-                                        Cancel
-                                    </button>
-                                    <button className="modal-btn modal-btn-save" onClick={handleSaveEmployee}>
-                                        {isEditMode ? 'Update' : 'Save'}
-                                    </button>
+                                <div className="form-group">
+                                    <label>Role</label>
+                                    <select value={currentEmployee.isAdmin} onChange={e => setCurrentEmployee({...currentEmployee, isAdmin: e.target.value})}>
+                                        <option value="notAdmin">Employee</option>
+                                        <option value="admin">Administrator</option>
+                                    </select>
                                 </div>
                             </div>
+                            <div className="modal-footer">
+                                <button className="action-button" style={{backgroundColor:'#6c757d'}} onClick={() => setShowModal(false)}>Cancel</button>
+                                <button className="action-button add-button" onClick={handleSaveEmployee}>Save</button>
+                            </div>
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
         </>
     );

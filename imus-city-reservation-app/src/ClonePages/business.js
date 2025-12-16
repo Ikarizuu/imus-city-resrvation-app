@@ -5,29 +5,52 @@ const Business = () => {
     <div className="container no-animations">
       <div className="row p-3">
     
-
-      {/*Sidebar*/}
-            <div className="col-md-3 col-sm-6">
-              <div className="text-center">
-    
-                <ul className="list-group list-group-flush">
-                  <li className="list-group-item" style={{ backgroundColor: "white" }}><h3>Business</h3></li>
-                    <li className="list-group-item "><a href="#WhyInvest" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample" className="collapsed">Why Invest in Imus?</a></li>
-                    <li className="list-group-item "><a href="#Accomodation" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseExample" className="">Accommodation</a></li>
-                    <li className="list-group-item "><a href="#Communication" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample" className="collapsed">Communication</a></li>
-                    <li className="list-group-item "><a href="#CourierandGo" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample" className="collapsed">Courier and Cargo</a></li>
-                    <li className="list-group-item "><a href="#NationalTaxes" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample">National Taxes</a></li>
-                    <li className="list-group-item "><a href="#Transportation" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample">Transportation</a></li>
-                    <li className="list-group-item "><a href="#PowerandWater" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample">Utilities: Power and Water</a></li>
-                </ul>
-    
-            </div>
-            </div>
-
-        {/* Main content */}
-        <div className="col-md-6 col-sm-6">
+        <div className="col-md-2 col-sm-6">
+          <div className="text-center">
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item" style={{ backgroundColor: "white", color: "#053774" }}>
+                <h3>Business</h3>
+              </li>
+              <li className="list-group-item">
+                <a href="#WhyInvest" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample" className="collapsed">
+                  Why Invest in Imus?
+                </a>
+              </li>
+              <li className="list-group-item">
+                <a href="#Accomodation" data-bs-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseExample" className="">
+                  Accommodation
+                </a>
+              </li>
+              <li className="list-group-item">
+                <a href="#Communication" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample" className="collapsed">
+                  Communication
+                </a>
+              </li>
+              <li className="list-group-item">
+                <a href="#CourierandGo" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample" className="collapsed">
+                  Courier and Cargo
+                </a>
+              </li>
+              <li className="list-group-item">
+                <a href="#NationalTaxes" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample">
+                  National Taxes
+                </a>
+              </li>
+              <li className="list-group-item">
+                <a href="#Transportation" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample">
+                  Transportation
+                </a>
+              </li>
+              <li className="list-group-item">
+                <a href="#PowerandWater" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample">
+                  Utilities: Power and Water
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="col-md-9 col-sm-6">
           <div className="row">
-            {/* YouTube video */}
             <div
               style={{
                 position: "relative",
@@ -53,9 +76,8 @@ const Business = () => {
               ></iframe>
             </div>
             
-            
             {/*Accordions*/}
-            <div className="col-md-12 col-sm-6">
+            <div className="col-md-12 col-sm-12">
                 <div className="row">
                     <div className="accordion accordion-flush" id="accordionFlushExample">
                       <div className="accordion-item">
@@ -112,34 +134,24 @@ const Business = () => {
                         <div id="Accomodation" className="accordion-collapse collapse show" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
                           <div className="accordion-body">
                             
-                      {/* <table className="table-lg text-center" width="100%">
-                            <thead><tr className="tableizer-firstrow" style={{background-color:#053774;color:white}}>
-                              <th >HOTELS (room per night)</th><th className="text-center">Rates (PHP)</th><th className="text-center">Rates (USD)</th><th></th></tr></thead><tbody>
-                             <tr><td>Classic Room</td><td>1,500.00 - 4,800.00</td><td>27 - 87</td></tr>
-                             <tr><td>Deluxe Room</td><td>2,700.00 - 7,900.00</td><td>48 - 142</td></tr>
-                             <tr><td>Suite Room</td><td>3,500.00 - 10,000.00</td><td>63 - 180</td></tr>
-                             <tr><td>Dorm Room</td><td>3,500.00 - 10,000.00</td><td>63 - 180</td></tr>
-                             <tr><td>Family</td><td>4,000.00 - 10,500.00</td><td>72 - 188</td></tr>
-                            </tbody></table> 
-                          </br> */}                  
-<br/>
+                            <br/>
                             <table className="table-lg text-center" width="100%" id="roomid">
-                              <tr className="tableizer-firstrow" style={{backgroundColor:"#053774", color:"white"}}>
-                                <th>Room Per Night</th><th>Rates (PHP)</th><th>Rates (USD)</th></tr><tbody>
+                              <thead>
+                                <tr className="tableizer-firstrow" style={{backgroundColor:"#053774", color:"white"}}>
+                                <th>Room Per Night</th><th>Rates (PHP)</th><th>Rates (USD)</th></tr>
+                              </thead>
+                              <tbody>
                                <tr><td>Standard Room (2 pax)</td><td>1,500.00 - 2,800.00</td><td>&nbsp;&nbsp;&nbsp;25.66 -	47.90                              </td></tr>
                                <tr><td>Family Room (4 pax)</td><td>3,000.00 - 6,000.00</td><td>&nbsp;&nbsp;&nbsp;51.32 -	102.63                              </td></tr>
                               </tbody></table>
                             <br/>                    
-<br/>                         
+                            <br/>                         
                             <table className="table-lg text-center" width="100%" id="roomid">
                                 <thead><tr className="tableizer-firstrow" style={{backgroundColor:"#053774", color:"white"}}><th>Office and Commercial Space Rental <br/>(Per sq. meter/month)</th><th>Rates (PHP)</th><th>Rates (USD)</th></tr></thead><tbody>
                                  <tr><td>Commercial Zone</td><td>500.00 - 600.00</td><td>8.55 -	10.26                                </td></tr>
                                  <tr><td>Outside Commercial Zone</td><td>400.00 - 500.00</td><td>6.84 -	8.55                                </td></tr>
                               </tbody></table>
                             
-                          
-                          
-                          
                           </div>
                           <p className="text-center"><br/>
                             Conversion rate 1US$ = Php 58.46*<br/>
@@ -163,8 +175,6 @@ const Business = () => {
                                <tr><td>Embassy Calls</td><td>₱ 36.08* per minute</td></tr>
                               </tbody></table>
 
-
-                          
                           </div>
                           <p className="text-center"><br/>
                             Conversion rate 1US$ = Php 58.46*<br/>
