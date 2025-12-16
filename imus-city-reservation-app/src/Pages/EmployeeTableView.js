@@ -778,6 +778,7 @@ const EmployeeTableView = () => {
     const [graphSelectedWeek, setGraphSelectedWeek] = useState('');
     const [graphSelectedMonth, setGraphSelectedMonth] = useState('');
     const [graphSelectedYear, setGraphSelectedYear] = useState('');
+    const [graphFormFilter, setGraphFormFilter] = useState('current');
     
     //Table filter states
     const [filterType, setFilterType] = useState('Day');
@@ -849,7 +850,7 @@ const EmployeeTableView = () => {
         if (allReservations.length > 0) {
             setGraphData(buildGraphData());
         }
-    }, [graphFilterType, allReservations, graphSelectedWeek, graphSelectedMonth, graphSelectedYear]);
+    }, [graphFilterType, allReservations, graphSelectedWeek, graphSelectedMonth, graphSelectedYear, graphFormFilter, formTitle]);
 
     //Fetch reservations based on table filter system
     useEffect(() => {
@@ -973,30 +974,41 @@ const EmployeeTableView = () => {
         const summary = {};
         const sortableKeys = {};
 
-        allReservations.forEach(item => {
-            if (!item.reservation_date) return;
-
-            const d = new Date(item.reservation_date);
-            let key = '';
-            let sortKey = '';
+        //Filter reservations based on form selection
+        const filteredReservations = allReservations.filter(item => {
+            if (!item.reservation_date) return false;
+            
+            //Apply form filter
+            if (graphFormFilter === 'current' && formTitle !== 'All Reservations') {
+                if (item.form_name !== formTitle) return false;
+            }
+            
+            //Apply date filter based on graph filter type
             let includeInData = true;
-
-            //Filter based on cascading graph filter settings
+            
             if (graphFilterType === 'Day' && graphSelectedWeek) {
                 const [year, week] = graphSelectedWeek.split('-W');
                 const weekDates = getWeekDateRange(parseInt(year), parseInt(week));
                 includeInData = item.reservation_date >= weekDates.start && item.reservation_date <= weekDates.end;
             } else if (graphFilterType === 'Week' && graphSelectedMonth) {
                 const [year, month] = graphSelectedMonth.split('-');
+                const d = new Date(item.reservation_date);
                 includeInData = d.getFullYear() === parseInt(year) && (d.getMonth() + 1) === parseInt(month);
             } else if (graphFilterType === 'Month' && graphSelectedYear) {
+                const d = new Date(item.reservation_date);
                 includeInData = d.getFullYear() === parseInt(graphSelectedYear);
             } else if (graphFilterType === 'Year') {
                 //Show all years - no filtering needed
                 includeInData = true;
             }
 
-            if (!includeInData) return;
+            return includeInData;
+        });
+
+        filteredReservations.forEach(item => {
+            const d = new Date(item.reservation_date);
+            let key = '';
+            let sortKey = '';
 
             if (graphFilterType === 'Day') {
                 //For day filter, show individual days of the week
@@ -1083,6 +1095,10 @@ const EmployeeTableView = () => {
 
     const handleGraphYearChange = (e) => {
         setGraphSelectedYear(e.target.value);
+    };
+
+    const handleGraphFormFilterChange = (e) => {
+        setGraphFormFilter(e.target.value);
     };
 
     //QR Scanner Functions
@@ -1411,11 +1427,20 @@ const EmployeeTableView = () => {
     };
 
     const getGraphFilterLabel = () => {
-        if (graphFilterType === 'Day') return `Showing daily reservations for: Week ${graphSelectedWeek}`;
-        if (graphFilterType === 'Week') return `Showing weekly reservations for: ${graphSelectedMonth}`;
-        if (graphFilterType === 'Month') return `Showing monthly reservations for: ${graphSelectedYear}`;
-        if (graphFilterType === 'Year') return `Showing yearly reservations`;
-        return '';
+        let label = '';
+        if (graphFilterType === 'Day') label = `Showing daily reservations for: Week ${graphSelectedWeek}`;
+        if (graphFilterType === 'Week') label = `Showing weekly reservations for: ${graphSelectedMonth}`;
+        if (graphFilterType === 'Month') label = `Showing monthly reservations for: ${graphSelectedYear}`;
+        if (graphFilterType === 'Year') label = `Showing yearly reservations`;
+        
+        //Add form filter info
+        if (graphFormFilter === 'current' && formTitle !== 'All Reservations') {
+            label += ` (${formTitle} only)`;
+        } else {
+            label += ' (All forms)';
+        }
+        
+        return label;
     };
 
     return (
@@ -1478,6 +1503,22 @@ const EmployeeTableView = () => {
                                             min="2020"
                                             max="2100"
                                         />
+                                    </div>
+                                )}
+
+                                {/*Form filter for graph*/}
+                                {formTitle !== 'All Reservations' && (
+                                    <div className="filter-container">
+                                        <label htmlFor="graphFormFilter">Form:</label>
+                                        <select
+                                            id="graphFormFilter"
+                                            className="filter-dropdown"
+                                            value={graphFormFilter}
+                                            onChange={handleGraphFormFilterChange}
+                                        >
+                                            <option value="current">Current Form Only</option>
+                                            <option value="all">All Forms</option>
+                                        </select>
                                     </div>
                                 )}
 
