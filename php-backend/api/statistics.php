@@ -6,7 +6,7 @@ header("Content-Type: application/json");
 
 require_once "../config.php";
 
-// Get the HTTP method
+//Get the HTTP method
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
@@ -29,11 +29,11 @@ switch ($method) {
         echo json_encode(["success" => false, "message" => "Method not allowed"]);
 }
 
-// READ statistics
+//READ statistics
 function handleGet() {
     global $conn;
     
-    // Get all active statistics, ordered by display order
+    //Get all active statistics, ordered by display order
     $sql = "SELECT * FROM statistics WHERE is_active = TRUE ORDER BY display_order, stat_name";
     $result = $conn->query($sql);
     $stats = [];
@@ -57,7 +57,7 @@ function handleGet() {
     }
 }
 
-// CREATE new statistic
+//CREATE new statistic
 function handlePost() {
     global $conn;
     
@@ -68,7 +68,7 @@ function handlePost() {
         return;
     }
     
-    // Validate required fields
+    //Validate required fields
     $requiredFields = ['stat_name', 'stat_value', 'stat_label'];
     foreach ($requiredFields as $field) {
         if (!isset($input[$field]) || empty($input[$field])) {
@@ -83,7 +83,7 @@ function handlePost() {
     $display_order = isset($input['display_order']) ? intval($input['display_order']) : 0;
     $is_active = isset($input['is_active']) ? ($input['is_active'] ? 1 : 0) : 1;
     
-    // Check if statistic name already exists
+    //Check if statistic name already exists
     $checkSql = "SELECT id FROM statistics WHERE stat_name = '$stat_name'";
     $checkResult = $conn->query($checkSql);
     
@@ -92,7 +92,7 @@ function handlePost() {
         return;
     }
     
-    // Insert new statistic
+    //Insert new statistic
     $sql = "INSERT INTO statistics (stat_name, stat_value, stat_label, display_order, is_active) 
             VALUES ('$stat_name', '$stat_value', '$stat_label', $display_order, $is_active)";
     
@@ -108,7 +108,7 @@ function handlePost() {
     }
 }
 
-// UPDATE statistic
+//UPDATE statistic
 function handlePut() {
     global $conn;
     
@@ -143,7 +143,7 @@ function handlePut() {
         return;
     }
     
-    // Check if new stat_name conflicts with existing (if changing name)
+    //Check if new stat_name conflicts with existing (if changing name)
     if (isset($input['stat_name'])) {
         $checkSql = "SELECT id FROM statistics WHERE stat_name = '" . $conn->real_escape_string($input['stat_name']) . "' AND id != $id";
         $checkResult = $conn->query($checkSql);
@@ -166,7 +166,7 @@ function handlePut() {
     }
 }
 
-// DELETE statistic (soft delete - set is_active to false)
+//DELETE statistic
 function handleDelete() {
     global $conn;
     
@@ -179,7 +179,7 @@ function handleDelete() {
     
     $id = intval($input['id']);
     
-    // Soft delete - set is_active to false
+    //Soft delete
     $sql = "UPDATE statistics SET is_active = FALSE WHERE id = $id";
     
     if ($conn->query($sql)) {

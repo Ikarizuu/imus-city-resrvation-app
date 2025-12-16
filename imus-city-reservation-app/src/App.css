@@ -523,6 +523,10 @@ footer a:hover {
     }
     
     /*News Carousel Mobile Stacking*/
+    #myCarousel2 {
+        margin-bottom: 40px; /* Added spacing to prevent overlap with View More button */
+    }
+
     #myCarousel2 .carousel-item .row {
         display: flex;
         flex-direction: column;

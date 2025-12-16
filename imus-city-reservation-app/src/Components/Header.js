@@ -83,6 +83,7 @@ const HeaderComponent = () => {
                                     <li><a className="dropdown-item" href="/Assistance">Assistance</a></li>
                                     <li><a className="dropdown-item" href="/CitizensCharcter">Citizen's Charter</a></li>
                                     <li><a className="dropdown-item" href="/ReservationSlot">Slot Reservation</a></li>
+                                    <li><a className="dropdown-item" href="/SearchReservation">Search Reservation</a></li>
                                 </ul>
                             </li>
 
@@ -95,7 +96,7 @@ const HeaderComponent = () => {
                                     <li><a className="dropdown-item" href="/NotablePerson">Notable Persons</a></li>
                                 </ul>
                             </li>
-
+                            
                             <li className="nav-item"><a className="nav-link" href="/Business">Business</a></li>
                         </ul>
                     </div>

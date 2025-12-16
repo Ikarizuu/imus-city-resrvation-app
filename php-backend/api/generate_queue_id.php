@@ -4,7 +4,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Content-Type: application/json");
 
-// Handle preflight requests
+//Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -21,14 +21,13 @@ if (!$input || !isset($input['date'])) {
 
 $date = $conn->real_escape_string($input['date']);
 
-// Generate queue ID with format: YYMMDDXXX
-// Example: 251215001 for December 15, 2025 (first reservation)
-$year = date('y', strtotime($date));  // 2-digit year (25)
-$month = date('m', strtotime($date)); // 2-digit month (12)
-$day = date('d', strtotime($date));   // 2-digit day (15)
-$datePrefix = $year . $month . $day;  // 251215
+//Generate queue ID with format: YYMMDDXXX
+$year = date('y', strtotime($date));  //2-digit year (25)
+$month = date('m', strtotime($date)); //2-digit month (12)
+$day = date('d', strtotime($date));   //2-digit day (15)
+$datePrefix = $year . $month . $day;
 
-// Find the highest sequence number for this date
+//Find the highest sequence number for this date
 $sql = "SELECT queue_id FROM reservations 
         WHERE queue_id LIKE '$datePrefix%' 
         ORDER BY queue_id DESC 
@@ -37,22 +36,22 @@ $sql = "SELECT queue_id FROM reservations
 $result = $conn->query($sql);
 
 if ($result && $result->num_rows > 0) {
-    // Get the last queue ID and extract the sequence number
+    //Get the last queue ID and extract the sequence number
     $row = $result->fetch_assoc();
     $lastQueueId = $row['queue_id'];
     
-    // Extract last 3 digits (sequence number)
+    //Extract last 3 digits (sequence number)
     $lastSequence = intval(substr($lastQueueId, -3));
     $nextSequence = $lastSequence + 1;
 } else {
-    // First reservation for this date
+    //First reservation for this date
     $nextSequence = 1;
 }
 
-// Format sequence to 3 digits with leading zeros
+//Format sequence to 3 digits with leading zeros
 $sequenceStr = str_pad($nextSequence, 3, '0', STR_PAD_LEFT);
 
-// Final queue ID: YYMMDDXXX (e.g., 251215001)
+//Final queue ID: YYMMDDXXX (e.g., 251215001)
 $queueId = $datePrefix . $sequenceStr;
 
 echo json_encode([

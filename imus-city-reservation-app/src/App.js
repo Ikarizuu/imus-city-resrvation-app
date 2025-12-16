@@ -13,6 +13,7 @@ import BackToTopButton from './Components/TopBtn';
   import HomePage from './Pages/Home';
   import ReservationSlot from './Pages/ReservationSlot';
   import ReservationResult from './Pages/ReservationResult';
+  import SearchReservation from './Pages/SearchReservation';
 
   //Employee Pages
   import EmployeeLogInPage from './Pages/EmployeeLogIn';
@@ -79,6 +80,7 @@ function App() {
           <Route path='/EmployeeLogIn' element={<UserLayout><EmployeeLogInPage /></UserLayout>} />
           <Route path='/ReservationSlot' element={<UserLayout><ReservationSlot /></UserLayout>} />
           <Route path='/ReservationResult' element={<UserLayout><ReservationResult /></UserLayout>} />
+          <Route path='/SearchReservation' element={<UserLayout><SearchReservation /></UserLayout>} />
 
           {/*EMPLOYEE PAGES*/}
           <Route path='/EmployeeHome' element={<EmployeeLayout><EmployeeHomePage /></EmployeeLayout>} />

@@ -123,7 +123,7 @@ const EmployeeLogInPage = () => {
             });
 
             if (response.data.success) {
-                // Store employee info in sessionStorage
+                //Store employee info in sessionStorage
                 sessionStorage.setItem("loggedInUser", employeeid);
                 sessionStorage.setItem("employeeFirstName", response.data.firstName || '');
                 sessionStorage.setItem("employeeLastName", response.data.lastName || '');
@@ -132,7 +132,7 @@ const EmployeeLogInPage = () => {
                 showMessage("Login successful! Redirecting...", "success");
                 
                 setTimeout(() => {
-                    // Redirect admins to EmployeeAdmin, others to EmployeeHome
+                    //Redirect admins to EmployeeAdmin, others to EmployeeHome
                     if (response.data.isAdmin === 'admin') {
                         window.location.href = "/EmployeeAdmin";
                     } else {

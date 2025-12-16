@@ -177,7 +177,7 @@ const ReservationModal = ({ isOpen, onClose, selectedForm }) => {
         const actionDate = new Date().toISOString().split("T")[0];
 
         try {
-            // First check if slot is available
+            //First check if slot is available
             try {
                 const checkResponse = await api.get(`/reservations.php?date=${date}&form=${encodeURIComponent(selectedForm)}`);
                 const existingReservations = checkResponse.data;
@@ -206,7 +206,7 @@ const ReservationModal = ({ isOpen, onClose, selectedForm }) => {
                 }
             } catch (queueError) {
                 console.error("Queue ID generation error:", queueError);
-                // Fallback queue ID generation
+                //Fallback queue ID generation
                 const reservationDate = new Date(date);
                 const year = String(reservationDate.getFullYear()).slice(-2);
                 const month = String(reservationDate.getMonth() + 1).padStart(2, '0');
@@ -215,7 +215,7 @@ const ReservationModal = ({ isOpen, onClose, selectedForm }) => {
                 queueId = year + month + day + randomNum;
             }
 
-            // Save user details to PHP backend
+            //Save user details to PHP backend
             const reservationData = {
                 queueId: queueId,
                 form: selectedForm,

@@ -4,28 +4,28 @@ header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Content-Type: application/json");
 
-// Handle preflight requests
+//Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// Check if it's a POST request
+//Check if it's a POST request
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(["success" => false, "message" => "Method not allowed"]);
     exit();
 }
 
-// Check if file was uploaded
+//Check if file was uploaded
 if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
     echo json_encode(["success" => false, "message" => "No image uploaded or upload error"]);
     exit();
 }
 
-// Get upload type (news-carousel, etc.)
+//Get upload type
 $type = isset($_POST['type']) ? $_POST['type'] : 'general';
 
-// Set upload directory based on type
+//Set upload directory based on type
 switch ($type) {
     case 'news-carousel':
         $uploadDir = '../uploads/news-carousel/';
@@ -35,19 +35,19 @@ switch ($type) {
         break;
 }
 
-// Create directory if it doesn't exist
+//Create directory if it doesn't exist
 if (!file_exists($uploadDir)) {
     mkdir($uploadDir, 0777, true);
 }
 
-// Validate file
+//Validate file
 $file = $_FILES['image'];
 $fileName = $file['name'];
 $fileTmpName = $file['tmp_name'];
 $fileSize = $file['size'];
 $fileError = $file['error'];
 
-// Check for upload errors
+//Check for upload errors
 if ($fileError !== UPLOAD_ERR_OK) {
     $errorMessages = [
         UPLOAD_ERR_INI_SIZE => 'File exceeds upload_max_filesize directive in php.ini',
@@ -62,14 +62,14 @@ if ($fileError !== UPLOAD_ERR_OK) {
     exit();
 }
 
-// Check file size (max 5MB)
-$maxSize = 5 * 1024 * 1024; // 5MB
+//Check file size (max 50MB)
+$maxSize = 50 * 1024 * 1024;
 if ($fileSize > $maxSize) {
-    echo json_encode(["success" => false, "message" => "File size exceeds 5MB limit"]);
+    echo json_encode(["success" => false, "message" => "File size exceeds 50MB limit"]);
     exit();
 }
 
-// Check file type
+//Check file type
 $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 $fileType = mime_content_type($fileTmpName);
 if (!in_array($fileType, $allowedTypes)) {
@@ -77,14 +77,14 @@ if (!in_array($fileType, $allowedTypes)) {
     exit();
 }
 
-// Generate unique filename
+//Generate unique filename
 $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
 $uniqueName = uniqid('news_', true) . '_' . time() . '.' . $fileExtension;
 $uploadPath = $uploadDir . $uniqueName;
 
-// Move uploaded file
+//Move uploaded file
 if (move_uploaded_file($fileTmpName, $uploadPath)) {
-    // Return success response
+    //Return success response
     echo json_encode([
         "success" => true,
         "message" => "Image uploaded successfully",

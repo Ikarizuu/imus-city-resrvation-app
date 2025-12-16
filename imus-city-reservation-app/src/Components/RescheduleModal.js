@@ -146,7 +146,7 @@ const RescheduleModal = ({ isOpen, onClose, reservation, onReschedule }) => {
 
     const generateQueueId = async (selectedDate) => {
         try {
-            // Use the new reschedule.php endpoint
+            //Use the new reschedule.php endpoint
             const response = await api.get(`/reschedule.php?date=${selectedDate}`);
             
             if (response.data.success) {
@@ -156,7 +156,7 @@ const RescheduleModal = ({ isOpen, onClose, reservation, onReschedule }) => {
             }
         } catch (error) {
             console.error("Error generating queue ID:", error);
-            // Fallback: generate locally
+            //Fallback: generate locally
             const year = String(new Date(selectedDate).getFullYear()).slice(-2);
             const month = String(new Date(selectedDate).getMonth() + 1).padStart(2, '0');
             const day = String(new Date(selectedDate).getDate()).padStart(2, '0');
@@ -185,7 +185,7 @@ const RescheduleModal = ({ isOpen, onClose, reservation, onReschedule }) => {
         }
 
         try {
-            // Generate new Queue ID using the new endpoint
+            //Generate new Queue ID using the new endpoint
             const newQueueId = await generateQueueId(date);
             
             if (onReschedule) {

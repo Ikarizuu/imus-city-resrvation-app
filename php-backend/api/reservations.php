@@ -29,6 +29,10 @@ switch ($method) {
 function handleGet() {
     global $conn;
     
+    //Debug logging
+    error_log("=== RESERVATIONS.PHP DEBUG ===");
+    error_log("GET params: " . print_r($_GET, true));
+    
     //Check if requesting available slots
     if (isset($_GET['available_slots']) && $_GET['available_slots'] === 'true') {
         if (isset($_GET['date']) && isset($_GET['form'])) {
@@ -46,57 +50,62 @@ function handleGet() {
         }
     }
     
+    //Initialize SQL query - IMPORTANT: Start with WHERE 1=1
+    $sql = "SELECT * FROM reservations WHERE 1=1";
+    $conditions = [];
+    
     //Check for date range (Week filter)
     if (isset($_GET['startDate']) && isset($_GET['endDate'])) {
         $startDate = $conn->real_escape_string($_GET['startDate']);
         $endDate = $conn->real_escape_string($_GET['endDate']);
-        $sql = "SELECT * FROM reservations WHERE reservation_date BETWEEN '$startDate' AND '$endDate'";
-        
-        if (isset($_GET['form']) && $_GET['form'] !== 'All Reservations') {
-            $form = $conn->real_escape_string($_GET['form']);
-            $sql .= " AND form_name = '$form'";
-        }
-        $sql .= " ORDER BY reservation_date, reservation_time";
+        $conditions[] = "reservation_date BETWEEN '$startDate' AND '$endDate'";
+        error_log("Added week filter: $startDate to $endDate");
     }
     //Check for month and year filter
     elseif (isset($_GET['year']) && isset($_GET['month'])) {
         $year = $conn->real_escape_string($_GET['year']);
         $month = $conn->real_escape_string($_GET['month']);
-        $sql = "SELECT * FROM reservations WHERE YEAR(reservation_date) = '$year' AND MONTH(reservation_date) = '$month'";
-        
-        if (isset($_GET['form']) && $_GET['form'] !== 'All Reservations') {
-            $form = $conn->real_escape_string($_GET['form']);
-            $sql .= " AND form_name = '$form'";
-        }
-        $sql .= " ORDER BY reservation_date, reservation_time";
+        $conditions[] = "YEAR(reservation_date) = '$year' AND MONTH(reservation_date) = '$month'";
+        error_log("Added month filter: $year-$month");
     }
     //Check for year only filter
-    elseif (isset($_GET['year'])) {
+    elseif (isset($_GET['year']) && !isset($_GET['month'])) {
         $year = $conn->real_escape_string($_GET['year']);
-        $sql = "SELECT * FROM reservations WHERE YEAR(reservation_date) = '$year'";
-        
-        if (isset($_GET['form']) && $_GET['form'] !== 'All Reservations') {
-            $form = $conn->real_escape_string($_GET['form']);
-            $sql .= " AND form_name = '$form'";
-        }
-        $sql .= " ORDER BY reservation_date, reservation_time";
+        $conditions[] = "YEAR(reservation_date) = '$year'";
+        error_log("Added year filter: $year");
     }
-    //Check if filtering by date and form
-    elseif (isset($_GET['date']) && isset($_GET['form'])) {
-        $date = $conn->real_escape_string($_GET['date']);
-        $form = $conn->real_escape_string($_GET['form']);
-        
-        $sql = "SELECT * FROM reservations WHERE reservation_date = '$date' AND form_name = '$form' ORDER BY reservation_time";
-    } 
     //Check if filtering by date only
     elseif (isset($_GET['date'])) {
         $date = $conn->real_escape_string($_GET['date']);
-        $sql = "SELECT * FROM reservations WHERE reservation_date = '$date' ORDER BY reservation_time";
+        $conditions[] = "reservation_date = '$date'";
+        error_log("Added date filter: $date");
     }
-    //Get all reservations
-    else {
-        $sql = "SELECT * FROM reservations ORDER BY reservation_date DESC, reservation_time";
+    
+    if (isset($_GET['form'])) {
+        $formParam = $_GET['form'];
+        error_log("Form parameter received: '$formParam'");
+        
+        //Only filter if it's not "All Reservations"
+        if ($formParam !== 'All Reservations' && !empty($formParam)) {
+            $form = $conn->real_escape_string($formParam);
+            $conditions[] = "form_name = '$form'";
+            error_log("Applied form filter: $form");
+        } else {
+            error_log("Skipping form filter (All Reservations or empty)");
+        }
+    } else {
+        error_log("No form parameter in request");
     }
+    
+    //Add all conditions to SQL
+    if (count($conditions) > 0) {
+        $sql .= " AND " . implode(" AND ", $conditions);
+    }
+    
+    //Add ordering
+    $sql .= " ORDER BY reservation_date DESC, reservation_time";
+    
+    error_log("Final SQL: $sql");
     
     $result = $conn->query($sql);
     $reservations = [];
@@ -106,6 +115,13 @@ function handleGet() {
             $reservations[] = $row;
         }
     }
+    
+    error_log("Returning " . count($reservations) . " reservations");
+    if (count($reservations) > 0) {
+        $uniqueForms = array_unique(array_column($reservations, 'form_name'));
+        error_log("Unique forms in result: " . implode(", ", $uniqueForms));
+    }
+    error_log("==============================");
     
     echo json_encode($reservations);
 }

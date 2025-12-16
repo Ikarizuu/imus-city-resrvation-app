@@ -30,7 +30,7 @@ if (!$result) {
 if ($result->num_rows > 0) {
     $reservation = $result->fetch_assoc();
     
-    //Format time for display (remove seconds)
+    //Format time for display
     if (isset($reservation['reservation_time'])) {
         $reservation['reservation_time_display'] = substr($reservation['reservation_time'], 0, 5);
     }

@@ -6,7 +6,7 @@ header("Content-Type: application/json");
 
 require_once "../config.php";
 
-// Handle preflight requests
+//Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -14,14 +14,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-/* GET: Retrieve published news cards for public display */
+/*GET*/
 if ($method === 'GET' && !isset($_GET['admin'])) {
     $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
     $offset = isset($_GET['offset']) ? intval($_GET['offset']) : 0;
     $status = isset($_GET['status']) ? $_GET['status'] : 'active';
 
     try {
-        // Build query for published/active cards
+        //Build query for published/active cards
         $sql = "SELECT id, title, excerpt, image_path, image_alt, link, display_order, status, news_date, updated_at 
                 FROM news_carousel_items 
                 WHERE status = ? 
@@ -38,7 +38,7 @@ if ($method === 'GET' && !isset($_GET['admin'])) {
             $items[] = $row;
         }
         
-        // Get total count for pagination
+        //Get total count for pagination
         $countSql = "SELECT COUNT(*) as total FROM news_carousel_items WHERE status = ?";
         $countStmt = $conn->prepare($countSql);
         $countStmt->bind_param('s', $status);
@@ -67,7 +67,7 @@ if ($method === 'GET' && !isset($_GET['admin'])) {
     exit;
 }
 
-/* GET: Retrieve all news cards for admin */
+/*GET*/
 if ($method === 'GET' && isset($_GET['admin'])) {
     
     $status = isset($_GET['status']) ? $_GET['status'] : 'all';
@@ -109,9 +109,8 @@ if ($method === 'GET' && isset($_GET['admin'])) {
     exit;
 }
 
-/* POST: Create new news card */
+/*POST*/
 if ($method === 'POST' && !isset($_GET['action'])) {
-    // TODO: Add admin authentication check here
     
     $input = json_decode(file_get_contents('php://input'), true);
     
@@ -120,7 +119,7 @@ if ($method === 'POST' && !isset($_GET['action'])) {
         exit;
     }
     
-    // Validate required fields
+    //Validate required fields
     $requiredFields = ['title', 'excerpt'];
     foreach ($requiredFields as $field) {
         if (!isset($input[$field]) || empty($input[$field])) {
@@ -129,7 +128,7 @@ if ($method === 'POST' && !isset($_GET['action'])) {
         }
     }
     
-    // Sanitize input data
+    //Sanitize input data
     $title = $conn->real_escape_string($input['title']);
     $excerpt = $conn->real_escape_string($input['excerpt']);
     $image_path = isset($input['image_path']) ? $conn->real_escape_string($input['image_path']) : null;
@@ -169,7 +168,7 @@ if ($method === 'POST' && !isset($_GET['action'])) {
     exit;
 }
 
-/* PUT: Update existing news card */
+/*PUT: Update existing news card*/
 if ($method === 'PUT' || ($method === 'POST' && isset($_GET['action']) && $_GET['action'] === 'update')) {
     
     $input = json_decode(file_get_contents('php://input'), true);
@@ -181,12 +180,12 @@ if ($method === 'PUT' || ($method === 'POST' && isset($_GET['action']) && $_GET[
     
     $id = intval($input['id']);
     
-    // Build update query dynamically based on provided fields
+    //Build update query dynamically based on provided fields
     $updates = [];
     $types = '';
     $values = [];
     
-    // Define field mappings
+    //Define field mappings
     $fieldMap = [
         'title' => 's',
         'excerpt' => 's',
@@ -211,7 +210,7 @@ if ($method === 'PUT' || ($method === 'POST' && isset($_GET['action']) && $_GET[
         exit;
     }
     
-    // Add ID to the end
+    //Add ID to the end
     $values[] = $id;
     $types .= 'i';
     
@@ -245,7 +244,7 @@ if ($method === 'PUT' || ($method === 'POST' && isset($_GET['action']) && $_GET[
     exit;
 }
 
-/* DELETE */
+/*DELETE*/
 if ($method === 'DELETE' || ($method === 'POST' && isset($_GET['action']) && $_GET['action'] === 'delete')) {
     $input = json_decode(file_get_contents('php://input'), true);
     
@@ -257,7 +256,7 @@ if ($method === 'DELETE' || ($method === 'POST' && isset($_GET['action']) && $_G
     $id = intval($input['id']);
     
     try {
-        // First, get image path to potentially delete file
+        //First, get image path to potentially delete file
         $getStmt = $conn->prepare("SELECT image_path FROM news_carousel_items WHERE id = ?");
         $getStmt->bind_param('i', $id);
         $getStmt->execute();
@@ -265,13 +264,13 @@ if ($method === 'DELETE' || ($method === 'POST' && isset($_GET['action']) && $_G
         $item = $result->fetch_assoc();
         $getStmt->close();
         
-        // Delete the news card
+        //Delete the news card
         $stmt = $conn->prepare("DELETE FROM news_carousel_items WHERE id = ?");
         $stmt->bind_param('i', $id);
         $stmt->execute();
         
         if ($stmt->affected_rows > 0) {
-            // Optionally delete image file
+            //Optionally delete image file
             if ($item && $item['image_path']) {
                 $imagePath = __DIR__ . '/../uploads/news-carousel/' . $item['image_path'];
                 if (file_exists($imagePath)) {

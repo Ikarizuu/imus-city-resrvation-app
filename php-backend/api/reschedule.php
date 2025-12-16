@@ -72,7 +72,7 @@ function handleRescheduleRequest() {
     //Create new rescheduled reservation
     $fullName = $conn->real_escape_string($input['fullName']);
     $email = $conn->real_escape_string($input['email']);
-    $actionDate = date('Y-m-d'); // Current date
+    $actionDate = date('Y-m-d'); //Current date
     $status = isset($input['status']) ? $conn->real_escape_string($input['status']) : 'Pending';
     $remarks = isset($input['remarks']) ? $conn->real_escape_string($input['remarks']) : '';
     
@@ -120,7 +120,7 @@ function handleRescheduleRequest() {
     }
 }
 
-// Handle queue ID generation (for GET requests or separate calls)
+//Handle queue ID generation (for GET requests or separate calls)
 function handleGenerateQueueId() {
     global $conn;
     
@@ -133,7 +133,7 @@ function handleGenerateQueueId() {
     generateQueueId($date);
 }
 
-// Generate a unique queue ID for a given date
+//Generate a unique queue ID for a given date
 function generateQueueId($date) {
     global $conn;
     
@@ -142,7 +142,7 @@ function generateQueueId($date) {
     $day = date('d', strtotime($date));
     $datePrefix = $year . $month . $day;
     
-    // Find the highest sequence for this date (excluding cancelled for better sequence)
+    //Find the highest sequence for this date
     $sql = "SELECT queue_id FROM reservations 
             WHERE queue_id LIKE '$datePrefix%' 
             AND status != 'Cancelled' 
@@ -159,7 +159,7 @@ function generateQueueId($date) {
         $nextSequence = 1;
     }
     
-    // Format sequence to 3 digits
+    //Format sequence to 3 digits
     $sequenceStr = str_pad($nextSequence, 3, '0', STR_PAD_LEFT);
     $queueId = $datePrefix . $sequenceStr;
     

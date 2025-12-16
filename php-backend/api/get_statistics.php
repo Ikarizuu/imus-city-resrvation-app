@@ -6,17 +6,17 @@ header("Content-Type: application/json");
 
 require_once "../config.php";
 
-// Handle preflight requests
+//Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// Get only active statistics, ordered by display order
+//Get only active statistics, ordered by display order
 $sql = "SELECT stat_value, stat_label FROM statistics 
         WHERE is_active = TRUE 
         ORDER BY display_order, stat_name 
-        LIMIT 10"; // Limit to 10 stats for display
+        LIMIT 10"; //Limit to 10 stats for display
 
 $result = $conn->query($sql);
 $stats = [];
@@ -33,7 +33,7 @@ if ($result && $result->num_rows > 0) {
         "statistics" => $stats
     ]);
 } else {
-    // Return default stats if none found
+    //Return default stats if none found
     $defaultStats = [
         ['value' => '539,743', 'label' => 'Population'],
         ['value' => '101.56', 'label' => 'Persons/sq.km.'],

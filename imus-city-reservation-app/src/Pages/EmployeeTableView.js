@@ -127,7 +127,7 @@ const pageSpecificStyles = `
         min-width: 150px;
     }
 
-    /* Graph Styles */
+    /*Graph Styles*/
     .graph-container {
         background: #fff;
         padding: 20px;
@@ -172,7 +172,7 @@ const pageSpecificStyles = `
         background-color: #053774;
     }
 
-    /* QR Scanner Modal Styles */
+    /*QR Scanner Modal Styles*/
     .qr-modal-overlay {
         position: fixed;
         top: 0;
@@ -484,7 +484,7 @@ const pageSpecificStyles = `
         font-size: 0.9em;
     }
 
-    /* Table Styles */
+    /*Table Styles*/
     table {
         border: 1px solid #ccc;
         border-collapse: collapse;
@@ -547,21 +547,25 @@ const pageSpecificStyles = `
     .status-complete { 
         color: #06402B; 
         border-color: #06402B; 
+        background-color: #d4edda;
     }
     
     .status-pending { 
         color: #BA8E23; 
         border-color: #BA8E23; 
+        background-color: #fff3cd;
     }
     
     .status-cancelled { 
         color: #f70d1a; 
         border-color: #f70d1a; 
+        background-color: #f8d7da;
     }
     
     .status-rescheduled { 
         color: #04285c; 
         border-color: #04285c; 
+        background-color: #d1ecf1;
     }
 
     .remarks-textarea {
@@ -754,7 +758,7 @@ const EmployeeTableView = () => {
     const [filteredReservations, setFilteredReservations] = useState([]);
     const [allReservations, setAllReservations] = useState([]);
     const [selectedDate, setSelectedDate] = useState('');
-    const [formTitle, setFormTitle] = useState('All Reservations');
+    const [formTitle, setFormTitle] = useState(null);
     const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
     const [currentReservation, setCurrentReservation] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -794,10 +798,17 @@ const EmployeeTableView = () => {
 
         const urlParams = new URLSearchParams(window.location.search);
         const form = urlParams.get('formName');
+        
+        console.log('=== INITIAL SETUP ===');
+        console.log('URL params:', window.location.search);
+        console.log('formName param:', form);
+        
         if (form) {
             setFormTitle(form);
+            console.log('Setting formTitle to:', form);
         } else {
-            setFormTitle('All Reservations'); 
+            setFormTitle('All Reservations');
+            console.log('No form param, setting to: All Reservations');
         }
 
         const today = new Date();
@@ -814,6 +825,9 @@ const EmployeeTableView = () => {
         //Set current week
         const weekNum = getWeekNumber(today);
         setSelectedWeek(`${year}-W${String(weekNum).padStart(2, '0')}`);
+        
+        console.log('Initial filters set');
+        console.log('=====================');
     }, []);
 
     //Fetch all reservations for graph
@@ -837,32 +851,68 @@ const EmployeeTableView = () => {
         }
     }, [graphFilterType, allReservations, graphSelectedWeek, graphSelectedMonth, graphSelectedYear]);
 
-    //Fetch reservations based on ORIGINAL table filter system (UNCHANGED)
+    //Fetch reservations based on table filter system
     useEffect(() => {
+        if (formTitle === null) {
+            console.log('Skipping fetch - formTitle not initialized yet');
+            return;
+        }
+
         const fetchReservations = async () => {
             try {
                 let url = '/reservations.php';
+                const params = [];
+                
+                console.log('=== FETCH RESERVATIONS DEBUG ===');
+                console.log('formTitle:', formTitle);
+                console.log('filterType:', filterType);
+                console.log('selectedDate:', selectedDate);
+                console.log('selectedWeek:', selectedWeek);
+                console.log('selectedMonth:', selectedMonth);
+                console.log('selectedYear:', selectedYear);
                 
                 if (filterType === 'Day' && selectedDate) {
-                    url += `?date=${selectedDate}`;
+                    params.push(`date=${selectedDate}`);
+                    console.log('Adding date filter');
                 } else if (filterType === 'Week' && selectedWeek) {
                     //Get week range
                     const [year, week] = selectedWeek.split('-W');
                     const weekDates = getWeekDateRange(parseInt(year), parseInt(week));
-                    url += `?startDate=${weekDates.start}&endDate=${weekDates.end}`;
+                    params.push(`startDate=${weekDates.start}&endDate=${weekDates.end}`);
+                    console.log('Adding week filter:', weekDates);
                 } else if (filterType === 'Month' && selectedMonth) {
                     const [year, month] = selectedMonth.split('-');
-                    url += `?year=${year}&month=${month}`;
+                    params.push(`year=${year}&month=${month}`);
+                    console.log('Adding month filter');
                 } else if (filterType === 'Year' && selectedYear) {
-                    url += `?year=${selectedYear}`;
+                    params.push(`year=${selectedYear}`);
+                    console.log('Adding year filter');
+                } else if (filterType === 'All') {
+                    console.log('No date filter (showing all)');
                 }
                 
-                if (formTitle !== 'All Reservations') {
-                    url += url.includes('?') ? '&' : '?';
-                    url += `form=${encodeURIComponent(formTitle)}`;
+                if (formTitle && formTitle !== 'All Reservations') {
+                    params.push(`form=${encodeURIComponent(formTitle)}`);
+                    console.log('Adding form filter:', formTitle);
+                } else {
+                    console.log('NOT adding form filter - formTitle is:', formTitle);
                 }
+                
+                //Combine all parameters
+                if (params.length > 0) {
+                    url += '?' + params.join('&');
+                }
+                
+                console.log('Final URL:', url);
+                console.log('================================');
                 
                 const response = await api.get(url);
+                console.log('Response received, count:', response.data.length);
+                if (response.data.length > 0) {
+                    console.log('First reservation form:', response.data[0].form_name);
+                    console.log('All unique forms in response:', [...new Set(response.data.map(r => r.form_name))]);
+                }
+                
                 setReservations(response.data);
                 setFilteredReservations(response.data);
             } catch (error) {
@@ -959,7 +1009,7 @@ const EmployeeTableView = () => {
                 const year = d.getFullYear();
                 const weekNum = getWeekNumber(d);
                 const monthName = d.toLocaleString('default', { month: 'long' });
-                key = `Week ${weekNum} – ${monthName} ${year}`;
+                key = `Week ${weekNum} — ${monthName} ${year}`;
                 sortKey = `${year}-${String(weekNum).padStart(2, '0')}`;
             } else if (graphFilterType === 'Month') {
                 //For month filter, show months of the year
@@ -1089,7 +1139,7 @@ const EmployeeTableView = () => {
                 attachStream(fallback);
             } catch (fbErr) {
                 console.error('Any camera also failed', fbErr);
-                setQrError('Camera blocked or no permission – use HTTPS and allow camera.');
+                setQrError('Camera blocked or no permission — use HTTPS and allow camera.');
                 setIsScanning(false);
             }
         }
@@ -1173,7 +1223,7 @@ const EmployeeTableView = () => {
         if (/^\d{9}$/.test(queueId)) {
             fetchReservationByQueueId(queueId);
         } else {
-            setQrError("❌ Invalid QR code format. Please scan a valid reservation QR code with a 9-digit Queue ID.");
+            setQrError("⌧ Invalid QR code format. Please scan a valid reservation QR code with a 9-digit Queue ID.");
         }
     };
 
@@ -1191,13 +1241,13 @@ const EmployeeTableView = () => {
                     setQrError(`⚠️ Form Mismatch: This Queue ID belongs to "${reservation.form_name}" but you are viewing "${formTitle}". Click "View in Table" to navigate to the correct form and date.`);
                 }
             } else {
-                setQrError(response.data.message || "❌ Reservation not found");
+                setQrError(response.data.message || "⌧ Reservation not found");
                 setScannedReservation(null);
                 setQrSuccess('');
             }
         } catch (error) {
             console.error("Error fetching reservation:", error);
-            setQrError("❌ Failed to fetch reservation data. Please check your connection.");
+            setQrError("⌧ Failed to fetch reservation data. Please check your connection.");
             setScannedReservation(null);
             setQrSuccess('');
         }
@@ -1372,7 +1422,7 @@ const EmployeeTableView = () => {
         <>
             <style>{pageSpecificStyles}</style>
             <div className="employee-table-view">
-                {/* Graph Section - with cascading filters */}
+                {/*Graph Section*/}
                 {showGraph && (
                     <div className="graph-container">
                         <div className="graph-header">
@@ -1430,7 +1480,7 @@ const EmployeeTableView = () => {
                                         />
                                     </div>
                                 )}
-                                
+
                                 <button
                                     className="toggle-graph-btn"
                                     onClick={() => setShowGraph(false)}
@@ -1459,7 +1509,7 @@ const EmployeeTableView = () => {
                         <h2>{formTitle}</h2>
                         <small>{getFilterLabel()}</small>
                     </div>
-                    
+
                     <div className="controls-section">
                         <div className="search-container">
                             <FontAwesomeIcon icon={faSearch} />
@@ -1473,8 +1523,8 @@ const EmployeeTableView = () => {
                         </div>
 
                         {!showGraph && (
-                            <button 
-                                className="qr-scanner-btn" 
+                            <button
+                                className="qr-scanner-btn"
                                 onClick={() => setShowGraph(true)}
                                 style={{ backgroundColor: '#06428A' }}
                             >
@@ -1556,7 +1606,7 @@ const EmployeeTableView = () => {
                     </div>
                 </div>
 
-                {/* Table - ORIGINAL SYSTEM (UNCHANGED) */}
+                {/*Table*/}
                 <table>
                     <thead>
                         <tr>
@@ -1573,8 +1623,8 @@ const EmployeeTableView = () => {
                     <tbody>
                         {filteredReservations.length > 0 ? (
                             filteredReservations.map((reservation, index) => (
-                                <tr 
-                                    key={reservation.queue_id || index} 
+                                <tr
+                                    key={reservation.queue_id || index}
                                     data-queue-id={reservation.queue_id}
                                 >
                                     <td data-label="Position">{index + 1}</td>
@@ -1609,13 +1659,13 @@ const EmployeeTableView = () => {
                                     </td>
                                     <td data-label="Actions">
                                         <div className="actions-buttons">
-                                            <button 
+                                            <button
                                                 className="action-button reschedule-button"
-						onClick={() => handleRescheduleClick(reservation)}
+                                                onClick={() => handleRescheduleClick(reservation)}
                                             >
                                                 <FontAwesomeIcon icon={faPen} /> Reschedule
                                             </button>
-                                            <button 
+                                            <button
                                                 className="action-button delete-button"
                                                 onClick={() => handleDeleteClick(reservation)}
                                             >
@@ -1628,8 +1678,8 @@ const EmployeeTableView = () => {
                         ) : (
                             <tr>
                                 <td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>
-                                    {searchTerm ? 
-                                        `No reservations found matching "${searchTerm}"` : 
+                                    {searchTerm ?
+                                        `No reservations found matching "${searchTerm}"` :
                                         `No reservations found for the selected filter.`
                                     }
                                 </td>
@@ -1645,7 +1695,7 @@ const EmployeeTableView = () => {
                     onReschedule={handleRescheduleSubmit}
                 />
 
-                {/* QR Scanner Modal */}
+                {/*QR Scanner Modal*/}
                 {showQRScanner && (
                     <div className="qr-modal-overlay" onClick={(e) => e.target.className === 'qr-modal-overlay' && handleCloseQRScanner()}>
                         <div className="qr-modal-content">
@@ -1667,7 +1717,7 @@ const EmployeeTableView = () => {
                                             </button>
                                         )}
                                     </div>
-                                    
+
                                     <div className="scanner-viewport">
                                         {isScanning ? (
                                             <>
@@ -1680,8 +1730,8 @@ const EmployeeTableView = () => {
                                             </>
                                         ) : (
                                             <div className="no-camera">
-                                                {availableCameras.length > 0 ? 
-                                                    "Click 'Start Camera' to begin scanning" : 
+                                                {availableCameras.length > 0 ?
+                                                    "Click 'Start Camera' to begin scanning" :
                                                     "No camera available"}
                                             </div>
                                         )}
@@ -1699,7 +1749,7 @@ const EmployeeTableView = () => {
                                             onChange={(e) => setManualQueueId(e.target.value)}
                                             onKeyPress={(e) => e.key === 'Enter' && handleManualSearch()}
                                         />
-                                        <button 
+                                        <button
                                             className="manual-submit-btn"
                                             onClick={handleManualSearch}
                                         >
@@ -1729,11 +1779,11 @@ const EmployeeTableView = () => {
                                             <p><strong>Form:</strong> {scannedReservation.form_name}</p>
                                             <p><strong>Date:</strong> {scannedReservation.reservation_date}</p>
                                             <p><strong>Time:</strong> {scannedReservation.reservation_time ? scannedReservation.reservation_time.substring(0, 5) : ''}</p>
-                                            <p><strong>Status:</strong> 
+                                            <p><strong>Status:</strong>
                                                 <span style={{
-                                                    color: scannedReservation.status === 'Complete' ? '#28a745' : 
-                                                        scannedReservation.status === 'Cancelled' ? '#dc3545' : 
-                                                        scannedReservation.status === 'Pending' ? '#ffc107' : '#06428A',
+                                                    color: scannedReservation.status === 'Complete' ? '#28a745' :
+                                                        scannedReservation.status === 'Cancelled' ? '#dc3545' :
+                                                            scannedReservation.status === 'Pending' ? '#ffc107' : '#06428A',
                                                     fontWeight: 'bold',
                                                     marginLeft: '8px'
                                                 }}>
@@ -1747,9 +1797,8 @@ const EmployeeTableView = () => {
                                                 </div>
                                             )}
 
-                                            {/* Only show View in Table button when scanned */}
                                             <div className="qr-actions">
-                                                <button 
+                                                <button
                                                     className="qr-action-btn goto-btn"
                                                     onClick={goToReservationInTable}
                                                 >
