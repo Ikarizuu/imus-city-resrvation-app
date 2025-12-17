@@ -92,6 +92,7 @@ serve -s build
 imus-city-reservation-app/
 ├── README.md                     # This file
 ├── SQLTableCreation              # SQL Commands for Table Creation
+├── SQLDataInsertion              # SQL Commands for Data Inserion
 ├── imus-city-reservation-app/    # React frontend application
 │   ├── package.json              # Project dependencies and scripts
 │   ├── build/                    # Production build output

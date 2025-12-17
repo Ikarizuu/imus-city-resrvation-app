@@ -54,7 +54,7 @@ INSERT INTO reservations (queue_id, form_name, full_name, email, reservation_dat
 ('241219001', 'Community Tax Certificate', 'Daniel Thompson', 'daniel.t@email.com', '2024-12-19', '08:00:00', '2024-12-19', 'Complete', 'Cedula processed'),
 ('241220005', 'Community Tax Certificate', 'Andrew Wright', 'andrew.w@email.com', '2024-12-20', '10:00:00', '2024-12-20', 'Complete', 'Tax certificate');
 
--- Sample 8: Fire Station Applications (NEW FORM)
+-- Sample 8: Fire Station Applications
 INSERT INTO reservations (queue_id, form_name, full_name, email, reservation_date, reservation_time, action_date, status, remarks) VALUES
 ('241217008', 'Fire Station Application', 'Carlos Fernandez', 'carlos.f@email.com', '2024-12-17', '13:00:00', '2024-12-17', 'Complete', 'Fire safety inspection'),
 ('241218008', 'Fire Station Application', 'Maria Rodriguez', 'maria.r@email.com', '2024-12-18', '11:30:00', '2024-12-18', 'Complete', 'Fire drill approval'),

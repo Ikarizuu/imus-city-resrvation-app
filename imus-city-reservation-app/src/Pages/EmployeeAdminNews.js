@@ -135,9 +135,9 @@ const EmployeeAdminNews = () => {
                                 <li className="list-group-item" style={{ backgroundColor: 'white', color: '#053774' }}>
                                     <h3>Admin Panel</h3>
                                 </li>
-                                <li className="list-group-item"><a href="/EmployeeAdmin"><FontAwesomeIcon icon={faUsers} className="me-2"/> Employee Mgmt</a></li>
-                                <li className="list-group-item"><a href="/EmployeeAdminStats"><FontAwesomeIcon icon={faChartBar} className="me-2"/> Statistics Mgmt</a></li>
-                                <li className="list-group-item active"><a href="/EmployeeAdminNews"><FontAwesomeIcon icon={faNewspaper} className="me-2"/> News Mgmt</a></li>
+                                <li className="list-group-item"><a href="/EmployeeAdmin"><FontAwesomeIcon icon={faUsers} className="me-2" /> Employee Management</a></li>
+                                <li className="list-group-item"><a href="/EmployeeAdminStats"><FontAwesomeIcon icon={faChartBar} className="me-2" /> Statistics Management</a></li>
+                                <li className="list-group-item active"><a href="/EmployeeAdminNews"><FontAwesomeIcon icon={faNewspaper} className="me-2" /> News Management</a></li>
                             </ul>
                         </div>
                     </div>
@@ -158,7 +158,7 @@ const EmployeeAdminNews = () => {
                                 <label>Filter Status:</label>
                                 <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
                                     <option value="active">Active</option>
-                                    <option value="inactive">Inctive</option>
+                                    <option value="inactive">Inactive</option>
                                     <option value="all">All</option>
                                 </select>
                             </div>
@@ -179,14 +179,14 @@ const EmployeeAdminNews = () => {
                                         {newsItems.map(item => (
                                             <tr key={item.id}>
                                                 <td data-label="Image">
-                                                    {item.image_path ? 
-                                                        <img src={`http://localhost/imus-city-reservation-app/php-backend/uploads/news-carousel/${item.image_path}`} alt="Thumb" className="news-thumb"/> : 
-                                                        <span style={{color:'#999', fontSize:'0.8em'}}>No Image</span>
+                                                    {item.image_path ?
+                                                        <img src={`http://localhost/imus-city-reservation-app/php-backend/uploads/news-carousel/${item.image_path}`} alt="Thumb" className="news-thumb" /> :
+                                                        <span style={{ color: '#999', fontSize: '0.8em' }}>No Image</span>
                                                     }
                                                 </td>
                                                 <td data-label="Title">
                                                     <strong>{item.title}</strong>
-                                                    <div style={{fontSize:'0.8em', color:'#666'}}>{item.excerpt?.substring(0, 50)}...</div>
+                                                    <div style={{ fontSize: '0.8em', color: '#666' }}>{item.excerpt?.substring(0, 50)}...</div>
                                                 </td>
                                                 <td data-label="Date">{item.news_date}</td>
                                                 <td data-label="Status"><span className={`status-badge status-${item.status}`}>{item.status}</span></td>
@@ -194,7 +194,7 @@ const EmployeeAdminNews = () => {
                                                 <td data-label="Actions">
                                                     <div className="actions-buttons">
                                                         <button className="action-button edit-button" onClick={() => { setEditingItem(item); setShowModal(true); }}>
-                                                            <FontAwesomeIcon icon={faEdit} />
+                                                            <FontAwesomeIcon icon={faEdit} /> Edit
                                                         </button>
                                                         <button className="action-button toggle-button" onClick={() => handleToggleStatus(item)} title="Toggle Status">
                                                             <FontAwesomeIcon icon={item.status === 'active' ? faEyeSlash : faEye} />
@@ -215,9 +215,9 @@ const EmployeeAdminNews = () => {
 
                 {/*News Modal*/}
                 {showModal && (
-                    <NewsEditorModal 
-                        item={editingItem} 
-                        onClose={() => setShowModal(false)} 
+                    <NewsEditorModal
+                        item={editingItem}
+                        onClose={() => setShowModal(false)}
                         onSave={() => { setShowModal(false); fetchNewsItems(); }}
                     />
                 )}
@@ -228,59 +228,268 @@ const EmployeeAdminNews = () => {
 
 const NewsEditorModal = ({ item, onClose, onSave }) => {
     const [formData, setFormData] = useState({
-        id: item?.id || '', title: item?.title || '', excerpt: item?.excerpt || '',
-        image_path: item?.image_path || '', link: item?.link || 'http://localhost:3000/Home',
-        display_order: item?.display_order || 1, status: item?.status || 'active', news_date: item?.news_date || ''
+        id: item?.id || '',
+        title: item?.title || '',
+        excerpt: item?.excerpt || '',
+        image_path: item?.image_path || '',
+        link: item?.link || 'http://localhost:3000/Home',
+        display_order: item?.display_order || 1,
+        status: item?.status || 'active',
+        news_date: item?.news_date || ''
     });
+
+    const [isUploading, setIsUploading] = useState(false);
+    const [imagePreview, setImagePreview] = useState(null);
+
+    useEffect(() => {
+        if (formData.image_path) {
+            setImagePreview(`http://localhost/imus-city-reservation-app/php-backend/uploads/news-carousel/${formData.image_path}`);
+        } else {
+            setImagePreview(null);
+        }
+    }, [formData.image_path]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (formData.id) await api.put('/news_handler.php', formData);
-            else { const { id, ...data } = formData; await api.post('/news_handler.php', data); }
+            if (formData.id) {
+                await api.put('/news_handler.php', formData);
+            } else {
+                const { id, ...data } = formData;
+                await api.post('/news_handler.php', data);
+            }
             onSave();
-        } catch (error) { alert("Failed to save."); }
+        } catch (error) {
+            alert("Failed to save.");
+        }
     };
 
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        //Validate file type
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            alert('Invalid file type. Please upload an image (JPEG, PNG, GIF, WebP).');
+            return;
+        }
+
+        //Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('File size too large. Maximum size is 5MB.');
+            return;
+        }
+
+        setIsUploading(true);
         const form = new FormData();
         form.append('image', file);
         form.append('type', 'news-carousel');
+
         try {
-            const res = await api.post('/upload.php', form);
-            if(res.data.success) setFormData({...formData, image_path: res.data.filePath});
-            else alert(res.data.message);
-        } catch(err) { alert("Upload failed"); }
+            const res = await api.post('/upload.php', form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            if (res.data.success) {
+                setFormData({ ...formData, image_path: res.data.filePath });
+                alert("Image uploaded successfully!");
+            } else {
+                alert(res.data.message || "Upload failed");
+            }
+        } catch (err) {
+            alert("Upload failed: " + (err.response?.data?.message || err.message));
+        } finally {
+            setIsUploading(false);
+            e.target.value = '';
+        }
+    };
+
+    const removeImage = () => {
+        if (window.confirm("Remove current image?")) {
+            setFormData({ ...formData, image_path: '' });
+            setImagePreview(null);
+        }
     };
 
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h3 style={{color: '#053774', margin:0}}>{formData.id ? 'Edit' : 'Add'} News</h3>
-                    <button onClick={onClose} style={{border:'none', background:'none', fontSize:'1.5rem'}}>×</button>
+                    <h3 style={{ color: '#053774', margin: 0 }}>{formData.id ? 'Edit' : 'Add'} News</h3>
+                    <button
+                        onClick={onClose}
+                        style={{ border: 'none', background: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
+                    >
+                        ×
+                    </button>
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className="modal-body">
-                        <div className="form-group"><label>Title</label><input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} /></div>
-                        <div className="form-group"><label>Excerpt</label><textarea required value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} /></div>
-                        <div className="form-group"><label>Date Text</label><input value={formData.news_date} onChange={e => setFormData({...formData, news_date: e.target.value})} placeholder="e.g. January" /></div>
-                        <div className="form-group"><label>Image</label><input type="file" onChange={handleImageUpload} /></div>
-                        {formData.image_path && <div className="form-group"><small>Current: {formData.image_path}</small></div>}
-                        <div className="form-group"><label>Link</label><input value={formData.link} onChange={e => setFormData({...formData, link: e.target.value})} /></div>
-                        <div className="form-group"><label>Order</label><input type="number" value={formData.display_order} onChange={e => setFormData({...formData, display_order: e.target.value})} /></div>
-                        <div className="form-group"><label>Status</label>
-                            <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})}>
+                        <div className="form-group">
+                            <label>Title *</label>
+                            <input
+                                required
+                                value={formData.title}
+                                onChange={e => setFormData({ ...formData, title: e.target.value })}
+                                placeholder="Enter news title"
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Excerpt *</label>
+                            <textarea
+                                required
+                                value={formData.excerpt}
+                                onChange={e => setFormData({ ...formData, excerpt: e.target.value })}
+                                rows="3"
+                                placeholder="Enter short description"
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Date Text</label>
+                            <input
+                                value={formData.news_date}
+                                onChange={e => setFormData({ ...formData, news_date: e.target.value })}
+                                placeholder="e.g. January 2024"
+                            />
+                        </div>
+
+                        {/*Image Upload Section*/}
+                        <div className="form-group">
+                            <label>Image</label>
+                            <input
+                                type="file"
+                                onChange={handleImageUpload}
+                                accept=".jpg,.jpeg,.png,.gif,.webp"
+                                disabled={isUploading}
+                                style={{ padding: '5px' }}
+                            />
+                            <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
+                                Supported formats: JPG, PNG, GIF, WebP (Max 5MB)
+                            </small>
+                            {isUploading && (
+                                <div style={{ marginTop: '10px', color: '#053774' }}>
+                                    <small>Uploading image...</small>
+                                </div>
+                            )}
+                        </div>
+
+                        {/*Current Image Display*/}
+                        {formData.image_path && (
+                            <div className="form-group" style={{
+                                border: '1px solid #ddd',
+                                padding: '15px',
+                                borderRadius: '5px',
+                                marginBottom: '15px',
+                                backgroundColor: '#f9f9f9'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                    <strong style={{ color: '#053774' }}>Current Image:</strong>
+                                    <button
+                                        type="button"
+                                        onClick={removeImage}
+                                        className="action-button delete-button"
+                                        style={{ padding: '5px 10px', fontSize: '0.8em' }}
+                                        disabled={isUploading}
+                                    >
+                                        Remove Image
+                                    </button>
+                                </div>
+                                <div>
+                                    <div style={{ marginBottom: '10px' }}>
+                                        <small>File: {formData.image_path}</small>
+                                    </div>
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        padding: '10px',
+                                        backgroundColor: 'white',
+                                        borderRadius: '4px',
+                                        border: '1px solid #eee'
+                                    }}>
+                                        {imagePreview ? (
+                                            <img
+                                                src={imagePreview}
+                                                alt="Current news"
+                                                style={{
+                                                    maxWidth: '100%',
+                                                    maxHeight: '200px',
+                                                    objectFit: 'contain',
+                                                    border: '1px solid #ddd',
+                                                    borderRadius: '4px'
+                                                }}
+                                                onError={(e) => {
+                                                    e.target.style.display = 'none';
+                                                    e.target.parentElement.innerHTML =
+                                                        '<div style="color:#dc3545; text-align:center; padding:20px;">' +
+                                                        '<strong>Image not found</strong><br/>' +
+                                                        '<small>The image file may have been moved or deleted.</small>' +
+                                                        '</div>';
+                                                }}
+                                            />
+                                        ) : (
+                                            <div style={{ color: '#999', textAlign: 'center', padding: '20px' }}>
+                                                No image preview available
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="form-group">
+                            <label>Link URL</label>
+                            <input
+                                value={formData.link}
+                                onChange={e => setFormData({ ...formData, link: e.target.value })}
+                                placeholder="https://example.com/news"
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Display Order</label>
+                            <input
+                                type="number"
+                                value={formData.display_order}
+                                onChange={e => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
+                                min="0"
+                                step="1"
+                                style={{ width: '100px' }}
+                            />
+                            <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
+                                Lower numbers appear first
+                            </small>
+                        </div>
+                        <div className="form-group">
+                            <label>Status</label>
+                            <select
+                                value={formData.status}
+                                onChange={e => setFormData({ ...formData, status: e.target.value })}
+                                style={{ width: '150px' }}
+                            >
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                             </select>
                         </div>
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="action-button" style={{backgroundColor:'#6c757d'}} onClick={onClose}>Cancel</button>
-                        <button type="submit" className="action-button add-button">Save</button>
+                        <button
+                            type="button"
+                            className="action-button"
+                            style={{ backgroundColor: '#6c757d' }}
+                            onClick={onClose}
+                            disabled={isUploading}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="action-button add-button"
+                            disabled={isUploading}
+                        >
+                            {isUploading ? 'Uploading...' : 'Save Changes'}
+                        </button>
                     </div>
                 </form>
             </div>

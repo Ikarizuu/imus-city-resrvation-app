@@ -285,13 +285,13 @@ const EmployeeAdmin = () => {
                                     <h3>Admin Panel</h3>
                                 </li>
                                 <li className="list-group-item active">
-                                    <a href="/EmployeeAdmin"><FontAwesomeIcon icon={faUsers} className="me-2"/> Employee Mgmt</a>
+                                    <a href="/EmployeeAdmin"><FontAwesomeIcon icon={faUsers} className="me-2"/> Employee Management</a>
                                 </li>
                                 <li className="list-group-item">
-                                    <a href="/EmployeeAdminStats"><FontAwesomeIcon icon={faChartBar} className="me-2"/> Statistics Mgmt</a>
+                                    <a href="/EmployeeAdminStats"><FontAwesomeIcon icon={faChartBar} className="me-2"/> Statistics Management</a>
                                 </li>
                                 <li className="list-group-item">
-                                    <a href="/EmployeeAdminNews"><FontAwesomeIcon icon={faNewspaper} className="me-2"/> News Mgmt</a>
+                                    <a href="/EmployeeAdminNews"><FontAwesomeIcon icon={faNewspaper} className="me-2"/> News Management</a>
                                 </li>
                             </ul>
                         </div>
